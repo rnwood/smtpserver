@@ -19,7 +19,7 @@ build_script:
  - cmd: dotnet build Rnwood.SmtpServer -c %Configuration%
 after_build:
  - ps: |
-    $versionsuffix=$("{0:D4}" -f [convert]::ToInt32($env:APPVEYOR_BUILD_NUMBER, 10))
+    $versionsuffix=$("{0:D4}-{1}" -f [convert]::ToInt32($env:APPVEYOR_BUILD_NUMBER, 10), $env:APPVEYOR_REPO_BRANCH)
     dotnet pack Rnwood.SmtpServer -c $env:Configuration --version-suffix $versionsuffix
     #get-item Rnwood.SmtpServer\bin\$($env:Configuration)\*.nupkg | foreach-object { appveyor PushArtifact $_.FullName }
 build:
