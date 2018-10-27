@@ -1,14 +1,14 @@
-﻿using Rnwood.SmtpServer.Verbs;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Rnwood.SmtpServer.Extensions.Auth
+﻿namespace Rnwood.SmtpServer.Extensions.Auth
 {
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Rnwood.SmtpServer.Verbs;
+
     public class AuthVerb : IVerb
     {
         public AuthVerb(AuthExtensionProcessor authExtensionProcessor)
         {
-            AuthExtensionProcessor = authExtensionProcessor;
+            this.AuthExtensionProcessor = authExtensionProcessor;
         }
 
         public AuthExtensionProcessor AuthExtensionProcessor { get; private set; }
@@ -21,24 +21,27 @@ namespace Rnwood.SmtpServer.Extensions.Auth
             {
                 if (connection.Session.Authenticated)
                 {
-                    throw new SmtpServerException(new SmtpResponse(StandardSmtpResponseCode.BadSequenceOfCommands,
+                    throw new SmtpServerException(new SmtpResponse(
+                        StandardSmtpResponseCode.BadSequenceOfCommands,
                                                                    "Already authenticated"));
                 }
 
                 string mechanismId = argumentsParser.Arguments[0];
-                IAuthMechanism mechanism = AuthExtensionProcessor.MechanismMap.Get(mechanismId);
+                IAuthMechanism mechanism = this.AuthExtensionProcessor.MechanismMap.Get(mechanismId);
 
                 if (mechanism == null)
                 {
                     throw new SmtpServerException(
-                        new SmtpResponse(StandardSmtpResponseCode.CommandParameterNotImplemented,
+                        new SmtpResponse(
+                            StandardSmtpResponseCode.CommandParameterNotImplemented,
                                          "Specified AUTH mechanism not supported"));
                 }
 
-                if (!AuthExtensionProcessor.IsMechanismEnabled(mechanism))
+                if (!await this.AuthExtensionProcessor.IsMechanismEnabled(mechanism).ConfigureAwait(false))
                 {
                     throw new SmtpServerException(
-                        new SmtpResponse(StandardSmtpResponseCode.AuthenticationFailure,
+                        new SmtpResponse(
+                            StandardSmtpResponseCode.AuthenticationFailure,
                                          "Specified AUTH mechanism not allowed right now (might require secure connection etc)"));
                 }
 
@@ -52,36 +55,39 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                 }
 
                 AuthMechanismProcessorStatus status =
-                    await authMechanismProcessor.ProcessResponseAsync(initialData);
+                    await authMechanismProcessor.ProcessResponseAsync(initialData).ConfigureAwait(false);
                 while (status == AuthMechanismProcessorStatus.Continue)
                 {
-                    string response = await connection.ReadLineAsync();
+                    string response = await connection.ReadLine().ConfigureAwait(false);
 
                     if (response == "*")
                     {
-                        await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.SyntaxErrorInCommandArguments, "Authentication aborted"));
+                        await connection.WriteResponse(new SmtpResponse(StandardSmtpResponseCode.SyntaxErrorInCommandArguments, "Authentication aborted")).ConfigureAwait(false);
                         return;
                     }
 
-                    status = await authMechanismProcessor.ProcessResponseAsync(response);
+                    status = await authMechanismProcessor.ProcessResponseAsync(response).ConfigureAwait(false);
                 }
 
                 if (status == AuthMechanismProcessorStatus.Success)
                 {
-                    await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.AuthenticationOK,
-                                                              "Authenticated OK"));
+                    await connection.WriteResponse(new SmtpResponse(
+                        StandardSmtpResponseCode.AuthenticationOK,
+                                                              "Authenticated OK")).ConfigureAwait(false);
                     connection.Session.Authenticated = true;
                     connection.Session.AuthenticationCredentials = authMechanismProcessor.Credentials;
                 }
                 else
                 {
-                    await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.AuthenticationFailure,
-                                                              "Authentication failure"));
+                    await connection.WriteResponse(new SmtpResponse(
+                        StandardSmtpResponseCode.AuthenticationFailure,
+                                                              "Authentication failure")).ConfigureAwait(false);
                 }
             }
             else
             {
-                throw new SmtpServerException(new SmtpResponse(StandardSmtpResponseCode.SyntaxErrorInCommandArguments,
+                throw new SmtpServerException(new SmtpResponse(
+                    StandardSmtpResponseCode.SyntaxErrorInCommandArguments,
                                                                "Must specify AUTH mechanism as a parameter"));
             }
         }

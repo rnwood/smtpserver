@@ -10,44 +10,49 @@ namespace Rnwood.SmtpServer.Tests
     {
         public Mocks()
         {
-            Connection = new Mock<IConnection>();
-            ConnectionChannel = new Mock<IConnectionChannel>();
-            Session = new Mock<IEditableSession>();
-            Server = new Mock<IServer>();
-            ServerBehaviour = new Mock<IServerBehaviour>();
-            MessageBuilder = new Mock<IMessageBuilder>();
-            VerbMap = new Mock<IVerbMap>();
+            this.Connection = new Mock<IConnection>();
+            this.ConnectionChannel = new Mock<IConnectionChannel>();
+            this.Session = new Mock<IEditableSession>();
+            this.Server = new Mock<IServer>();
+            this.ServerBehaviour = new Mock<IServerBehaviour>();
+            this.MessageBuilder = new Mock<IMessageBuilder>();
+            this.VerbMap = new Mock<IVerbMap>();
 
-            ServerBehaviour.Setup(
-                sb => sb.OnCreateNewSession(It.IsAny<IConnection>(), It.IsAny<IPAddress>(), It.IsAny<DateTime>())).
-                Returns(Session.Object);
-            ServerBehaviour.Setup(sb => sb.OnCreateNewMessage(It.IsAny<IConnection>())).Returns(MessageBuilder.Object);
+            this.ServerBehaviour.Setup(
+                sb => sb.OnCreateNewSession(It.IsAny<IConnectionChannel>())).
+                ReturnsAsync(this.Session.Object);
+            this.ServerBehaviour.Setup(sb => sb.OnCreateNewMessage(It.IsAny<IConnection>())).ReturnsAsync(this.MessageBuilder.Object);
 
-            Connection.SetupGet(c => c.Session).Returns(Session.Object);
-            Connection.SetupGet(c => c.Server).Returns(Server.Object);
-            Connection.SetupGet(c => c.ReaderEncoding).Returns(new ASCIISevenBitTruncatingEncoding());
-            Connection.Setup(s => s.CloseConnectionAsync()).Returns(() => ConnectionChannel.Object.CloseAync());
+            this.Connection.SetupGet(c => c.Session).Returns(this.Session.Object);
+            this.Connection.SetupGet(c => c.Server).Returns(this.Server.Object);
+            this.Connection.SetupGet(c => c.ReaderEncoding).Returns(new ASCIISevenBitTruncatingEncoding());
+            this.Connection.Setup(s => s.CloseConnection()).Returns(() => this.ConnectionChannel.Object.CloseAync());
 
-            Server.SetupGet(s => s.Behaviour).Returns(ServerBehaviour.Object);
+            this.Server.SetupGet(s => s.Behaviour).Returns(this.ServerBehaviour.Object);
 
             bool isConnected = true;
-            ConnectionChannel.Setup(s => s.IsConnected).Returns(() => isConnected);
-            ConnectionChannel.Setup(s => s.CloseAync()).Returns(() => Task.Run(() => isConnected = false));
-            ConnectionChannel.Setup(s => s.ClientIPAddress).Returns(IPAddress.Loopback);
+            this.ConnectionChannel.Setup(s => s.IsConnected).Returns(() => isConnected);
+            this.ConnectionChannel.Setup(s => s.CloseAync()).Returns(() => Task.Run(() => isConnected = false));
+            this.ConnectionChannel.Setup(s => s.ClientIPAddress).Returns(IPAddress.Loopback);
         }
 
         public Mock<IConnection> Connection { get; private set; }
+
         public Mock<IConnectionChannel> ConnectionChannel { get; private set; }
+
         public Mock<IEditableSession> Session { get; private set; }
+
         public Mock<IServer> Server { get; private set; }
+
         public Mock<IServerBehaviour> ServerBehaviour { get; private set; }
+
         public Mock<IMessageBuilder> MessageBuilder { get; private set; }
 
         public Mock<IVerbMap> VerbMap { get; private set; }
 
         public void VerifyWriteResponseAsync(StandardSmtpResponseCode responseCode)
         {
-            Connection.Verify(c => c.WriteResponseAsync(It.Is<SmtpResponse>(r => r.Code == (int)responseCode)));
+            this.Connection.Verify(c => c.WriteResponse(It.Is<SmtpResponse>(r => r.Code == (int)responseCode)));
         }
     }
 }

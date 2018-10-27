@@ -1,10 +1,9 @@
 ﻿namespace Rnwood.SmtpServer.Extensions
 {
+    using System.Threading.Tasks;
+
     public interface IExtensionProcessor
     {
-        string[] EHLOKeywords
-        {
-            get;
-        }
+        Task<string[]> GetEHLOKeywords();
     }
 }

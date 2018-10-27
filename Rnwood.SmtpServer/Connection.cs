@@ -1,55 +1,56 @@
-﻿#region
-
-using Rnwood.SmtpServer.Extensions;
-using Rnwood.SmtpServer.Verbs;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net.Security;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-#endregion
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Net.Security;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Rnwood.SmtpServer.Extensions;
+    using Rnwood.SmtpServer.Verbs;
+
     public class Connection : IConnection
     {
         public IConnectionChannel ConnectionChannel { get; private set; }
-        private string _id;
 
-        public Connection(IServer server, IConnectionChannel connectionChannel, IVerbMap verbMap)
+        private readonly string id;
+
+        public static async Task<Connection> Create(IServer server, IConnectionChannel connectionChannel, IVerbMap verbMap)
         {
-            _id = string.Format("[RemoteIP={0}]", connectionChannel.ClientIPAddress.ToString());
+            IEditableSession session = await server.Behaviour.OnCreateNewSession(connectionChannel).ConfigureAwait(false);
+            var extensions = await server.Behaviour.GetExtensions(connectionChannel).ConfigureAwait(false);
+            IExtensionProcessor[] createConnectionExtensions(IConnection c) => extensions.Select(e => e.CreateExtensionProcessor(c)).ToArray();
+            Connection result = new Connection(server, session, connectionChannel, verbMap, createConnectionExtensions);
+            await result.SetReaderEncodingToDefault().ConfigureAwait(false);
+            
 
-            ConnectionChannel = connectionChannel;
-            ConnectionChannel.Closed += OnConnectionChannelClosed;
+            return result;
+        }
 
-            VerbMap = verbMap;
-            Session = server.Behaviour.OnCreateNewSession(this, ConnectionChannel.ClientIPAddress, DateTime.Now);
+        internal Connection(IServer server, IEditableSession session, IConnectionChannel connectionChannel, IVerbMap verbMap, Func<IConnection, IExtensionProcessor[]> extensionProcessors)
+        {
+            this.id = string.Format("[RemoteIP={0}]", connectionChannel.ClientIPAddress.ToString());
 
-            Server = server;
+            this.ConnectionChannel = connectionChannel;
+            this.ConnectionChannel.Closed += this.OnConnectionChannelClosed;
 
-            ConnectionChannel.ReceiveTimeout = Server.Behaviour.GetReceiveTimeout(this);
-            ConnectionChannel.SendTimeout = Server.Behaviour.GetSendTimeout(this);
-            SetReaderEncodingToDefault();
-
-            ExtensionProcessors = Server.Behaviour.GetExtensions(this).Select(e => e.CreateExtensionProcessor(this)).ToArray();
+            this.VerbMap = verbMap;
+            this.Session = session;
+            this.Server = server;
+            this.ExtensionProcessors = extensionProcessors(this).ToArray(); ;
         }
 
         private void OnConnectionChannelClosed(object sender, EventArgs e)
         {
-            ConnectionClosed?.Invoke(this, EventArgs.Empty);
+            this.ConnectionClosed?.Invoke(this, EventArgs.Empty);
         }
 
         public override string ToString()
         {
-            return _id;
+            return this.id;
         }
-
-        #region IConnectionProcessor Members
 
         public IServer Server { get; private set; }
 
@@ -57,55 +58,49 @@ namespace Rnwood.SmtpServer
 
         public void SetReaderEncoding(Encoding encoding)
         {
-            ConnectionChannel.SetReaderEncoding(encoding);
+            this.ConnectionChannel.SetReaderEncoding(encoding);
         }
 
-        public Encoding ReaderEncoding
-        {
-            get { return ConnectionChannel.ReaderEncoding; }
-        }
+        public Encoding ReaderEncoding => this.ConnectionChannel.ReaderEncoding;
 
-        public void SetReaderEncodingToDefault()
+        public async Task SetReaderEncodingToDefault()
         {
-            SetReaderEncoding(Server.Behaviour.GetDefaultEncoding(this));
+            this.SetReaderEncoding(await this.Server.Behaviour.GetDefaultEncoding(this).ConfigureAwait(false));
         }
 
         public IExtensionProcessor[] ExtensionProcessors { get; private set; }
 
-        public async Task CloseConnectionAsync()
+        public async Task CloseConnection()
         {
-            await ConnectionChannel.CloseAync();
+            await this.ConnectionChannel.CloseAync().ConfigureAwait(false);
         }
 
         public IVerbMap VerbMap { get; private set; }
 
-        public async Task ApplyStreamFilterAsync(Func<Stream, Task<Stream>> filter)
+        public async Task ApplyStreamFilter(Func<Stream, Task<Stream>> filter)
         {
-            await ConnectionChannel.ApplyStreamFilterAsync(filter);
+            await this.ConnectionChannel.ApplyStreamFilterAsync(filter).ConfigureAwait(false);
         }
 
-        public MailVerb MailVerb
-        {
-            get { return (MailVerb)VerbMap.GetVerbProcessor("MAIL"); }
-        }
+        public MailVerb MailVerb => (MailVerb)this.VerbMap.GetVerbProcessor("MAIL");
 
-        protected async Task WriteLineAndFlushAsync(string text, params object[] arg)
+        protected async Task WriteLineAndFlush(string text, params object[] arg)
         {
             string formattedText = string.Format(text, arg);
-            Session.AppendToLog(formattedText);
-            await ConnectionChannel.WriteLineAsync(formattedText);
-            await ConnectionChannel.FlushAsync();
+            this.Session.AppendToLog(formattedText);
+            await this.ConnectionChannel.WriteLineAsync(formattedText).ConfigureAwait(false);
+            await this.ConnectionChannel.FlushAsync().ConfigureAwait(false);
         }
 
-        public async Task WriteResponseAsync(SmtpResponse response)
+        public async Task WriteResponse(SmtpResponse response)
         {
-            await WriteLineAndFlushAsync(response.ToString().TrimEnd());
+            await this.WriteLineAndFlush(response.ToString().TrimEnd()).ConfigureAwait(false);
         }
 
-        public async Task<string> ReadLineAsync()
+        public async Task<string> ReadLine()
         {
-            string text = await ConnectionChannel.ReadLineAsync();
-            Session.AppendToLog(text);
+            string text = await this.ConnectionChannel.ReadLineAsync().ConfigureAwait(false);
+            this.Session.AppendToLog(text);
             return text;
         }
 
@@ -113,71 +108,71 @@ namespace Rnwood.SmtpServer
 
         public IMessageBuilder CurrentMessage { get; private set; }
 
-        public IMessageBuilder NewMessage()
+        public async Task<IMessageBuilder> NewMessage()
         {
-            CurrentMessage = Server.Behaviour.OnCreateNewMessage(this);
-            CurrentMessage.Session = Session;
-            return CurrentMessage;
+            this.CurrentMessage = await this.Server.Behaviour.OnCreateNewMessage(this).ConfigureAwait(false);
+            this.CurrentMessage.Session = this.Session;
+            return this.CurrentMessage;
         }
 
-        public void CommitMessage()
+        public async Task CommitMessage()
         {
-            IMessage message = CurrentMessage.ToMessage();
-            Session.AddMessage(message);
-            CurrentMessage = null;
+            IMessage message = await this.CurrentMessage.ToMessage().ConfigureAwait(false);
+            this.Session.AddMessage(message);
+            this.CurrentMessage = null;
 
-            Server.Behaviour.OnMessageReceived(this, message);
+            await this.Server.Behaviour.OnMessageReceived(this, message).ConfigureAwait(false);
         }
 
-        public void AbortMessage()
+        public Task AbortMessage()
         {
-            CurrentMessage = null;
+            this.CurrentMessage = null;
+            return Task.CompletedTask;
         }
-
-        #endregion
 
         public async Task ProcessAsync()
         {
             try
             {
-                Server.Behaviour.OnSessionStarted(this, Session);
-                SetReaderEncoding(Server.Behaviour.GetDefaultEncoding(this));
+                await this.Server.Behaviour.OnSessionStarted(this, this.Session).ConfigureAwait(false);
+                this.SetReaderEncoding(await this.Server.Behaviour.GetDefaultEncoding(this).ConfigureAwait(false));
 
-                if (Server.Behaviour.IsSSLEnabled(this))
+                if (await this.Server.Behaviour.IsSSLEnabled(this).ConfigureAwait(false))
                 {
-                    await ConnectionChannel.ApplyStreamFilterAsync(async s =>
+                    await this.ConnectionChannel.ApplyStreamFilterAsync(async s =>
                     {
                         SslStream sslStream = new SslStream(s);
-                        await sslStream.AuthenticateAsServerAsync(Server.Behaviour.GetSSLCertificate(this));
+                        await sslStream.AuthenticateAsServerAsync(await this.Server.Behaviour.GetSSLCertificate(this).ConfigureAwait(false)).ConfigureAwait(false);
                         return sslStream;
-                    });
+                    }).ConfigureAwait(false);
 
-                    Session.SecureConnection = true;
+                    this.Session.SecureConnection = true;
                 }
 
-                await WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.ServiceReady,
-                                               Server.Behaviour.DomainName + " smtp4dev ready"));
+                await this.WriteResponse(new SmtpResponse(
+                    StandardSmtpResponseCode.ServiceReady,
+                                               this.Server.Behaviour.DomainName + " smtp4dev ready")).ConfigureAwait(false);
 
                 int numberOfInvalidCommands = 0;
-                while (ConnectionChannel.IsConnected)
+                while (this.ConnectionChannel.IsConnected)
                 {
                     bool badCommand = false;
-                    SmtpCommand command = new SmtpCommand(await ReadLineAsync());
-                    Server.Behaviour.OnCommandReceived(this, command);
+                    SmtpCommand command = new SmtpCommand(await this.ReadLine().ConfigureAwait(false));
+                    await this.Server.Behaviour.OnCommandReceived(this, command).ConfigureAwait(false);
 
                     if (command.IsValid)
                     {
-                        IVerb verbProcessor = VerbMap.GetVerbProcessor(command.Verb);
+                        IVerb verbProcessor = this.VerbMap.GetVerbProcessor(command.Verb);
 
                         if (verbProcessor != null)
                         {
                             try
                             {
-                                await verbProcessor.ProcessAsync(this, command);
+                                await verbProcessor.ProcessAsync(this, command).ConfigureAwait(false);
                             }
                             catch (SmtpServerException exception)
                             {
-                                await WriteResponseAsync(exception.SmtpResponse);
+                                await this.WriteResponse(exception.SmtpResponse).ConfigureAwait(false);
                             }
                         }
                         else
@@ -197,35 +192,36 @@ namespace Rnwood.SmtpServer
                     {
                         numberOfInvalidCommands++;
 
-                        if (Server.Behaviour.MaximumNumberOfSequentialBadCommands > 0 &&
-                        numberOfInvalidCommands >= Server.Behaviour.MaximumNumberOfSequentialBadCommands)
+                        if (this.Server.Behaviour.MaximumNumberOfSequentialBadCommands > 0 &&
+                        numberOfInvalidCommands >= this.Server.Behaviour.MaximumNumberOfSequentialBadCommands)
                         {
-                            await WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.ClosingTransmissionChannel, "Too many bad commands. Bye!"));
-                            await CloseConnectionAsync();
+                            await this.WriteResponse(new SmtpResponse(StandardSmtpResponseCode.ClosingTransmissionChannel, "Too many bad commands. Bye!")).ConfigureAwait(false);
+                            await this.CloseConnection().ConfigureAwait(false);
                         }
                         else
                         {
-                            await WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.SyntaxErrorCommandUnrecognised,
-                                                           "Command unrecognised"));
+                            await this.WriteResponse(new SmtpResponse(
+                                StandardSmtpResponseCode.SyntaxErrorCommandUnrecognised,
+                                                           "Command unrecognised")).ConfigureAwait(false);
                         }
                     }
                 }
             }
             catch (IOException ioException)
             {
-                Session.SessionError = ioException;
-                Session.SessionErrorType = SessionErrorType.NetworkError;
+                this.Session.SessionError = ioException;
+                this.Session.SessionErrorType = SessionErrorType.NetworkError;
             }
             catch (Exception exception)
             {
-                Session.SessionError = exception;
-                Session.SessionErrorType = SessionErrorType.UnexpectedException;
+                this.Session.SessionError = exception;
+                this.Session.SessionErrorType = SessionErrorType.UnexpectedException;
             }
 
-            await CloseConnectionAsync();
+            await this.CloseConnection().ConfigureAwait(false);
 
-            Session.EndDate = DateTime.Now;
-            Server.Behaviour.OnSessionCompleted(this, Session);
+            this.Session.EndDate = DateTime.Now;
+            await this.Server.Behaviour.OnSessionCompleted(this, this.Session).ConfigureAwait(false);
         }
     }
 }

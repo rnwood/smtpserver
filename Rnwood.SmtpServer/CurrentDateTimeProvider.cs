@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+
     public class CurrentDateTimeProvider : ICurrentDateTimeProvider
     {
         public DateTime GetCurrentDateTime()

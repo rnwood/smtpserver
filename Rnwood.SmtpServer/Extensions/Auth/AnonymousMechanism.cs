@@ -2,23 +2,13 @@
 {
     public class AnonymousMechanism : IAuthMechanism
     {
-        #region IAuthMechanism Members
-
-        public string Identifier
-        {
-            get { return "ANONYMOUS"; }
-        }
+        public string Identifier => "ANONYMOUS";
 
         public IAuthMechanismProcessor CreateAuthMechanismProcessor(IConnection connection)
         {
             return new AnonymousMechanismProcessor(connection);
         }
 
-        public bool IsPlainText
-        {
-            get { return false; }
-        }
-
-        #endregion IAuthMechanism Members
+        public bool IsPlainText => false;
     }
 }

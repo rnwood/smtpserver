@@ -1,21 +1,17 @@
-﻿#region
-
-using Rnwood.SmtpServer.Verbs;
-using System.Linq;
-using System.Threading.Tasks;
-
-#endregion
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Rnwood.SmtpServer.Verbs;
+
     public class MailFromVerb : IVerb
     {
-        private ICurrentDateTimeProvider _currentDateTimeProvider;
+        private ICurrentDateTimeProvider currentDateTimeProvider;
 
         public MailFromVerb(ICurrentDateTimeProvider currentDateTimeProvider)
         {
-            ParameterProcessorMap = new ParameterProcessorMap();
-            _currentDateTimeProvider = currentDateTimeProvider;
+            this.ParameterProcessorMap = new ParameterProcessorMap();
+            this.currentDateTimeProvider = currentDateTimeProvider;
         }
 
         public MailFromVerb() : this(new CurrentDateTimeProvider())
@@ -28,16 +24,18 @@ namespace Rnwood.SmtpServer
         {
             if (connection.CurrentMessage != null)
             {
-                await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.BadSequenceOfCommands,
-                                                                   "You already told me who the message was from"));
+                await connection.WriteResponse(new SmtpResponse(
+                    StandardSmtpResponseCode.BadSequenceOfCommands,
+                                                                   "You already told me who the message was from")).ConfigureAwait(false);
                 return;
             }
 
             if (command.ArgumentsText.Length == 0)
             {
-                await connection.WriteResponseAsync(
-                    new SmtpResponse(StandardSmtpResponseCode.SyntaxErrorInCommandArguments,
-                                     "Must specify from address or <>"));
+                await connection.WriteResponse(
+                    new SmtpResponse(
+                        StandardSmtpResponseCode.SyntaxErrorInCommandArguments,
+                                     "Must specify from address or <>")).ConfigureAwait(false);
                 return;
             }
 
@@ -46,24 +44,28 @@ namespace Rnwood.SmtpServer
 
             string from = arguments.First();
             if (from.StartsWith("<"))
+            {
                 from = from.Remove(0, 1);
+            }
 
             if (from.EndsWith(">"))
+            {
                 from = from.Remove(from.Length - 1, 1);
+            }
 
-            connection.Server.Behaviour.OnMessageStart(connection, from);
-            connection.NewMessage();
-            connection.CurrentMessage.ReceivedDate = _currentDateTimeProvider.GetCurrentDateTime();
+            await connection.Server.Behaviour.OnMessageStart(connection, from).ConfigureAwait(false);
+            await connection.NewMessage().ConfigureAwait(false);
+            connection.CurrentMessage.ReceivedDate = this.currentDateTimeProvider.GetCurrentDateTime();
             connection.CurrentMessage.From = from;
 
             try
             {
-                await ParameterProcessorMap.ProcessAsync(connection, arguments.Skip(1).ToArray(), true);
-                await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.OK, "New message started"));
+                await this.ParameterProcessorMap.ProcessAsync(connection, arguments.Skip(1).ToArray(), true).ConfigureAwait(false);
+                await connection.WriteResponse(new SmtpResponse(StandardSmtpResponseCode.OK, "New message started")).ConfigureAwait(false);
             }
             catch
             {
-                connection.AbortMessage();
+                await connection.AbortMessage().ConfigureAwait(false);
                 throw;
             }
         }

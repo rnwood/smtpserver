@@ -1,18 +1,14 @@
-﻿#region
-
-using Rnwood.SmtpServer.Verbs;
-using System.Threading.Tasks;
-
-#endregion
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System.Threading.Tasks;
+    using Rnwood.SmtpServer.Verbs;
+
     public class RcptVerb : IVerb
     {
         public RcptVerb()
         {
-            SubVerbMap = new VerbMap();
-            SubVerbMap.SetVerbProcessor("TO", new RcptToVerb());
+            this.SubVerbMap = new VerbMap();
+            this.SubVerbMap.SetVerbProcessor("TO", new RcptToVerb());
         }
 
         public VerbMap SubVerbMap { get; private set; }
@@ -20,17 +16,18 @@ namespace Rnwood.SmtpServer
         public async Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
             SmtpCommand subrequest = new SmtpCommand(command.ArgumentsText);
-            IVerb verbProcessor = SubVerbMap.GetVerbProcessor(subrequest.Verb);
+            IVerb verbProcessor = this.SubVerbMap.GetVerbProcessor(subrequest.Verb);
 
             if (verbProcessor != null)
             {
-                await verbProcessor.ProcessAsync(connection, subrequest);
+                await verbProcessor.ProcessAsync(connection, subrequest).ConfigureAwait(false);
             }
             else
             {
-                await connection.WriteResponseAsync(
-                    new SmtpResponse(StandardSmtpResponseCode.CommandParameterNotImplemented,
-                                     "Subcommand {0} not implemented", subrequest.Verb));
+                await connection.WriteResponse(
+                    new SmtpResponse(
+                        StandardSmtpResponseCode.CommandParameterNotImplemented,
+                                     "Subcommand {0} not implemented", subrequest.Verb)).ConfigureAwait(false);
             }
         }
     }

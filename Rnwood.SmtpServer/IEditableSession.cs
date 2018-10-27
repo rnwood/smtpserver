@@ -1,9 +1,9 @@
-using Rnwood.SmtpServer.Extensions.Auth;
-using System;
-using System.Net;
-
 namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Net;
+    using Rnwood.SmtpServer.Extensions.Auth;
+
     public interface IEditableSession : ISession
     {
         new DateTime StartDate { get; set; }
@@ -25,6 +25,7 @@ namespace Rnwood.SmtpServer
         new IAuthenticationCredentials AuthenticationCredentials { get; set; }
 
         new Exception SessionError { get; set; }
+
         new SessionErrorType SessionErrorType { get; set; }
 
         void AppendToLog(string text);

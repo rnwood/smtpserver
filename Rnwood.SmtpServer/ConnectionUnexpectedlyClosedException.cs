@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.IO;
+
     public class ConnectionUnexpectedlyClosedException : IOException
     {
         public ConnectionUnexpectedlyClosedException()

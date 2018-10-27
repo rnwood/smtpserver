@@ -12,12 +12,12 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
         {
             Mocks mocks = new Mocks();
 
-            LoginMechanismProcessor processor = Setup(mocks);
-            AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(null);
+            LoginMechanismProcessor processor = this.Setup(mocks);
+            AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(null).ConfigureAwait(false);
 
             Assert.Equal(AuthMechanismProcessorStatus.Continue, result);
             mocks.Connection.Verify(c =>
-                c.WriteResponseAsync(
+                c.WriteResponse(
                         It.Is<SmtpResponse>(r =>
                            r.Code == (int)StandardSmtpResponseCode.AuthenticationContinue &&
                            VerifyBase64Response(r.Message, "Username:")
@@ -31,13 +31,13 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
         {
             Mocks mocks = new Mocks();
 
-            LoginMechanismProcessor processor = Setup(mocks);
-            AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(EncodeBase64("rob"));
+            LoginMechanismProcessor processor = this.Setup(mocks);
+            AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(EncodeBase64("rob")).ConfigureAwait(false);
 
             Assert.Equal(AuthMechanismProcessorStatus.Continue, result);
 
             mocks.Connection.Verify(c =>
-                c.WriteResponseAsync(
+                c.WriteResponse(
                     It.Is<SmtpResponse>(r =>
                         VerifyBase64Response(r.Message, "Password:")
                         && r.Code == (int)StandardSmtpResponseCode.AuthenticationContinue
@@ -51,13 +51,13 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
         {
             Mocks mocks = new Mocks();
 
-            LoginMechanismProcessor processor = Setup(mocks);
-            AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(EncodeBase64("rob"));
+            LoginMechanismProcessor processor = this.Setup(mocks);
+            AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(EncodeBase64("rob")).ConfigureAwait(false);
 
             Assert.Equal(AuthMechanismProcessorStatus.Continue, result);
 
             mocks.Connection.Verify(c =>
-                c.WriteResponseAsync(
+                c.WriteResponse(
                     It.Is<SmtpResponse>(r =>
                         VerifyBase64Response(r.Message, "Password:")
                         && r.Code == (int)StandardSmtpResponseCode.AuthenticationContinue
@@ -65,7 +65,7 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
                 )
             );
 
-            result = await processor.ProcessResponseAsync(EncodeBase64("password"));
+            result = await processor.ProcessResponseAsync(EncodeBase64("password")).ConfigureAwait(false);
             Assert.Equal(AuthMechanismProcessorStatus.Success, result);
         }
 
@@ -77,10 +77,10 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
             {
                 Mocks mocks = new Mocks();
 
-                LoginMechanismProcessor processor = Setup(mocks);
-                await processor.ProcessResponseAsync(null);
-                await processor.ProcessResponseAsync("rob blah");
-            });
+                LoginMechanismProcessor processor = this.Setup(mocks);
+                await processor.ProcessResponseAsync(null).ConfigureAwait(false);
+                await processor.ProcessResponseAsync("rob blah").ConfigureAwait(false);
+            }).ConfigureAwait(false);
         }
 
         private LoginMechanismProcessor Setup(Mocks mocks)

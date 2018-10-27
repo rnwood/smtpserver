@@ -1,23 +1,17 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
-    public class Logging
-    {
-        private static ILoggerFactory _factory = new LoggerFactory();
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Reflection;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
 
-        public static ILoggerFactory Factory
-        {
-            get
-            {
-                return _factory;
-            }
-        }
+    public static class Logging
+    {
+        private static readonly ILoggerFactory FactoryValue = new LoggerFactory();
+
+        public static ILoggerFactory Factory => FactoryValue;
     }
 }

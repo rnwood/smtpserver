@@ -1,18 +1,14 @@
-﻿#region
-
-using System;
-using System.Text;
-
-#endregion
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Text;
+
     public class SmtpResponse : IEquatable<SmtpResponse>
     {
         public SmtpResponse(int code, string message, params object[] args)
         {
-            Code = code;
-            Message = string.Format(message, args);
+            this.Code = code;
+            this.Message = string.Format(message, args);
         }
 
         public SmtpResponse(StandardSmtpResponseCode code, string message, params object[] args)
@@ -24,23 +20,18 @@ namespace Rnwood.SmtpServer
 
         public string Message { get; private set; }
 
-        public bool IsError
-        {
-            get { return Code >= 500 && Code <= 599; }
-        }
+        public bool IsError => this.Code >= 500 && this.Code <= 599;
 
-        public bool IsSuccess
-        {
-            get { return Code >= 200 && Code <= 299; }
-        }
+        public bool IsSuccess => this.Code >= 200 && this.Code <= 299;
 
         /// <summary>
-        /// Returns a <see cref="T:System.String"/> that represents the response.
+        /// Returns a <see cref="string"/> that represents the response.
         /// </summary>
+        /// <returns>A <see cref="string"/> that represents the response.</returns>
         public override string ToString()
         {
             StringBuilder result = new StringBuilder();
-            string[] lines = Message.Split(new string[] { "\r\n" }, System.StringSplitOptions.None);
+            string[] lines = this.Message.Split(new string[] { "\r\n" }, System.StringSplitOptions.None);
 
             for (int l = 0; l < lines.Length; l++)
             {
@@ -48,11 +39,11 @@ namespace Rnwood.SmtpServer
 
                 if (l == lines.Length - 1)
                 {
-                    result.AppendLine(Code + " " + line);
+                    result.AppendLine(this.Code + " " + line);
                 }
                 else
                 {
-                    result.AppendLine(Code + "-" + line);
+                    result.AppendLine(this.Code + "-" + line);
                 }
             }
 
@@ -61,24 +52,44 @@ namespace Rnwood.SmtpServer
 
         public bool Equals(SmtpResponse other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return other.Code == Code && Equals(other.Message, Message);
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            return other.Code == this.Code && Equals(other.Message, this.Message);
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(SmtpResponse)) return false;
-            return Equals((SmtpResponse)obj);
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj.GetType() != typeof(SmtpResponse))
+            {
+                return false;
+            }
+
+            return this.Equals((SmtpResponse)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (Code * 397) ^ (Message != null ? Message.GetHashCode() : 0);
+                return (this.Code * 397) ^ (this.Message != null ? this.Message.GetHashCode() : 0);
             }
         }
     }

@@ -43,8 +43,8 @@ namespace Rnwood.SmtpServer.Tests
                Mocks mocks = new Mocks();
 
                ParameterProcessorMap map = new ParameterProcessorMap();
-               await map.ProcessAsync(mocks.Connection.Object, new string[] { "KEYA=VALUEA" }, true);
-           });
+               await map.ProcessAsync(mocks.Connection.Object, new string[] { "KEYA=VALUEA" }, true).ConfigureAwait(false);
+           }).ConfigureAwait(false);
 
             Assert.Equal("Parameter KEYA is not recognised", e.Message);
         }
@@ -55,7 +55,7 @@ namespace Rnwood.SmtpServer.Tests
             Mocks mocks = new Mocks();
 
             ParameterProcessorMap map = new ParameterProcessorMap();
-            await map.ProcessAsync(mocks.Connection.Object, new string[] { }, true);
+            await map.ProcessAsync(mocks.Connection.Object, new string[] { }, true).ConfigureAwait(false);
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace Rnwood.SmtpServer.Tests
             map.SetProcessor("keya", keyAProcessor.Object);
             map.SetProcessor("keyb", keyBProcessor.Object);
 
-            await map.ProcessAsync(mocks.Connection.Object, new string[] { "KEYA=VALUEA", "KEYB=VALUEB" }, true);
+            await map.ProcessAsync(mocks.Connection.Object, new string[] { "KEYA=VALUEA", "KEYB=VALUEB" }, true).ConfigureAwait(false);
 
             keyAProcessor.Verify(p => p.SetParameter(mocks.Connection.Object, "KEYA", "VALUEA"));
             keyBProcessor.Verify(p => p.SetParameter(mocks.Connection.Object, "KEYB", "VALUEB"));

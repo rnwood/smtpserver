@@ -9,12 +9,12 @@ namespace Rnwood.SmtpServer.Tests
     {
         public static async Task WithTimeout(this Task task, string descriptionOfTask)
         {
-            await WithTimeout(task, 10, descriptionOfTask);
+            await WithTimeout(task, 10, descriptionOfTask).ConfigureAwait(false);
         }
 
         public static async Task WithTimeout(this Task task, int seconds, string descriptionOfTask)
         {
-            Task completedTask = await Task.WhenAny(task, Task.Delay(seconds * 1000));
+            Task completedTask = await Task.WhenAny(task, Task.Delay(seconds * 1000)).ConfigureAwait(false);
 
             if (completedTask != task)
             {

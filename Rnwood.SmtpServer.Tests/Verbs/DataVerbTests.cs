@@ -13,26 +13,26 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         {
             //Check escaping of end of message character ".." is decoded to "."
             //but the .. after B should be left alone
-            await TestGoodDataAsync(new string[] { "A", "..", "B..", "." }, "A\r\n.\r\nB..", true);
+            await this.TestGoodDataAsync(new string[] { "A", "..", "B..", "." }, "A\r\n.\r\nB..", true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task Data_EmptyMessage_Accepted()
         {
-            await TestGoodDataAsync(new string[] { "." }, "", true);
+            await this.TestGoodDataAsync(new string[] { "." }, "", true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task Data_8BitData_TruncatedTo7Bit()
         {
-            await TestGoodDataAsync(new string[] { ((char)(0x41 + 128)).ToString(), "." }, "\u0041", false);
+            await this.TestGoodDataAsync(new string[] { ((char)(0x41 + 128)).ToString(), "." }, "\u0041", false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task Data_8BitData_PassedThrough()
         {
             string data = ((char)(0x41 + 128)).ToString();
-            await TestGoodDataAsync(new string[] { data, "." }, data, true);
+            await this.TestGoodDataAsync(new string[] { data, "." }, data, true).ConfigureAwait(false);
         }
 
         private async Task TestGoodDataAsync(string[] messageData, string expectedData, bool eightBitClean)
@@ -46,18 +46,18 @@ namespace Rnwood.SmtpServer.Tests.Verbs
 
             MemoryMessage.Builder messageBuilder = new MemoryMessage.Builder();
             mocks.Connection.SetupGet(c => c.CurrentMessage).Returns(messageBuilder);
-            mocks.ServerBehaviour.Setup(b => b.GetMaximumMessageSize(It.IsAny<IConnection>())).Returns((long?)null);
+            mocks.ServerBehaviour.Setup(b => b.GetMaximumMessageSize(It.IsAny<IConnection>())).ReturnsAsync((long?)null);
 
             int messageLine = 0;
-            mocks.Connection.Setup(c => c.ReadLineAsync()).Returns(() => Task.FromResult(messageData[messageLine++]));
+            mocks.Connection.Setup(c => c.ReadLine()).Returns(() => Task.FromResult(messageData[messageLine++]));
 
             DataVerb verb = new DataVerb();
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("DATA"));
+            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("DATA")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.StartMailInputEndWithDot);
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
 
-            using (StreamReader dataReader = new StreamReader(messageBuilder.GetData(), eightBitClean ? Encoding.UTF8 : new ASCIISevenBitTruncatingEncoding()))
+            using (StreamReader dataReader = new StreamReader(await messageBuilder.GetData().ConfigureAwait(false), eightBitClean ? Encoding.UTF8 : new ASCIISevenBitTruncatingEncoding()))
             {
                 Assert.Equal(expectedData, dataReader.ReadToEnd());
             }
@@ -70,14 +70,14 @@ namespace Rnwood.SmtpServer.Tests.Verbs
 
             MemoryMessage.Builder messageBuilder = new MemoryMessage.Builder();
             mocks.Connection.SetupGet(c => c.CurrentMessage).Returns(messageBuilder);
-            mocks.ServerBehaviour.Setup(b => b.GetMaximumMessageSize(It.IsAny<IConnection>())).Returns(10);
+            mocks.ServerBehaviour.Setup(b => b.GetMaximumMessageSize(It.IsAny<IConnection>())).ReturnsAsync(10);
 
             string[] messageData = new string[] { new string('x', 11), "." };
             int messageLine = 0;
-            mocks.Connection.Setup(c => c.ReadLineAsync()).Returns(() => Task.FromResult(messageData[messageLine++]));
+            mocks.Connection.Setup(c => c.ReadLine()).Returns(() => Task.FromResult(messageData[messageLine++]));
 
             DataVerb verb = new DataVerb();
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("DATA"));
+            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("DATA")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.StartMailInputEndWithDot);
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.ExceededStorageAllocation);
@@ -90,14 +90,14 @@ namespace Rnwood.SmtpServer.Tests.Verbs
 
             MemoryMessage.Builder messageBuilder = new MemoryMessage.Builder();
             mocks.Connection.SetupGet(c => c.CurrentMessage).Returns(messageBuilder);
-            mocks.ServerBehaviour.Setup(b => b.GetMaximumMessageSize(It.IsAny<IConnection>())).Returns(10);
+            mocks.ServerBehaviour.Setup(b => b.GetMaximumMessageSize(It.IsAny<IConnection>())).ReturnsAsync(10);
 
             string[] messageData = new string[] { new string('x', 10), "." };
             int messageLine = 0;
-            mocks.Connection.Setup(c => c.ReadLineAsync()).Returns(() => Task.FromResult(messageData[messageLine++]));
+            mocks.Connection.Setup(c => c.ReadLine()).Returns(() => Task.FromResult(messageData[messageLine++]));
 
             DataVerb verb = new DataVerb();
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("DATA"));
+            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("DATA")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.StartMailInputEndWithDot);
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
@@ -110,14 +110,14 @@ namespace Rnwood.SmtpServer.Tests.Verbs
 
             MemoryMessage.Builder messageBuilder = new MemoryMessage.Builder();
             mocks.Connection.SetupGet(c => c.CurrentMessage).Returns(messageBuilder);
-            mocks.ServerBehaviour.Setup(b => b.GetMaximumMessageSize(It.IsAny<IConnection>())).Returns(10);
+            mocks.ServerBehaviour.Setup(b => b.GetMaximumMessageSize(It.IsAny<IConnection>())).ReturnsAsync(10);
 
             string[] messageData = new string[] { new string('x', 9), "." };
             int messageLine = 0;
-            mocks.Connection.Setup(c => c.ReadLineAsync()).Returns(() => Task.FromResult(messageData[messageLine++]));
+            mocks.Connection.Setup(c => c.ReadLine()).Returns(() => Task.FromResult(messageData[messageLine++]));
 
             DataVerb verb = new DataVerb();
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("DATA"));
+            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("DATA")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.StartMailInputEndWithDot);
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
@@ -129,7 +129,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             Mocks mocks = new Mocks();
 
             DataVerb verb = new DataVerb();
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("DATA"));
+            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("DATA")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.BadSequenceOfCommands);
         }

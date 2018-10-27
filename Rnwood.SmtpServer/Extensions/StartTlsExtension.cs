@@ -1,9 +1,8 @@
-﻿#region
-
-#endregion
-
-namespace Rnwood.SmtpServer.Extensions
+﻿namespace Rnwood.SmtpServer.Extensions
 {
+    using System;
+    using System.Threading.Tasks;
+
     public class StartTlsExtension : IExtension
     {
         public IExtensionProcessor CreateExtensionProcessor(IConnection connection)
@@ -11,32 +10,30 @@ namespace Rnwood.SmtpServer.Extensions
             return new StartTlsExtensionProcessor(connection);
         }
 
-        #region Nested type: StartTlsExtensionProcessor
-
         private class StartTlsExtensionProcessor : IExtensionProcessor
         {
             public StartTlsExtensionProcessor(IConnection connection)
             {
-                Connection = connection;
-                Connection.VerbMap.SetVerbProcessor("STARTTLS", new StartTlsVerb());
+                this.Connection = connection;
+                this.Connection.VerbMap.SetVerbProcessor("STARTTLS", new StartTlsVerb());
             }
 
             public IConnection Connection { get; private set; }
 
-            public string[] EHLOKeywords
+            public Task<string[]> GetEHLOKeywords()
             {
-                get
-                {
-                    if (!Connection.Session.SecureConnection)
-                    {
-                        return new[] { "STARTTLS" };
-                    }
 
-                    return new string[] { };
+                string[] result;
+
+                if (!this.Connection.Session.SecureConnection)
+                {
+                    result = new[] { "STARTTLS" };
                 }
+                result = Array.Empty<string>();
+
+                return Task.FromResult(result);
+
             }
         }
-
-        #endregion
     }
 }

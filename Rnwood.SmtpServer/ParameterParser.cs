@@ -1,25 +1,18 @@
-﻿#region
-
-using System;
-using System.Collections.Generic;
-
-#endregion
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Collections.Generic;
+
     public class ParameterParser
     {
-        private readonly List<Parameter> _parameters = new List<Parameter>();
+        private readonly List<Parameter> parameters = new List<Parameter>();
 
         public ParameterParser(params string[] arguments)
         {
-            Parse(arguments);
+            this.Parse(arguments);
         }
 
-        public Parameter[] Parameters
-        {
-            get { return _parameters.ToArray(); }
-        }
+        public Parameter[] Parameters => this.parameters.ToArray();
 
         private void Parse(string[] tokens)
         {
@@ -28,7 +21,7 @@ namespace Rnwood.SmtpServer
                 string[] tokenParts = token.Split(new[] { '=' }, 2, StringSplitOptions.RemoveEmptyEntries);
                 string key = tokenParts[0];
                 string value = tokenParts.Length > 1 ? tokenParts[1] : null;
-                _parameters.Add(new Parameter(key, value));
+                this.parameters.Add(new Parameter(key, value));
             }
         }
     }

@@ -1,40 +1,35 @@
-﻿#region
-
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-#endregion
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+
     public class ParameterProcessorMap
     {
-        private readonly Dictionary<string, IParameterProcessor> _processors =
+        private readonly Dictionary<string, IParameterProcessor> processors =
             new Dictionary<string, IParameterProcessor>(StringComparer.OrdinalIgnoreCase);
 
         public void SetProcessor(string key, IParameterProcessor processor)
         {
-            _processors[key] = processor;
+            this.processors[key] = processor;
         }
 
         public IParameterProcessor GetProcessor(string key)
         {
-            IParameterProcessor result = null;
-            _processors.TryGetValue(key, out result);
+            this.processors.TryGetValue(key, out IParameterProcessor result);
             return result;
         }
 
         public async Task ProcessAsync(IConnection connection, string[] arguments, bool throwOnUnknownParameter)
         {
-            await ProcessAsync(connection, new ParameterParser(arguments), throwOnUnknownParameter);
+            await this.ProcessAsync(connection, new ParameterParser(arguments), throwOnUnknownParameter).ConfigureAwait(false);
         }
 
         public Task ProcessAsync(IConnection connection, ParameterParser parameters, bool throwOnUnknownParameter)
         {
             foreach (Parameter parameter in parameters.Parameters)
             {
-                IParameterProcessor parameterProcessor = GetProcessor(parameter.Name);
+                IParameterProcessor parameterProcessor = this.GetProcessor(parameter.Name);
 
                 if (parameterProcessor != null)
                 {
@@ -43,7 +38,8 @@ namespace Rnwood.SmtpServer
                 else if (throwOnUnknownParameter)
                 {
                     throw new SmtpServerException(
-                        new SmtpResponse(StandardSmtpResponseCode.SyntaxErrorInCommandArguments,
+                        new SmtpResponse(
+                            StandardSmtpResponseCode.SyntaxErrorInCommandArguments,
                                          "Parameter {0} is not recognised", parameter.Name));
                 }
             }

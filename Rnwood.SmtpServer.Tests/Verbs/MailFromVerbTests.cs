@@ -13,7 +13,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             mocks.Connection.SetupGet(c => c.CurrentMessage).Returns(new Mock<IMessageBuilder>().Object);
 
             MailFromVerb mailFromVerb = new MailFromVerb();
-            await mailFromVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("FROM <foo@bar.com>"));
+            await mailFromVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("FROM <foo@bar.com>")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.BadSequenceOfCommands);
         }
@@ -24,7 +24,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             Mocks mocks = new Mocks();
 
             MailFromVerb mailFromVerb = new MailFromVerb();
-            await mailFromVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("FROM"));
+            await mailFromVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("FROM")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.SyntaxErrorInCommandArguments);
         }
@@ -32,19 +32,19 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         [Fact]
         public async Task Process_Address_Plain()
         {
-            await Process_AddressAsync("rob@rnwood.co.uk", "rob@rnwood.co.uk", StandardSmtpResponseCode.OK);
+            await this.Process_AddressAsync("rob@rnwood.co.uk", "rob@rnwood.co.uk", StandardSmtpResponseCode.OK).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task Process_Address_Bracketed()
         {
-            await Process_AddressAsync("<rob@rnwood.co.uk>", "rob@rnwood.co.uk", StandardSmtpResponseCode.OK);
+            await this.Process_AddressAsync("<rob@rnwood.co.uk>", "rob@rnwood.co.uk", StandardSmtpResponseCode.OK).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task Process_Address_BracketedWithName()
         {
-            await Process_AddressAsync("<Robert Wood <rob@rnwood.co.uk>>", "Robert Wood <rob@rnwood.co.uk>", StandardSmtpResponseCode.OK);
+            await this.Process_AddressAsync("<Robert Wood <rob@rnwood.co.uk>>", "Robert Wood <rob@rnwood.co.uk>", StandardSmtpResponseCode.OK).ConfigureAwait(false);
         }
 
         private async Task Process_AddressAsync(string address, string expectedParsedAddress, StandardSmtpResponseCode expectedResponse)
@@ -52,19 +52,15 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             Mocks mocks = new Mocks();
             Mock<IMessageBuilder> message = new Mock<IMessageBuilder>();
             IMessageBuilder currentMessage = null;
-            mocks.Connection.Setup(c => c.NewMessage()).Returns(() =>
+            mocks.Connection.Setup(c => c.NewMessage()).ReturnsAsync(() =>
             {
-                currentMessage
-                    =
-                    message.
-                        Object;
-                return
-                    currentMessage;
+                currentMessage = message.Object;
+                return currentMessage;
             });
             mocks.Connection.SetupGet(c => c.CurrentMessage).Returns(() => currentMessage);
 
             MailFromVerb mailFromVerb = new MailFromVerb();
-            await mailFromVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("FROM " + address));
+            await mailFromVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("FROM " + address)).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(expectedResponse);
             message.VerifySet(m => m.From = expectedParsedAddress);

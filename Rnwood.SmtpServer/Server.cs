@@ -1,33 +1,29 @@
-﻿#region
-
-using Microsoft.Extensions.Logging;
-using Rnwood.SmtpServer.Verbs;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
-
-#endregion
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
+    using Rnwood.SmtpServer.Verbs;
+
     public class Server : IServer
     {
-        private ILogger _logger = Logging.Factory.CreateLogger<Server>();
-        private TcpListener _listener;
+        private readonly ILogger logger = Logging.Factory.CreateLogger<Server>();
+        private TcpListener listener;
 
         public Server(IServerBehaviour behaviour)
         {
-            Behaviour = behaviour;
+            this.Behaviour = behaviour;
         }
 
         public IServerBehaviour Behaviour { get; private set; }
 
-        private bool _isRunning;
+        private bool isRunning;
 
         /// <summary>
         /// Gets or sets a value indicating whether the server is currently running.
@@ -36,24 +32,19 @@ namespace Rnwood.SmtpServer
         {
             get
             {
-                return _isRunning;
+                return this.isRunning;
             }
+
             private set
             {
-                _isRunning = value;
-                IsRunningChanged?.Invoke(this, EventArgs.Empty);
+                this.isRunning = value;
+                this.IsRunningChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         public event EventHandler IsRunningChanged;
 
-        public int PortNumber
-        {
-            get
-            {
-                return ((IPEndPoint)_listener.LocalEndpoint).Port;
-            }
-        }
+        public int PortNumber => ((IPEndPoint)this.listener.LocalEndpoint).Port;
 
         private IVerbMap GetVerbMap()
         {
@@ -72,20 +63,20 @@ namespace Rnwood.SmtpServer
 
         private async void Core()
         {
-            _logger.LogDebug("Core task running");
+            this.logger.LogDebug("Core task running");
 
-            while (IsRunning)
+            while (this.IsRunning)
             {
-                _logger.LogDebug("Waiting for new client");
+                this.logger.LogDebug("Waiting for new client");
 
-                await AcceptNextClient();
-                _nextConnectionEvent.Set();
+                await this.AcceptNextClient().ConfigureAwait(false);
+                this.nextConnectionEvent.Set();
             }
         }
 
         public void WaitForNextConnection()
         {
-            _nextConnectionEvent.WaitOne();
+            this.nextConnectionEvent.WaitOne();
         }
 
         private async Task AcceptNextClient()
@@ -93,158 +84,155 @@ namespace Rnwood.SmtpServer
             TcpClient tcpClient = null;
             try
             {
-                tcpClient = await _listener.AcceptTcpClientAsync();
+                tcpClient = await this.listener.AcceptTcpClientAsync().ConfigureAwait(false);
             }
             catch (InvalidOperationException)
             {
-                if (IsRunning)
+                if (this.IsRunning)
                 {
                     throw;
                 }
 
-                _logger.LogDebug("Got InvalidOperationException on listener, shutting down");
-                //normal - caused by _listener.Stop();
+                this.logger.LogDebug("Got InvalidOperationException on listener, shutting down");
+                // normal - caused by _listener.Stop();
             }
 
-            if (IsRunning)
+            if (this.IsRunning)
             {
-                _logger.LogDebug("New connection from {0}", tcpClient.Client.RemoteEndPoint);
+                this.logger.LogDebug("New connection from {0}", tcpClient.Client.RemoteEndPoint);
 
-                Connection connection = new Connection(this, new TcpClientConnectionChannel(tcpClient), GetVerbMap());
-                _activeConnections.Add(connection);
-                connection.ConnectionClosed += (s, ea) =>
-                {
-                    _logger.LogDebug("Connection {0} handling completed removing from active connections", connection);
-                    _activeConnections.Remove(connection);
-                };
+                TcpClientConnectionChannel connectionChannel = new TcpClientConnectionChannel(tcpClient);
+                connectionChannel.ReceiveTimeout = await this.Behaviour.GetReceiveTimeout(connectionChannel).ConfigureAwait(false);
+                connectionChannel.SendTimeout = await this.Behaviour.GetSendTimeout(connectionChannel).ConfigureAwait(false);
+
+
+                Connection connection = await Connection.Create(this, connectionChannel, this.GetVerbMap()).ConfigureAwait(false);
+            this.activeConnections.Add(connection);
+            connection.ConnectionClosed += (s, ea) =>
+            {
+                this.logger.LogDebug("Connection {0} handling completed removing from active connections", connection);
+                this.activeConnections.Remove(connection);
+            };
 #pragma warning disable 4014
-                connection.ProcessAsync();
+            connection.ProcessAsync();
 #pragma warning restore 4014
-            }
         }
+    }
 
-        /// <summary>
-        /// Runs the server asynchronously. This method returns once the server has been started.
-        /// To stop the server call the <see cref="Stop()"/> method.
-        /// </summary>
-        /// <exception cref="System.InvalidOperationException">if the server is already running.</exception>
-        public void Start()
-        {
-            if (IsRunning)
+    /// <summary>
+    /// Runs the server asynchronously. This method returns once the server has been started.
+    /// To stop the server call the <see cref="Stop()"/> method.
+    /// </summary>
+    /// <exception cref="System.InvalidOperationException">if the server is already running.</exception>
+    public void Start()
+    {
+        if (this.IsRunning)
+            {
                 throw new InvalidOperationException("Already running");
+            }
 
-            _logger.LogDebug("Starting server on {0}:{1}", Behaviour.IpAddress, Behaviour.PortNumber);
+            this.logger.LogDebug("Starting server on {0}:{1}", this.Behaviour.IpAddress, this.Behaviour.PortNumber);
 
-            _listener = new TcpListener(Behaviour.IpAddress, Behaviour.PortNumber);
-            _listener.Start();
+        this.listener = new TcpListener(this.Behaviour.IpAddress, this.Behaviour.PortNumber);
+        this.listener.Start();
 
-            IsRunning = true;
+        this.IsRunning = true;
 
-            _logger.LogDebug("Listener active. Starting core task");
+        this.logger.LogDebug("Listener active. Starting core task");
 
-            _coreTask = Task.Run(() => Core());
-        }
+        this.coreTask = Task.Run(() => this.Core());
+    }
 
-        /// <summary>
-        /// Stops the running server. Any existing connections are terminated.
-        /// </summary>
-        /// <exception cref="System.InvalidOperationException">if the server is not running.</exception>
-        public void Stop()
+    /// <summary>
+    /// Stops the running server. Any existing connections are terminated.
+    /// </summary>
+    /// <exception cref="System.InvalidOperationException">if the server is not running.</exception>
+    public void Stop()
+    {
+        this.Stop(true);
+    }
+
+    /// <summary>
+    /// Stops the running server.
+    /// This method blocks until all connections have terminated, either by normal completion or timeout,
+    /// or if <paramref name="killConnections"/> has been specified then once all of the threads
+    /// have been killed.
+    /// </summary>
+    /// <param name="killConnections">True if existing connections should be terminated.</param>
+    /// <exception cref="System.InvalidOperationException">if the server is not running.</exception>
+    public void Stop(bool killConnections)
+    {
+        if (!this.IsRunning)
         {
-            Stop(true);
+            return;
         }
 
-        /// <summary>
-        /// Stops the running server.
-        /// This method blocks until all connections have terminated, either by normal completion or timeout,
-        /// or if <paramref name="killConnections"/> has been specified then once all of the threads
-        /// have been killed.
-        /// </summary>
-        /// <param name="killConnections">True if existing connections should be terminated.</param>
-        /// <exception cref="System.InvalidOperationException">if the server is not running.</exception>
-        public void Stop(bool killConnections)
+        this.logger.LogDebug("Stopping server");
+
+        this.IsRunning = false;
+        this.listener.Stop();
+
+        this.logger.LogDebug("Listener stopped. Waiting for core task to exit");
+        this.coreTask.Wait();
+
+        if (killConnections)
         {
-            if (!IsRunning)
-            {
-                return;
-            }
+            this.KillConnections();
 
-            _logger.LogDebug("Stopping server");
-
-            IsRunning = false;
-            _listener.Stop();
-
-            _logger.LogDebug("Listener stopped. Waiting for core task to exit");
-            _coreTask.Wait();
-
-            if (killConnections)
-            {
-                KillConnections();
-
-                _logger.LogDebug("Server is stopped");
-            }
-            else
-            {
-                _logger.LogDebug("Server is stopped but existing connections may still be active");
-            }
+            this.logger.LogDebug("Server is stopped");
         }
-
-        public void KillConnections()
+        else
         {
-            _logger.LogDebug("Killing client connections");
-
-            List<Task> killTasks = new List<Task>();
-            foreach (Connection connection in _activeConnections.Cast<Connection>().ToArray())
-            {
-                _logger.LogDebug("Killing connection {0}", connection);
-                killTasks.Add(connection.CloseConnectionAsync());
-            }
-            Task.WaitAll(killTasks.ToArray());
+            this.logger.LogDebug("Server is stopped but existing connections may still be active");
         }
+    }
 
-        private readonly IList _activeConnections = ArrayList.Synchronized(new List<Connection>());
+    public void KillConnections()
+    {
+        this.logger.LogDebug("Killing client connections");
 
-        public IEnumerable<IConnection> ActiveConnections
+        List<Task> killTasks = new List<Task>();
+        foreach (Connection connection in this.activeConnections.Cast<Connection>().ToArray())
         {
-            get
-            {
-                return _activeConnections.Cast<IConnection>();
-            }
+            this.logger.LogDebug("Killing connection {0}", connection);
+            killTasks.Add(connection.CloseConnection());
         }
+        Task.WaitAll(killTasks.ToArray());
+    }
 
-        private Task _coreTask;
+    private readonly IList activeConnections = ArrayList.Synchronized(new List<Connection>());
 
-        #region IDisposable Support
+        public IEnumerable<IConnection> ActiveConnections => this.activeConnections.Cast<IConnection>();
+
+        private Task coreTask;
         private bool disposedValue = false; // To detect redundant calls
-        private AutoResetEvent _nextConnectionEvent = new AutoResetEvent(false);
+    private readonly AutoResetEvent nextConnectionEvent = new AutoResetEvent(false);
 
-        protected virtual void Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!this.disposedValue)
         {
-            if (!disposedValue)
+            if (disposing)
             {
-                if (disposing)
-                {
-                    Stop();
-                }
-
-                disposedValue = true;
+                this.Stop();
             }
+
+            this.disposedValue = true;
         }
+    }
 
-        // ~Server() {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
+    // ~Server() {
+    //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+    //   Dispose(false);
+    // }
 
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
-        }
-
-        #endregion
+    // This code added to correctly implement the disposable pattern.
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        this.Dispose(true);
+        // TODO: uncomment the following line if the finalizer is overridden above.
+        // GC.SuppressFinalize(this);
+    }
     }
 }

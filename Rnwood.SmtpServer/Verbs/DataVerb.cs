@@ -1,43 +1,43 @@
-﻿#region
-
-using Rnwood.SmtpServer.Verbs;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-
-#endregion
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.IO;
+    using System.Threading.Tasks;
+    using Rnwood.SmtpServer.Verbs;
+
     public class DataVerb : IVerb
     {
         public async virtual Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
             if (connection.CurrentMessage == null)
             {
-                await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.BadSequenceOfCommands,
-                                                                   "Bad sequence of commands"));
+                await connection.WriteResponse(new SmtpResponse(
+                    StandardSmtpResponseCode.BadSequenceOfCommands,
+                                                                   "Bad sequence of commands")).ConfigureAwait(false);
                 return;
             }
 
             connection.CurrentMessage.SecureConnection = connection.Session.SecureConnection;
-            await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.StartMailInputEndWithDot,
-                                                               "End message with period"));
+            await connection.WriteResponse(new SmtpResponse(
+                StandardSmtpResponseCode.StartMailInputEndWithDot,
+                                                               "End message with period")).ConfigureAwait(false);
 
-            using (StreamWriter writer = new StreamWriter(connection.CurrentMessage.WriteData(), connection.ReaderEncoding))
+            using (StreamWriter writer = new StreamWriter(await connection.CurrentMessage.WriteData().ConfigureAwait(false), connection.ReaderEncoding))
             {
                 bool firstLine = true;
 
                 do
                 {
-                    string line = await connection.ReadLineAsync();
+                    string line = await connection.ReadLine().ConfigureAwait(false);
 
                     if (line != ".")
                     {
-                        line = ProcessLine(line);
+                        line = this.ProcessLine(line);
 
                         if (!firstLine)
+                        {
                             writer.Write(Environment.NewLine);
+                        }
 
                         writer.Write(line);
                     }
@@ -51,28 +51,29 @@ namespace Rnwood.SmtpServer
 
                 writer.Flush();
                 long? maxMessageSize =
-                    connection.Server.Behaviour.GetMaximumMessageSize(connection);
+                    await connection.Server.Behaviour.GetMaximumMessageSize(connection).ConfigureAwait(false);
 
                 if (maxMessageSize.HasValue && writer.BaseStream.Length > maxMessageSize.Value)
                 {
-                    await connection.WriteResponseAsync(
-                        new SmtpResponse(StandardSmtpResponseCode.ExceededStorageAllocation,
-                                         "Message exceeds fixed size limit"));
+                    await connection.WriteResponse(
+                        new SmtpResponse(
+                            StandardSmtpResponseCode.ExceededStorageAllocation,
+                                         "Message exceeds fixed size limit")).ConfigureAwait(false);
                 }
                 else
                 {
                     writer.Dispose();
-                    connection.Server.Behaviour.OnMessageCompleted(connection);
-                    await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.OK, "Mail accepted"));
-                    connection.CommitMessage();
+                    await connection.Server.Behaviour.OnMessageCompleted(connection).ConfigureAwait(false);
+                    await connection.WriteResponse(new SmtpResponse(StandardSmtpResponseCode.OK, "Mail accepted")).ConfigureAwait(false);
+                    await connection.CommitMessage().ConfigureAwait(false);
                 }
             }
         }
 
         protected virtual string ProcessLine(string line)
         {
-            //Remove escaping of end of message character
-            if (line.StartsWith("."))
+            // Remove escaping of end of message character
+            if (line.StartsWith(".", StringComparison.Ordinal))
             {
                 line = line.Remove(0, 1);
             }

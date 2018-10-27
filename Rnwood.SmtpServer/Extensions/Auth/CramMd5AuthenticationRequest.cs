@@ -4,9 +4,9 @@
     {
         public CramMd5AuthenticationRequest(string username, string challenge, string challengeResponse)
         {
-            Username = username;
-            ChallengeResponse = challengeResponse;
-            Challenge = challenge;
+            this.Username = username;
+            this.ChallengeResponse = challengeResponse;
+            this.Challenge = challenge;
         }
 
         public string Username { get; private set; }

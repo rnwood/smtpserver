@@ -1,9 +1,7 @@
-﻿#region
-
-#endregion
-
-namespace Rnwood.SmtpServer.Extensions
+﻿namespace Rnwood.SmtpServer.Extensions
 {
+    using System.Threading.Tasks;
+
     public class EightBitMimeExtension : IExtension
     {
         public EightBitMimeExtension()
@@ -14,8 +12,6 @@ namespace Rnwood.SmtpServer.Extensions
         {
             return new EightBitMimeExtensionProcessor(connection);
         }
-
-        #region Nested type: EightBitMimeExtensionProcessor
 
         private class EightBitMimeExtensionProcessor : ExtensionProcessor
         {
@@ -30,12 +26,10 @@ namespace Rnwood.SmtpServer.Extensions
                 mailFromProcessor.ParameterProcessorMap.SetProcessor("BODY", verb);
             }
 
-            public override string[] EHLOKeywords
+            public override Task<string[]> GetEHLOKeywords()
             {
-                get { return new[] { "8BITMIME" }; }
+                return Task.FromResult(new[] { "8BITMIME" });
             }
         }
-
-        #endregion
     }
 }

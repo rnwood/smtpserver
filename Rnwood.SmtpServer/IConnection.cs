@@ -1,42 +1,44 @@
-#region
-
-using Rnwood.SmtpServer.Extensions;
-using Rnwood.SmtpServer.Verbs;
-using System;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-
-#endregion
-
 namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.IO;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Rnwood.SmtpServer.Extensions;
+    using Rnwood.SmtpServer.Verbs;
+
     public interface IConnection
     {
         IServer Server { get; }
+
         IExtensionProcessor[] ExtensionProcessors { get; }
+
         IVerbMap VerbMap { get; }
+
         MailVerb MailVerb { get; }
+
         IEditableSession Session { get; }
+
         IMessageBuilder CurrentMessage { get; }
+
         Encoding ReaderEncoding { get; }
 
         void SetReaderEncoding(Encoding encoding);
 
-        void SetReaderEncodingToDefault();
+        Task SetReaderEncodingToDefault();
 
-        Task CloseConnectionAsync();
+        Task CloseConnection();
 
-        Task ApplyStreamFilterAsync(Func<Stream, Task<Stream>> filter);
+        Task ApplyStreamFilter(Func<Stream, Task<Stream>> filter);
 
-        Task WriteResponseAsync(SmtpResponse response);
+        Task WriteResponse(SmtpResponse response);
 
-        Task<string> ReadLineAsync();
+        Task<string> ReadLine();
 
-        IMessageBuilder NewMessage();
+        Task<IMessageBuilder> NewMessage();
 
-        void CommitMessage();
+        Task CommitMessage();
 
-        void AbortMessage();
+        Task AbortMessage();
     }
 }

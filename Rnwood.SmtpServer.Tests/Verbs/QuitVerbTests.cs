@@ -11,7 +11,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             Mocks mocks = new Mocks();
 
             QuitVerb quitVerb = new QuitVerb();
-            await quitVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("QUIT"));
+            await quitVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("QUIT")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.ClosingTransmissionChannel);
         }

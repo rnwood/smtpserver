@@ -16,10 +16,10 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         public async Task NoCertificateAvailable_ReturnsErrorResponse()
         {
             Mocks mocks = new Mocks();
-            mocks.ServerBehaviour.Setup(b => b.GetSSLCertificate(It.IsAny<IConnection>())).Returns<X509Certificate>(null);
+            mocks.ServerBehaviour.Setup(b => b.GetSSLCertificate(It.IsAny<IConnection>())).ReturnsAsync((X509Certificate) null);
 
             StartTlsVerb verb = new StartTlsVerb();
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("STARTTLS"));
+            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("STARTTLS")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.CommandNotImplemented);
         }

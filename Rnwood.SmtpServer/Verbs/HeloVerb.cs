@@ -1,25 +1,22 @@
-﻿#region
-
-using Rnwood.SmtpServer.Verbs;
-using System.Threading.Tasks;
-
-#endregion
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System.Threading.Tasks;
+    using Rnwood.SmtpServer.Verbs;
+
     public class HeloVerb : IVerb
     {
         public async Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
             if (!string.IsNullOrEmpty(connection.Session.ClientName))
             {
-                await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.BadSequenceOfCommands,
-                                                                   "You already said HELO"));
+                await connection.WriteResponse(new SmtpResponse(
+                    StandardSmtpResponseCode.BadSequenceOfCommands,
+                                                                   "You already said HELO")).ConfigureAwait(false);
                 return;
             }
 
             connection.Session.ClientName = command.ArgumentsText ?? "";
-            await connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.OK, "Nice to meet you"));
+            await connection.WriteResponse(new SmtpResponse(StandardSmtpResponseCode.OK, "Nice to meet you")).ConfigureAwait(false);
         }
     }
 }

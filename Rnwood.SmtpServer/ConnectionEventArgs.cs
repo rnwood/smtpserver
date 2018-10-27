@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+
     public class ConnectionEventArgs : EventArgs
     {
         public ConnectionEventArgs(IConnection connection)
         {
-            Connection = connection;
+            this.Connection = connection;
         }
 
         public IConnection Connection { get; private set; }

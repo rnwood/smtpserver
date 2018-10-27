@@ -1,4 +1,4 @@
-version: 3.0.{build}-ci
+version: 3.1.0-ci
 os: Visual Studio 2017
 configuration: Release
 skip_tags:  false
@@ -23,8 +23,12 @@ init:
            Exit-AppveyorBuild
        }
        $version = $env:APPVEYOR_REPO_TAG_NAME
-    }
-    Set-AppveyorBuildVariable 'PRERELEASE' (($version.Contains("-")).ToString())
+       Set-AppveyorBuildVariable 'PRERELEASE' (($version.Contains("-")).ToString())
+    } else() {
+        Update-AppveyorBuild -version $version + (([int]$env:APPVEYOR_BUILD_NUMBER).ToString("000")
+        Set-AppveyorBuildVariable 'PRERELEASE' "true"
+	}
+    
 install:
 - cmd: |
     dotnet restore

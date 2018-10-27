@@ -1,11 +1,8 @@
-﻿#region
-
-using System;
-
-#endregion
-
-namespace Rnwood.SmtpServer.Extensions
+﻿namespace Rnwood.SmtpServer.Extensions
 {
+    using System;
+    using System.Threading.Tasks;
+
     public class SizeExtension : IExtension
     {
         public IExtensionProcessor CreateExtensionProcessor(IConnection connection)
@@ -13,35 +10,30 @@ namespace Rnwood.SmtpServer.Extensions
             return new SizeExtensionProcessor(connection);
         }
 
-        #region Nested type: SizeExtensionProcessor
-
         private class SizeExtensionProcessor : IExtensionProcessor, IParameterProcessor
         {
             public SizeExtensionProcessor(IConnection connection)
             {
-                Connection = connection;
-                Connection.MailVerb.FromSubVerb.ParameterProcessorMap.SetProcessor("SIZE", this);
+                this.Connection = connection;
+                this.Connection.MailVerb.FromSubVerb.ParameterProcessorMap.SetProcessor("SIZE", this);
             }
 
             public IConnection Connection { get; private set; }
 
-            #region IParameterProcessor Members
-
-            public void SetParameter(IConnection connection, string key, string value)
+            public async Task SetParameter(IConnection connection, string key, string value)
             {
                 if (key.Equals("SIZE", StringComparison.OrdinalIgnoreCase))
                 {
-                    long messageSize;
-
-                    if (long.TryParse(value, out messageSize) && messageSize > 0)
+                    if (long.TryParse(value, out long messageSize) && messageSize > 0)
                     {
-                        long? maxMessageSize = Connection.Server.Behaviour.GetMaximumMessageSize(Connection);
+                        long? maxMessageSize = await this.Connection.Server.Behaviour.GetMaximumMessageSize(this.Connection).ConfigureAwait(false);
                         connection.CurrentMessage.DeclaredMessageSize = messageSize;
 
                         if (maxMessageSize.HasValue && messageSize > maxMessageSize)
                         {
                             throw new SmtpServerException(
-                                new SmtpResponse(StandardSmtpResponseCode.ExceededStorageAllocation,
+                                new SmtpResponse(
+                                    StandardSmtpResponseCode.ExceededStorageAllocation,
                                                  "Message exceeds fixes size limit"));
                         }
                     }
@@ -52,13 +44,10 @@ namespace Rnwood.SmtpServer.Extensions
                 }
             }
 
-            #endregion
-
-            public string[] EHLOKeywords
+            public async Task<string[]> GetEHLOKeywords()
             {
-                get
-                {
-                    long? maxMessageSize = Connection.Server.Behaviour.GetMaximumMessageSize(Connection);
+                
+                    long? maxMessageSize = await this.Connection.Server.Behaviour.GetMaximumMessageSize(this.Connection).ConfigureAwait(false);
 
                     if (maxMessageSize.HasValue)
                     {
@@ -68,10 +57,9 @@ namespace Rnwood.SmtpServer.Extensions
                     {
                         return new[] { "SIZE" };
                     }
-                }
+                
             }
         }
 
-        #endregion
     }
 }

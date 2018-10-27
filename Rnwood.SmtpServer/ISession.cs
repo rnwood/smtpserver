@@ -1,10 +1,10 @@
-﻿using Rnwood.SmtpServer.Extensions.Auth;
-using System;
-using System.IO;
-using System.Net;
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.IO;
+    using System.Net;
+    using Rnwood.SmtpServer.Extensions.Auth;
+
     public interface ISession : IDisposable
     {
         /// <summary>
@@ -43,12 +43,14 @@ namespace Rnwood.SmtpServer
         /// if session logging is enabled.
         /// </summary>
         /// <value>The log.</value>
+        /// <returns></returns>
         TextReader GetLog();
 
         /// <summary>
         /// Gets an array of messages recevied in this session.
         /// </summary>
         /// <value>The messages.</value>
+        /// <returns></returns>
         IMessage[] GetMessages();
 
         /// <summary>

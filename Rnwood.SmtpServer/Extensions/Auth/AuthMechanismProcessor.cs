@@ -1,9 +1,9 @@
-using System;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Rnwood.SmtpServer.Extensions.Auth
 {
+    using System;
+    using System.Text;
+    using System.Threading.Tasks;
+
     public abstract class AuthMechanismProcessor : IAuthMechanismProcessor
     {
         public AuthMechanismProcessor(IConnection connection)
@@ -12,6 +12,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
         }
 
         public IAuthenticationCredentials Credentials { get; protected set; }
+
         public IConnection Connection { get; private set; }
 
         private static string EncodeBase64(string asciiString)
@@ -27,7 +28,8 @@ namespace Rnwood.SmtpServer.Extensions.Auth
             }
             catch (FormatException)
             {
-                throw new BadBase64Exception(new SmtpResponse(StandardSmtpResponseCode.AuthenticationFailure,
+                throw new BadBase64Exception(new SmtpResponse(
+                    StandardSmtpResponseCode.AuthenticationFailure,
                                                                "Bad Base64 data"));
             }
         }

@@ -10,19 +10,19 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
         [Fact]
         public async Task ProcessResponse_Success()
         {
-            await ProcessResponseAsync(AuthenticationResult.Success, AuthMechanismProcessorStatus.Success);
+            await this.ProcessResponseAsync(AuthenticationResult.Success, AuthMechanismProcessorStatus.Success).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task ProcessResponse_Failure()
         {
-            await ProcessResponseAsync(AuthenticationResult.Failure, AuthMechanismProcessorStatus.Failed);
+            await this.ProcessResponseAsync(AuthenticationResult.Failure, AuthMechanismProcessorStatus.Failed).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task ProcessResponse_TemporarilyFailure()
         {
-            await ProcessResponseAsync(AuthenticationResult.TemporaryFailure, AuthMechanismProcessorStatus.Failed);
+            await this.ProcessResponseAsync(AuthenticationResult.TemporaryFailure, AuthMechanismProcessorStatus.Failed).ConfigureAwait(false);
         }
 
         private async Task ProcessResponseAsync(AuthenticationResult authenticationResult, AuthMechanismProcessorStatus authMechanismProcessorStatus)
@@ -34,7 +34,7 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
                 .ReturnsAsync(authenticationResult);
 
             AnonymousMechanismProcessor anonymousMechanismProcessor = new AnonymousMechanismProcessor(mocks.Connection.Object);
-            AuthMechanismProcessorStatus result = await anonymousMechanismProcessor.ProcessResponseAsync(null);
+            AuthMechanismProcessorStatus result = await anonymousMechanismProcessor.ProcessResponseAsync(null).ConfigureAwait(false);
 
             Assert.Equal(authMechanismProcessorStatus, result);
 

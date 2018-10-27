@@ -1,22 +1,18 @@
-#region
-
-using Rnwood.SmtpServer.Extensions.Auth;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-
-#endregion
-
 namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Net;
+    using Rnwood.SmtpServer.Extensions.Auth;
+
     public abstract class AbstractSession : IEditableSession
     {
         public AbstractSession(IPAddress clientAddress, DateTime startDate)
         {
-            _messages = new List<IMessage>();
-            ClientAddress = clientAddress;
-            StartDate = startDate;
+            this.messages = new List<IMessage>();
+            this.ClientAddress = clientAddress;
+            this.StartDate = startDate;
         }
 
         public DateTime StartDate { get; set; }
@@ -35,15 +31,15 @@ namespace Rnwood.SmtpServer
 
         public IMessage[] GetMessages()
         {
-            return _messages.ToArray();
+            return this.messages.ToArray();
         }
 
         public void AddMessage(IMessage message)
         {
-            _messages.Add(message);
+            this.messages.Add(message);
         }
 
-        private List<IMessage> _messages;
+        private List<IMessage> messages;
 
         public bool CompletedNormally { get; set; }
 

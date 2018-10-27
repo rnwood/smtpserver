@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+
     public class ArgumentsParser
     {
         public ArgumentsParser(string text)
         {
             this.Text = text;
-            this.Arguments = ParseArguments(text);
+            this.Arguments = this.ParseArguments(text);
         }
 
         public string[] Arguments { get; private set; }
+
         public string Text { get; private set; }
 
         private string[] ParseArguments(string argumentsText)

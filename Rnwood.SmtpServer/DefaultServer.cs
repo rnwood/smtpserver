@@ -1,9 +1,9 @@
-﻿using System;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Security.Cryptography.X509Certificates;
+    using System.Threading.Tasks;
+
     public class DefaultServer : Server
     {
         /// <summary>
@@ -57,42 +57,36 @@ namespace Rnwood.SmtpServer
         {
         }
 
-        new protected DefaultServerBehaviour Behaviour
-        {
-            get
-            {
-                return (DefaultServerBehaviour)base.Behaviour;
-            }
-        }
+        new protected DefaultServerBehaviour Behaviour => (DefaultServerBehaviour)base.Behaviour;
 
         public event EventHandler<MessageEventArgs> MessageReceived
         {
-            add { Behaviour.MessageReceived += value; }
-            remove { Behaviour.MessageReceived -= value; }
+            add { this.Behaviour.MessageReceived += value; }
+            remove { this.Behaviour.MessageReceived -= value; }
         }
 
         public event EventHandler<SessionEventArgs> SessionCompleted
         {
-            add { Behaviour.SessionCompleted += value; }
-            remove { Behaviour.SessionCompleted -= value; }
+            add { this.Behaviour.SessionCompleted += value; }
+            remove { this.Behaviour.SessionCompleted -= value; }
         }
 
         public event EventHandler<SessionEventArgs> SessionStarted
         {
-            add { Behaviour.SessionStarted += value; }
-            remove { Behaviour.SessionStarted -= value; }
+            add { this.Behaviour.SessionStarted += value; }
+            remove { this.Behaviour.SessionStarted -= value; }
         }
 
         public event Func<object, AuthenticationCredentialsValidationEventArgs, Task> AuthenticationCredentialsValidationRequiredAsync
         {
-            add { Behaviour.AuthenticationCredentialsValidationRequiredAsync += value; }
-            remove { Behaviour.AuthenticationCredentialsValidationRequiredAsync -= value; }
+            add { this.Behaviour.AuthenticationCredentialsValidationRequiredAsync += value; }
+            remove { this.Behaviour.AuthenticationCredentialsValidationRequiredAsync -= value; }
         }
 
         public event EventHandler<ConnectionEventArgs> MessageCompleted
         {
-            add { Behaviour.MessageCompleted += value; }
-            remove { Behaviour.MessageCompleted -= value; }
+            add { this.Behaviour.MessageCompleted += value; }
+            remove { this.Behaviour.MessageCompleted -= value; }
         }
     }
 }

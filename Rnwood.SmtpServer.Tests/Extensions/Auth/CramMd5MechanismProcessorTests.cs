@@ -13,14 +13,14 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
         {
             Mocks mocks = new Mocks();
 
-            CramMd5MechanismProcessor cramMd5MechanismProcessor = Setup(mocks);
-            AuthMechanismProcessorStatus result = await cramMd5MechanismProcessor.ProcessResponseAsync(null);
+            CramMd5MechanismProcessor cramMd5MechanismProcessor = this.Setup(mocks);
+            AuthMechanismProcessorStatus result = await cramMd5MechanismProcessor.ProcessResponseAsync(null).ConfigureAwait(false);
 
             string expectedResponse = string.Format("{0}.{1}@{2}", FAKERANDOM, FAKEDATETIME, FAKEDOMAIN);
 
             Assert.Equal(AuthMechanismProcessorStatus.Continue, result);
             mocks.Connection.Verify(
-                    c => c.WriteResponseAsync(
+                    c => c.WriteResponse(
                         It.Is<SmtpResponse>(r =>
                             r.Code == (int)StandardSmtpResponseCode.AuthenticationContinue &&
                             VerifyBase64Response(r.Message, expectedResponse)
@@ -38,9 +38,9 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
 
                 string challenge = string.Format("{0}.{1}@{2}", FAKERANDOM, FAKEDATETIME, FAKEDOMAIN);
 
-                CramMd5MechanismProcessor cramMd5MechanismProcessor = Setup(mocks, challenge);
-                AuthMechanismProcessorStatus result = await cramMd5MechanismProcessor.ProcessResponseAsync("BLAH");
-            });
+                CramMd5MechanismProcessor cramMd5MechanismProcessor = this.Setup(mocks, challenge);
+                AuthMechanismProcessorStatus result = await cramMd5MechanismProcessor.ProcessResponseAsync("BLAH").ConfigureAwait(false);
+            }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -50,10 +50,10 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
             {
                 Mocks mocks = new Mocks();
 
-                CramMd5MechanismProcessor cramMd5MechanismProcessor = Setup(mocks);
-                await cramMd5MechanismProcessor.ProcessResponseAsync(null);
-                await cramMd5MechanismProcessor.ProcessResponseAsync("rob blah");
-            });
+                CramMd5MechanismProcessor cramMd5MechanismProcessor = this.Setup(mocks);
+                await cramMd5MechanismProcessor.ProcessResponseAsync(null).ConfigureAwait(false);
+                await cramMd5MechanismProcessor.ProcessResponseAsync("rob blah").ConfigureAwait(false);
+            }).ConfigureAwait(false);
         }
 
         private const int FAKEDATETIME = 10000;

@@ -21,17 +21,17 @@ namespace Rnwood.SmtpServer.Tests
                 Task<TcpClient> acceptTask = listener.AcceptTcpClientAsync();
 
                 TcpClient client = new TcpClient();
-                await client.ConnectAsync(IPAddress.Loopback, ((IPEndPoint)listener.LocalEndpoint).Port);
+                await client.ConnectAsync(IPAddress.Loopback, ((IPEndPoint)listener.LocalEndpoint).Port).ConfigureAwait(false);
 
-                using (TcpClient serverTcpClient = await acceptTask)
+                using (TcpClient serverTcpClient = await acceptTask.ConfigureAwait(false))
                 {
                     TcpClientConnectionChannel channel = new TcpClientConnectionChannel(serverTcpClient);
                     client.Dispose();
 
                     await Assert.ThrowsAsync<ConnectionUnexpectedlyClosedException>(async () =>
                     {
-                        await channel.ReadLineAsync();
-                    });
+                        await channel.ReadLineAsync().ConfigureAwait(false);
+                    }).ConfigureAwait(false);
                 }
             }
             finally

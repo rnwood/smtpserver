@@ -1,7 +1,9 @@
 ﻿namespace Rnwood.SmtpServer
 {
+    using System.Threading.Tasks;
+
     public interface IParameterProcessor
     {
-        void SetParameter(IConnection connection, string key, string value);
+        Task SetParameter(IConnection connection, string key, string value);
     }
 }

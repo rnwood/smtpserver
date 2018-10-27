@@ -1,6 +1,4 @@
-﻿#region
-
-#endregion
+﻿
 
 namespace Rnwood.SmtpServer.Extensions.Auth
 {

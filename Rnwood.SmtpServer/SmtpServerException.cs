@@ -1,22 +1,18 @@
-﻿#region
-
-using System;
-
-#endregion
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+
     public class SmtpServerException : Exception
     {
         public SmtpServerException(SmtpResponse smtpResponse) : base(smtpResponse.Message)
         {
-            SmtpResponse = smtpResponse;
+            this.SmtpResponse = smtpResponse;
         }
 
         public SmtpServerException(SmtpResponse smtpResponse, Exception innerException)
             : base(smtpResponse.Message, innerException)
         {
-            SmtpResponse = smtpResponse;
+            this.SmtpResponse = smtpResponse;
         }
 
         public SmtpResponse SmtpResponse { get; private set; }

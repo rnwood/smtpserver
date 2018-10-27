@@ -1,24 +1,22 @@
-﻿using System.Threading.Tasks;
-
-namespace Rnwood.SmtpServer.Extensions.Auth
+﻿namespace Rnwood.SmtpServer.Extensions.Auth
 {
+    using System.Threading.Tasks;
+
     public class AnonymousMechanismProcessor : IAuthMechanismProcessor
     {
         public AnonymousMechanismProcessor(IConnection connection)
         {
-            Connection = connection;
+            this.Connection = connection;
         }
 
         protected IConnection Connection { get; private set; }
 
-        #region IAuthMechanismProcessor Members
-
         public async Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
         {
-            Credentials = new AnonymousAuthenticationCredentials();
+            this.Credentials = new AnonymousAuthenticationCredentials();
 
             AuthenticationResult result =
-                await Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(Connection, Credentials);
+                await this.Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(this.Connection, this.Credentials).ConfigureAwait(false);
 
             switch (result)
             {
@@ -35,7 +33,5 @@ namespace Rnwood.SmtpServer.Extensions.Auth
             get;
             private set;
         }
-
-        #endregion IAuthMechanismProcessor Members
     }
 }

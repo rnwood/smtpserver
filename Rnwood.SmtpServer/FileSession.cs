@@ -1,28 +1,28 @@
-using System;
-using System.IO;
-using System.Net;
-
 namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.IO;
+    using System.Net;
+
     public class FileSession : AbstractSession
     {
         public FileSession(IPAddress clientAddress, DateTime startDate, FileInfo file, bool keepOnDispose) : base(clientAddress, startDate)
         {
-            _file = file;
-            _keepOnDispose = keepOnDispose;
+            this.file = file;
+            this.keepOnDispose = keepOnDispose;
         }
 
-        private readonly FileInfo _file;
-        private readonly bool _keepOnDispose;
+        private readonly FileInfo file;
+        private readonly bool keepOnDispose;
 
         public override TextReader GetLog()
         {
-            return _file.OpenText();
+            return this.file.OpenText();
         }
 
         public override void AppendToLog(string text)
         {
-            using (StreamWriter writer = _file.AppendText())
+            using (StreamWriter writer = this.file.AppendText())
             {
                 writer.WriteLine(text);
             }
@@ -30,11 +30,11 @@ namespace Rnwood.SmtpServer
 
         public override void Dispose()
         {
-            if (!_keepOnDispose)
+            if (!this.keepOnDispose)
             {
-                if (_file.Exists)
+                if (this.file.Exists)
                 {
-                    _file.Delete();
+                    this.file.Delete();
                 }
             }
         }

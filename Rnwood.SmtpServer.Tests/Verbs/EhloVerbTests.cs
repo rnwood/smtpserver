@@ -12,9 +12,9 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         {
             Mocks mocks = new Mocks();
             Mock<IExtensionProcessor> mockExtensionProcessor1 = new Mock<IExtensionProcessor>();
-            mockExtensionProcessor1.SetupGet(ep => ep.EHLOKeywords).Returns(new[] { "EXTN1" });
+            mockExtensionProcessor1.Setup(ep => ep.GetEHLOKeywords()).ReturnsAsync(new[] { "EXTN1" });
             Mock<IExtensionProcessor> mockExtensionProcessor2 = new Mock<IExtensionProcessor>();
-            mockExtensionProcessor2.SetupGet(ep => ep.EHLOKeywords).Returns(new[] { "EXTN2A", "EXTN2B" });
+            mockExtensionProcessor2.Setup(ep => ep.GetEHLOKeywords()).ReturnsAsync(new[] { "EXTN2A", "EXTN2B" });
 
             mocks.Connection.SetupGet(c => c.ExtensionProcessors).Returns(new[]
                                                                               {
@@ -23,7 +23,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
                                                                               });
 
             EhloVerb ehloVerb = new EhloVerb();
-            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foobar"));
+            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foobar")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
         }
@@ -33,7 +33,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         {
             Mocks mocks = new Mocks();
             EhloVerb ehloVerb = new EhloVerb();
-            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO"));
+            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO")).ConfigureAwait(false);
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
 
             mocks.Session.VerifySet(s => s.ClientName = "");
@@ -44,7 +44,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         {
             Mocks mocks = new Mocks();
             EhloVerb ehloVerb = new EhloVerb();
-            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foobar"));
+            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foobar")).ConfigureAwait(false);
 
             mocks.Session.VerifySet(s => s.ClientName = "foobar");
         }
@@ -54,9 +54,9 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         {
             Mocks mocks = new Mocks();
             Mock<IExtensionProcessor> mockExtensionProcessor1 = new Mock<IExtensionProcessor>();
-            mockExtensionProcessor1.SetupGet(ep => ep.EHLOKeywords).Returns(new[] { "EXTN1" });
+            mockExtensionProcessor1.Setup(ep => ep.GetEHLOKeywords()).ReturnsAsync(new[] { "EXTN1" });
             Mock<IExtensionProcessor> mockExtensionProcessor2 = new Mock<IExtensionProcessor>();
-            mockExtensionProcessor2.SetupGet(ep => ep.EHLOKeywords).Returns(new[] { "EXTN2A", "EXTN2B" });
+            mockExtensionProcessor2.Setup(ep => ep.GetEHLOKeywords()).ReturnsAsync(new[] { "EXTN2A", "EXTN2B" });
 
             mocks.Connection.SetupGet(c => c.ExtensionProcessors).Returns(new[]
                                                                               {
@@ -65,9 +65,9 @@ namespace Rnwood.SmtpServer.Tests.Verbs
                                                                               });
 
             EhloVerb ehloVerb = new EhloVerb();
-            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foobar"));
+            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foobar")).ConfigureAwait(false);
 
-            mocks.Connection.Verify(c => c.WriteResponseAsync(It.Is<SmtpResponse>(r =>
+            mocks.Connection.Verify(c => c.WriteResponse(It.Is<SmtpResponse>(r =>
 
                 r.Message.Contains("EXTN1") &&
                 r.Message.Contains("EXTN2A") &&
@@ -81,8 +81,8 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             Mocks mocks = new Mocks();
 
             EhloVerb verb = new EhloVerb();
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foo.blah"));
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foo.blah"));
+            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foo.blah")).ConfigureAwait(false);
+            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foo.blah")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
         }

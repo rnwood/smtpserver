@@ -1,18 +1,16 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Rnwood.SmtpServer.Extensions
+﻿namespace Rnwood.SmtpServer.Extensions
 {
+    using System;
+    using System.Text;
+    using System.Threading.Tasks;
+
     public class EightBitMimeDataVerb : DataVerb, IParameterProcessor
     {
         public EightBitMimeDataVerb()
         {
         }
 
-        #region IParameterProcessor Members
-
-        public void SetParameter(IConnection connection, string key, string value)
+        public Task SetParameter(IConnection connection, string key, string value)
         {
             if (key.Equals("BODY", StringComparison.OrdinalIgnoreCase))
             {
@@ -27,13 +25,14 @@ namespace Rnwood.SmtpServer.Extensions
                 else
                 {
                     throw new SmtpServerException(
-                        new SmtpResponse(StandardSmtpResponseCode.SyntaxErrorInCommandArguments,
+                        new SmtpResponse(
+                            StandardSmtpResponseCode.SyntaxErrorInCommandArguments,
                                          "BODY parameter value invalid - must be either 7BIT or 8BITMIME"));
                 }
             }
-        }
 
-        #endregion IParameterProcessor Members
+            return Task.CompletedTask;
+        }
 
         public async override Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
@@ -44,11 +43,11 @@ namespace Rnwood.SmtpServer.Extensions
 
             try
             {
-                await base.ProcessAsync(connection, command);
+                await base.ProcessAsync(connection, command).ConfigureAwait(false);
             }
             finally
             {
-                connection.SetReaderEncodingToDefault();
+                await connection.SetReaderEncodingToDefault().ConfigureAwait(false);
             }
         }
     }

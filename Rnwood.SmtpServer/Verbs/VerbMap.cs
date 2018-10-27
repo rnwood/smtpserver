@@ -1,25 +1,20 @@
-﻿#region
-
-using System;
-using System.Collections.Generic;
-
-#endregion
-
-namespace Rnwood.SmtpServer.Verbs
+﻿namespace Rnwood.SmtpServer.Verbs
 {
+    using System;
+    using System.Collections.Generic;
+
     public class VerbMap : IVerbMap
     {
-        private readonly Dictionary<string, IVerb> _processorVerbs = new Dictionary<string, IVerb>(StringComparer.CurrentCultureIgnoreCase);
+        private readonly Dictionary<string, IVerb> processorVerbs = new Dictionary<string, IVerb>(StringComparer.CurrentCultureIgnoreCase);
 
         public void SetVerbProcessor(string verb, IVerb verbProcessor)
         {
-            _processorVerbs[verb] = verbProcessor;
+            this.processorVerbs[verb] = verbProcessor;
         }
 
         public IVerb GetVerbProcessor(string verb)
         {
-            IVerb result = null;
-            _processorVerbs.TryGetValue(verb, out result);
+            this.processorVerbs.TryGetValue(verb, out IVerb result);
             return result;
         }
     }

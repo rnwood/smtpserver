@@ -1,16 +1,17 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.IO;
+    using System.Net;
+    using System.Text;
+    using System.Threading.Tasks;
+
     ///<summary>
     ///</summary>
     public interface IConnectionChannel
     {
         bool IsConnected { get; }
+
         TimeSpan ReceiveTimeout { get; set; }
 
         TimeSpan SendTimeout { get; set; }

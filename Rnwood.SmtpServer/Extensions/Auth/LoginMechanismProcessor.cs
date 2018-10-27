@@ -1,56 +1,58 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Rnwood.SmtpServer.Extensions.Auth
+﻿namespace Rnwood.SmtpServer.Extensions.Auth
 {
+    using System;
+    using System.Text;
+    using System.Threading.Tasks;
+
     public class LoginMechanismProcessor : AuthMechanismProcessor
     {
         public LoginMechanismProcessor(IConnection connection) : base(connection)
         {
-            State = States.Initial;
+            this.State = States.Initial;
         }
 
         private States State { get; set; }
-        private string _username;
 
-        #region IAuthMechanismProcessor Members
+        private string username;
 
         public async override Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
         {
-            if (State == States.Initial && data != null)
+            if (this.State == States.Initial && data != null)
             {
-                State = States.WaitingForUsername;
+                this.State = States.WaitingForUsername;
             }
 
-            switch (State)
+            switch (this.State)
             {
                 case States.Initial:
-                    await Connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.AuthenticationContinue,
+                    await this.Connection.WriteResponse(new SmtpResponse(
+                        StandardSmtpResponseCode.AuthenticationContinue,
                                                               Convert.ToBase64String(
-                                                                  Encoding.ASCII.GetBytes("Username:"))));
-                    State = States.WaitingForUsername;
+                                                                  Encoding.ASCII.GetBytes("Username:")))).ConfigureAwait(false);
+                    this.State = States.WaitingForUsername;
                     return AuthMechanismProcessorStatus.Continue;
 
                 case States.WaitingForUsername:
 
-                    _username = DecodeBase64(data);
+                    this.username = DecodeBase64(data);
 
-                    await Connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.AuthenticationContinue,
+                    await this.Connection.WriteResponse(new SmtpResponse(
+                        StandardSmtpResponseCode.AuthenticationContinue,
                                                               Convert.ToBase64String(
-                                                                  Encoding.ASCII.GetBytes("Password:"))));
-                    State = States.WaitingForPassword;
+                                                                  Encoding.ASCII.GetBytes("Password:")))).ConfigureAwait(false);
+                    this.State = States.WaitingForPassword;
                     return AuthMechanismProcessorStatus.Continue;
 
                 case States.WaitingForPassword:
                     string password = DecodeBase64(data);
-                    State = States.Completed;
+                    this.State = States.Completed;
 
-                    Credentials = new LoginAuthenticationCredentials(_username, password);
+                    this.Credentials = new LoginAuthenticationCredentials(this.username, password);
 
                     AuthenticationResult result =
-                        await Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(Connection,
-                                                                                      Credentials);
+                        await this.Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(
+                            this.Connection,
+                                                                                      this.Credentials).ConfigureAwait(false);
 
                     switch (result)
                     {
@@ -66,10 +68,6 @@ namespace Rnwood.SmtpServer.Extensions.Auth
             }
         }
 
-        #endregion IAuthMechanismProcessor Members
-
-        #region Nested type: States
-
         private enum States
         {
             Initial,
@@ -77,7 +75,5 @@ namespace Rnwood.SmtpServer.Extensions.Auth
             WaitingForPassword,
             Completed
         }
-
-        #endregion Nested type: States
     }
 }

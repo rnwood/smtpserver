@@ -1,18 +1,14 @@
-﻿using System.Threading.Tasks;
-
-namespace Rnwood.SmtpServer.Extensions.Auth
+﻿namespace Rnwood.SmtpServer.Extensions.Auth
 {
+    using System.Threading.Tasks;
+
     public class PlainMechanismProcessor : AuthMechanismProcessor, IAuthMechanismProcessor
     {
-        #region States enum
-
         public enum States
         {
             Initial,
             AwaitingResponse
         }
-
-        #endregion States enum
 
         public PlainMechanismProcessor(IConnection connection) : base(connection)
         {
@@ -20,20 +16,19 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 
         private States State { get; set; }
 
-        #region IAuthMechanismProcessor Members
-
         public async override Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
         {
             if (string.IsNullOrEmpty(data))
             {
-                if (State == States.AwaitingResponse)
+                if (this.State == States.AwaitingResponse)
                 {
-                    throw new SmtpServerException(new SmtpResponse(StandardSmtpResponseCode.AuthenticationFailure,
+                    throw new SmtpServerException(new SmtpResponse(
+                        StandardSmtpResponseCode.AuthenticationFailure,
                                                                    "Missing auth data"));
                 }
 
-                await Connection.WriteResponseAsync(new SmtpResponse(StandardSmtpResponseCode.AuthenticationContinue, ""));
-                State = States.AwaitingResponse;
+                await this.Connection.WriteResponse(new SmtpResponse(StandardSmtpResponseCode.AuthenticationContinue, "")).ConfigureAwait(false);
+                this.State = States.AwaitingResponse;
                 return AuthMechanismProcessorStatus.Continue;
             }
 
@@ -42,17 +37,18 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 
             if (decodedDataParts.Length != 3)
             {
-                throw new SmtpServerException(new SmtpResponse(StandardSmtpResponseCode.AuthenticationFailure,
+                throw new SmtpServerException(new SmtpResponse(
+                    StandardSmtpResponseCode.AuthenticationFailure,
                                                                "Auth data in incorrect format"));
             }
 
             string username = decodedDataParts[1];
             string password = decodedDataParts[2];
 
-            Credentials = new PlainAuthenticationCredentials(username, password);
+            this.Credentials = new PlainAuthenticationCredentials(username, password);
 
             AuthenticationResult result =
-                await Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(Connection, Credentials);
+                await this.Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(this.Connection, this.Credentials).ConfigureAwait(false);
             switch (result)
             {
                 case AuthenticationResult.Success:
@@ -62,7 +58,5 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                     return AuthMechanismProcessorStatus.Failed;
             }
         }
-
-        #endregion IAuthMechanismProcessor Members
     }
 }

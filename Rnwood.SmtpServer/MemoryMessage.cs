@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-
 namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Threading.Tasks;
+
     public class MemoryMessage : IMessage
     {
         public MemoryMessage()
@@ -27,12 +28,9 @@ namespace Rnwood.SmtpServer
             get; private set;
         }
 
-        private List<string> _to = new List<string>();
+        private List<string> to = new List<string>();
 
-        public string[] To
-        {
-            get { return _to.ToArray(); }
-        }
+        public string[] To => this.to.ToArray();
 
         public bool SecureConnection
         {
@@ -53,12 +51,14 @@ namespace Rnwood.SmtpServer
         {
         }
 
-        public Stream GetData()
+        public Task<Stream> GetData()
         {
-            return new MemoryStream(Data ?? new byte[0], false);
+            return Task.FromResult<Stream>(
+                new MemoryStream(this.Data ?? Array.Empty<byte>(),
+                false));
         }
 
-        public class Builder : IMessageBuilder
+        internal class Builder : IMessageBuilder
         {
             public Builder() : this(new MemoryMessage())
             {
@@ -66,20 +66,20 @@ namespace Rnwood.SmtpServer
 
             protected Builder(MemoryMessage message)
             {
-                _message = message;
+                this.message = message;
             }
 
-            private MemoryMessage _message;
+            private readonly MemoryMessage message;
 
-            public Stream WriteData()
+            public Task<Stream> WriteData()
             {
                 CloseNotifyingMemoryStream stream = new CloseNotifyingMemoryStream();
                 stream.Closing += (s, ea) =>
                 {
-                    _message.Data = stream.ToArray();
+                    this.message.Data = stream.ToArray();
                 };
 
-                return stream;
+                return Task.FromResult<Stream>(stream);
             }
 
             internal class CloseNotifyingMemoryStream : MemoryStream
@@ -90,10 +90,7 @@ namespace Rnwood.SmtpServer
                 {
                     if (disposing)
                     {
-                        if (Closing != null)
-                        {
-                            Closing(this, EventArgs.Empty);
-                        }
+                        this.Closing?.Invoke(this, EventArgs.Empty);
                     }
 
                     base.Dispose(disposing);
@@ -104,12 +101,12 @@ namespace Rnwood.SmtpServer
             {
                 get
                 {
-                    return _message.Session;
+                    return this.message.Session;
                 }
 
                 set
                 {
-                    _message.Session = value;
+                    this.message.Session = value;
                 }
             }
 
@@ -117,12 +114,12 @@ namespace Rnwood.SmtpServer
             {
                 get
                 {
-                    return _message.ReceivedDate;
+                    return this.message.ReceivedDate;
                 }
 
                 set
                 {
-                    _message.ReceivedDate = value;
+                    this.message.ReceivedDate = value;
                 }
             }
 
@@ -130,12 +127,12 @@ namespace Rnwood.SmtpServer
             {
                 get
                 {
-                    return _message.From;
+                    return this.message.From;
                 }
 
                 set
                 {
-                    _message.From = value;
+                    this.message.From = value;
                 }
             }
 
@@ -143,12 +140,12 @@ namespace Rnwood.SmtpServer
             {
                 get
                 {
-                    return _message.SecureConnection;
+                    return this.message.SecureConnection;
                 }
 
                 set
                 {
-                    _message.SecureConnection = value;
+                    this.message.SecureConnection = value;
                 }
             }
 
@@ -156,12 +153,12 @@ namespace Rnwood.SmtpServer
             {
                 get
                 {
-                    return _message.EightBitTransport;
+                    return this.message.EightBitTransport;
                 }
 
                 set
                 {
-                    EightBitTransport = value;
+                    this.EightBitTransport = value;
                 }
             }
 
@@ -169,31 +166,25 @@ namespace Rnwood.SmtpServer
             {
                 get
                 {
-                    return _message.DeclaredMessageSize;
+                    return this.message.DeclaredMessageSize;
                 }
 
                 set
                 {
-                    _message.DeclaredMessageSize = value;
+                    this.message.DeclaredMessageSize = value;
                 }
             }
 
-            public ICollection<string> To
+            public ICollection<string> To => this.message.to;
+
+            public virtual Task<IMessage> ToMessage()
             {
-                get
-                {
-                    return _message._to;
-                }
+                return Task.FromResult<IMessage>(this.message);
             }
 
-            public virtual IMessage ToMessage()
+            public async Task<Stream> GetData()
             {
-                return _message;
-            }
-
-            public Stream GetData()
-            {
-                return _message.GetData();
+                return await this.message.GetData().ConfigureAwait(false);
             }
         }
     }

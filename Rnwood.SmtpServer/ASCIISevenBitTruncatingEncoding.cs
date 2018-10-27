@@ -1,54 +1,51 @@
-using System.Linq;
-using System.Text;
-
 namespace Rnwood.SmtpServer
 {
+    using System.Linq;
+    using System.Text;
+
     public class ASCIISevenBitTruncatingEncoding : Encoding
     {
         public ASCIISevenBitTruncatingEncoding()
         {
-            _asciiEncoding = Encoding.GetEncoding("ASCII", new EncodingFallback(),
+            this.asciiEncoding = Encoding.GetEncoding("ASCII", new EncodingFallback(),
                                                   new DecodingFallback());
         }
 
-        private Encoding _asciiEncoding;
+        private Encoding asciiEncoding;
 
         public override int GetByteCount(char[] chars, int index, int count)
         {
-            return _asciiEncoding.GetByteCount(chars, index, count);
+            return this.asciiEncoding.GetByteCount(chars, index, count);
         }
 
         public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
         {
-            return _asciiEncoding.GetBytes(chars, charIndex, charCount, bytes, byteIndex);
+            return this.asciiEncoding.GetBytes(chars, charIndex, charCount, bytes, byteIndex);
         }
 
         public override int GetCharCount(byte[] bytes, int index, int count)
         {
-            return _asciiEncoding.GetCharCount(bytes, index, count);
+            return this.asciiEncoding.GetCharCount(bytes, index, count);
         }
 
         public override int GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex)
         {
-            return _asciiEncoding.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
+            return this.asciiEncoding.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
         }
 
         public override int GetMaxByteCount(int charCount)
         {
-            return _asciiEncoding.GetMaxByteCount(charCount);
+            return this.asciiEncoding.GetMaxByteCount(charCount);
         }
 
         public override int GetMaxCharCount(int byteCount)
         {
-            return _asciiEncoding.GetMaxCharCount(byteCount);
+            return this.asciiEncoding.GetMaxCharCount(byteCount);
         }
 
         private class EncodingFallback : EncoderFallback
         {
-            public override int MaxCharCount
-            {
-                get { return 1; }
-            }
+            public override int MaxCharCount => 1;
 
             public override EncoderFallbackBuffer CreateFallbackBuffer()
             {
@@ -59,15 +56,15 @@ namespace Rnwood.SmtpServer
             {
                 public override bool Fallback(char charUnknown, int index)
                 {
-                    _char = FallbackChar(charUnknown);
-                    _charRead = false;
+                    this.@char = this.FallbackChar(charUnknown);
+                    this.charRead = false;
                     return true;
                 }
 
                 public override bool Fallback(char charUnknownHigh, char charUnknownLow, int index)
                 {
-                    _char = FallbackChar(charUnknownLow);
-                    _charRead = false;
+                    this.@char = this.FallbackChar(charUnknownLow);
+                    this.charRead = false;
                     return true;
                 }
 
@@ -78,10 +75,10 @@ namespace Rnwood.SmtpServer
 
                 public override char GetNextChar()
                 {
-                    if (!_charRead)
+                    if (!this.charRead)
                     {
-                        _charRead = true;
-                        return _char;
+                        this.charRead = true;
+                        return this.@char;
                     }
 
                     return '\0';
@@ -89,62 +86,51 @@ namespace Rnwood.SmtpServer
 
                 public override bool MovePrevious()
                 {
-                    if (_charRead)
+                    if (this.charRead)
                     {
-                        _charRead = false;
+                        this.charRead = false;
                         return true;
                     }
 
                     return false;
                 }
 
-                private char _char;
-                private bool _charRead;
+                private char @char;
+                private bool charRead;
 
-                public override int Remaining
-                {
-                    get { return !_charRead ? 1 : 0; }
-                }
+                public override int Remaining => !this.charRead ? 1 : 0;
             }
         }
 
         private class DecodingFallback : DecoderFallback
         {
-            public override int MaxCharCount
-            {
-                get { return 1; }
-            }
+            public override int MaxCharCount => 1;
 
             public override DecoderFallbackBuffer CreateFallbackBuffer()
             {
                 return new Buffer();
             }
 
-            #region Nested type: Buffer
-
             private class Buffer : DecoderFallbackBuffer
             {
-                private int _fallbackIndex;
-                private string _fallbackString;
+                private int fallbackIndex;
+                private string fallbackString;
 
-                public override int Remaining
-                {
-                    get { return _fallbackString.Length - _fallbackIndex; }
-                }
+                public override int Remaining => this.fallbackString.Length - this.fallbackIndex;
 
                 public override bool Fallback(byte[] bytesUnknown, int index)
                 {
-                    _fallbackString = Encoding.ASCII.GetString(bytesUnknown.Select(b => (byte)(b & 127)).ToArray());
-                    _fallbackIndex = 0;
+                    this.fallbackString = Encoding.ASCII.GetString(bytesUnknown.Select(b => (byte)(b & 127)).ToArray());
+                    this.fallbackIndex = 0;
 
                     return true;
                 }
 
                 public override char GetNextChar()
                 {
-                    if (Remaining > 0)
+                    if (this.Remaining > 0)
                     {
-                        return _fallbackString[_fallbackIndex++];
+                        return this.fallbackString[this.fallbackIndex++];
                     }
                     else
                     {
@@ -154,17 +140,15 @@ namespace Rnwood.SmtpServer
 
                 public override bool MovePrevious()
                 {
-                    if (_fallbackIndex > 0)
+                    if (this.fallbackIndex > 0)
                     {
-                        _fallbackIndex--;
+                        this.fallbackIndex--;
                         return true;
                     }
 
                     return false;
                 }
             }
-
-            #endregion Nested type: Buffer
         }
     }
 }

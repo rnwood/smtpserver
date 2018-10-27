@@ -1,52 +1,67 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Rnwood.SmtpServer.Extensions.Auth
+﻿namespace Rnwood.SmtpServer.Extensions.Auth
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+
     public class AuthExtensionProcessor : IExtensionProcessor
     {
-        private readonly IConnection _processor;
+        private readonly IConnection connection;
 
         public AuthExtensionProcessor(IConnection connection)
         {
-            _processor = connection;
-            MechanismMap = new AuthMechanismMap();
-            MechanismMap.Add(new CramMd5Mechanism());
-            MechanismMap.Add(new PlainMechanism());
-            MechanismMap.Add(new LoginMechanism());
-            MechanismMap.Add(new AnonymousMechanism());
+            this.connection = connection;
+            this.MechanismMap = new AuthMechanismMap();
+            this.MechanismMap.Add(new CramMd5Mechanism());
+            this.MechanismMap.Add(new PlainMechanism());
+            this.MechanismMap.Add(new LoginMechanism());
+            this.MechanismMap.Add(new AnonymousMechanism());
             connection.VerbMap.SetVerbProcessor("AUTH", new AuthVerb(this));
         }
 
         public AuthMechanismMap MechanismMap { get; private set; }
 
-        public string[] EHLOKeywords
+        protected async Task<IEnumerable<IAuthMechanism>> GetEnabledAuthMechanisms()
         {
-            get
-            {
-                IEnumerable<IAuthMechanism> mechanisms = MechanismMap.GetAll();
+            List<IAuthMechanism> result = new List<IAuthMechanism>();
 
-                if (mechanisms.Any())
+            foreach (var mechanism in this.MechanismMap.GetAll())
+            {
+                if (await this.connection.Server.Behaviour.IsAuthMechanismEnabled(this.connection, mechanism).ConfigureAwait(false))
                 {
-                    return new[]
-                               {
-                                   "AUTH=" +
-                                   string.Join(" ",
-                                               mechanisms.Where(IsMechanismEnabled).Select(m => m.Identifier).ToArray())
-                                   ,
-                                   "AUTH " + string.Join(" ", mechanisms.Select(m => m.Identifier).ToArray())
-                               };
-                }
-                else
-                {
-                    return new string[0];
+                    result.Add(mechanism);
                 }
             }
+
+            return result;
         }
 
-        public bool IsMechanismEnabled(IAuthMechanism mechanism)
+        public async Task<string[]> GetEHLOKeywords()
         {
-            return _processor.Server.Behaviour.IsAuthMechanismEnabled(_processor, mechanism);
+
+            IEnumerable<IAuthMechanism> mechanisms = await this.GetEnabledAuthMechanisms().ConfigureAwait(false);
+
+            if (mechanisms.Any())
+            {
+                string mids = string.Join(" ", mechanisms);
+
+                return new[]
+                           {
+                                   "AUTH=" + mids,
+                                   "AUTH " + mids
+                               };
+            }
+            else
+            {
+                return Array.Empty<string>();
+            }
+
+        }
+
+        public async Task<bool> IsMechanismEnabled(IAuthMechanism mechanism)
+        {
+            return await this.connection.Server.Behaviour.IsAuthMechanismEnabled(this.connection, mechanism).ConfigureAwait(false);
         }
     }
 }

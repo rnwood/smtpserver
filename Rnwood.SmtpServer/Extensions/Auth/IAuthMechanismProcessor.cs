@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-
-namespace Rnwood.SmtpServer.Extensions.Auth
+﻿namespace Rnwood.SmtpServer.Extensions.Auth
 {
+    using System.Threading.Tasks;
+
     public interface IAuthMechanismProcessor
     {
         Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data);

@@ -1,19 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-
 namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Threading.Tasks;
+
     public class FileMessage : IMessage
     {
         public FileMessage(FileInfo file, bool keepOnDispose)
         {
-            _file = file;
-            _keepOnDispose = keepOnDispose;
+            this.file = file;
+            this.keepOnDispose = keepOnDispose;
         }
 
-        private readonly FileInfo _file;
-        private readonly bool _keepOnDispose;
+        private readonly FileInfo file;
+        private readonly bool keepOnDispose;
 
         public DateTime ReceivedDate
         {
@@ -30,15 +31,9 @@ namespace Rnwood.SmtpServer
             get; private set;
         }
 
-        private List<string> _to = new List<string>();
+        private List<string> to = new List<string>();
 
-        public string[] To
-        {
-            get
-            {
-                return _to.ToArray();
-            }
-        }
+        public string[] To => this.to.ToArray();
 
         public bool SecureConnection
         {
@@ -57,39 +52,39 @@ namespace Rnwood.SmtpServer
 
         public virtual void Dispose()
         {
-            if (!_keepOnDispose)
+            if (!this.keepOnDispose)
             {
-                if (_file.Exists)
+                if (this.file.Exists)
                 {
-                    _file.Delete();
+                    this.file.Delete();
                 }
             }
         }
 
-        public Stream GetData()
+        public Task<Stream> GetData()
         {
-            return new FileStream(_file.FullName, FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.Read);
+            return Task.FromResult<Stream>( new FileStream(this.file.FullName, FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.Read));
         }
 
-        public class Builder : IMessageBuilder
+        internal class Builder : IMessageBuilder
         {
             public Builder(FileInfo file, bool keepOnDispose)
             {
-                _message = new FileMessage(file, keepOnDispose);
+                this.message = new FileMessage(file, keepOnDispose);
             }
 
-            private FileMessage _message;
+            private FileMessage message;
 
             public ISession Session
             {
                 get
                 {
-                    return _message.Session;
+                    return this.message.Session;
                 }
 
                 set
                 {
-                    _message.Session = value;
+                    this.message.Session = value;
                 }
             }
 
@@ -97,12 +92,12 @@ namespace Rnwood.SmtpServer
             {
                 get
                 {
-                    return _message.ReceivedDate;
+                    return this.message.ReceivedDate;
                 }
 
                 set
                 {
-                    _message.ReceivedDate = value;
+                    this.message.ReceivedDate = value;
                 }
             }
 
@@ -110,33 +105,27 @@ namespace Rnwood.SmtpServer
             {
                 get
                 {
-                    return _message.From;
+                    return this.message.From;
                 }
 
                 set
                 {
-                    _message.From = value;
+                    this.message.From = value;
                 }
             }
 
-            public ICollection<string> To
-            {
-                get
-                {
-                    return _message._to;
-                }
-            }
+            public ICollection<string> To => this.message.to;
 
             public bool SecureConnection
             {
                 get
                 {
-                    return _message.SecureConnection;
+                    return this.message.SecureConnection;
                 }
 
                 set
                 {
-                    _message.SecureConnection = value;
+                    this.message.SecureConnection = value;
                 }
             }
 
@@ -144,12 +133,12 @@ namespace Rnwood.SmtpServer
             {
                 get
                 {
-                    return _message.EightBitTransport;
+                    return this.message.EightBitTransport;
                 }
 
                 set
                 {
-                    EightBitTransport = value;
+                    this.EightBitTransport = value;
                 }
             }
 
@@ -157,28 +146,28 @@ namespace Rnwood.SmtpServer
             {
                 get
                 {
-                    return _message.DeclaredMessageSize;
+                    return this.message.DeclaredMessageSize;
                 }
 
                 set
                 {
-                    _message.DeclaredMessageSize = value;
+                    this.message.DeclaredMessageSize = value;
                 }
             }
 
-            public Stream GetData()
+            public async Task<Stream> GetData()
             {
-                return _message.GetData();
+                return await this.message.GetData().ConfigureAwait(false);
             }
 
-            public IMessage ToMessage()
+            public Task<IMessage> ToMessage()
             {
-                return _message;
+                return Task.FromResult<IMessage>(this.message);
             }
 
-            public Stream WriteData()
+            public Task<Stream> WriteData()
             {
-                return _message._file.OpenWrite();
+                return Task.FromResult<Stream>(this.message.file.OpenWrite());
             }
         }
     }

@@ -1,26 +1,26 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.IO;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Text;
+    using System.Threading.Tasks;
+
     public class TcpClientConnectionChannel : IConnectionChannel
     {
         public TcpClientConnectionChannel(TcpClient tcpClient)
         {
-            _tcpClient = tcpClient;
-            _stream = tcpClient.GetStream();
-            IsConnected = true;
-            SetReaderEncoding(Encoding.ASCII);
+            this.tcpClient = tcpClient;
+            this.stream = tcpClient.GetStream();
+            this.IsConnected = true;
+            this.SetReaderEncoding(Encoding.ASCII);
         }
 
-        private readonly TcpClient _tcpClient;
-        private StreamReader _reader;
-        private Stream _stream;
-        private StreamWriter _writer;
+        private readonly TcpClient tcpClient;
+        private StreamReader reader;
+        private Stream stream;
+        private StreamWriter writer;
 
         public Encoding ReaderEncoding
         {
@@ -30,8 +30,8 @@ namespace Rnwood.SmtpServer
 
         public void SetReaderEncoding(Encoding encoding)
         {
-            ReaderEncoding = encoding;
-            SetupReaderAndWriter();
+            this.ReaderEncoding = encoding;
+            this.SetupReaderAndWriter();
         }
 
         public bool IsConnected
@@ -43,17 +43,17 @@ namespace Rnwood.SmtpServer
 
         public async Task FlushAsync()
         {
-            await _writer.FlushAsync();
+            await this.writer.FlushAsync().ConfigureAwait(false);
         }
 
         public Task CloseAync()
         {
-            if (IsConnected)
+            if (this.IsConnected)
             {
-                IsConnected = false;
-                _tcpClient.Dispose();
+                this.IsConnected = false;
+                this.tcpClient.Dispose();
 
-                Closed?.Invoke(this, EventArgs.Empty);
+                this.Closed?.Invoke(this, EventArgs.Empty);
             }
 
             return Task.CompletedTask;
@@ -61,38 +61,35 @@ namespace Rnwood.SmtpServer
 
         public TimeSpan ReceiveTimeout
         {
-            get { return TimeSpan.FromMilliseconds(_tcpClient.ReceiveTimeout); }
-            set { _tcpClient.ReceiveTimeout = (int)Math.Min(int.MaxValue, value.TotalMilliseconds); }
+            get { return TimeSpan.FromMilliseconds(this.tcpClient.ReceiveTimeout); }
+            set { this.tcpClient.ReceiveTimeout = (int)Math.Min(int.MaxValue, value.TotalMilliseconds); }
         }
 
         public TimeSpan SendTimeout
         {
-            get { return TimeSpan.FromMilliseconds(_tcpClient.SendTimeout); }
-            set { _tcpClient.SendTimeout = (int)Math.Min(int.MaxValue, value.TotalMilliseconds); }
+            get { return TimeSpan.FromMilliseconds(this.tcpClient.SendTimeout); }
+            set { this.tcpClient.SendTimeout = (int)Math.Min(int.MaxValue, value.TotalMilliseconds); }
         }
 
-        public IPAddress ClientIPAddress
-        {
-            get { return ((IPEndPoint)_tcpClient.Client.RemoteEndPoint).Address; }
-        }
+        public IPAddress ClientIPAddress => ((IPEndPoint)this.tcpClient.Client.RemoteEndPoint).Address;
 
         public async Task ApplyStreamFilterAsync(Func<Stream, Task<Stream>> filter)
         {
-            _stream = await filter(_stream);
-            SetupReaderAndWriter();
+            this.stream = await filter(this.stream).ConfigureAwait(false);
+            this.SetupReaderAndWriter();
         }
 
         private void SetupReaderAndWriter()
         {
-            _writer = new StreamWriter(_stream, ReaderEncoding) { AutoFlush = true, NewLine = "\r\n" };
-            _reader = new StreamReader(_stream, ReaderEncoding);
+            this.writer = new StreamWriter(this.stream, this.ReaderEncoding) { AutoFlush = true, NewLine = "\r\n" };
+            this.reader = new StreamReader(this.stream, this.ReaderEncoding);
         }
 
         public async Task<string> ReadLineAsync()
         {
             try
             {
-                string text = await _reader.ReadLineAsync();
+                string text = await this.reader.ReadLineAsync().ConfigureAwait(false);
 
                 if (text == null)
                 {
@@ -103,7 +100,7 @@ namespace Rnwood.SmtpServer
             }
             catch (IOException e)
             {
-                await CloseAync();
+                await this.CloseAync().ConfigureAwait(false);
                 throw new ConnectionUnexpectedlyClosedException("Read failed", e);
             }
         }
@@ -112,11 +109,11 @@ namespace Rnwood.SmtpServer
         {
             try
             {
-                await _writer.WriteLineAsync(text);
+                await this.writer.WriteLineAsync(text).ConfigureAwait(false);
             }
             catch (IOException e)
             {
-                await CloseAync();
+                await this.CloseAync().ConfigureAwait(false);
                 throw new ConnectionUnexpectedlyClosedException("Write failed", e);
             }
         }

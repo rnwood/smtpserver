@@ -1,26 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-
-namespace Rnwood.SmtpServer
+﻿namespace Rnwood.SmtpServer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Threading.Tasks;
+
     public interface IMessageBuilder
     {
-        Stream WriteData();
+        Task<Stream> WriteData();
 
         ISession Session { get; set; }
 
         DateTime ReceivedDate { get; set; }
+
         string From { get; set; }
 
         ICollection<string> To { get; }
 
         bool SecureConnection { get; set; }
+
         bool EightBitTransport { get; set; }
+
         long? DeclaredMessageSize { get; set; }
 
-        IMessage ToMessage();
+        Task<IMessage> ToMessage();
 
-        Stream GetData();
+        Task<Stream> GetData();
     }
 }
