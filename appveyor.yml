@@ -16,6 +16,7 @@ init:
     $ErrorActionPreference="Stop"
     $version = $env:APPVEYOR_BUILD_VERSION
     if ($env:APPVEYOR_REPO_TAG_NAME) {
+       write-host "Using label ${env:APPVEYOR_REPO_TAG_NAME} as version number"
        try {
            Update-AppveyorBuild -version $env:APPVEYOR_REPO_TAG_NAME
        } catch {
@@ -25,7 +26,9 @@ init:
        $version = $env:APPVEYOR_REPO_TAG_NAME
        Set-AppveyorBuildVariable 'PRERELEASE' (($version.Contains("-")).ToString())
     } else {
-        Update-AppveyorBuild -version ($version.Replace($env:APPVEYOR_BUILD_NUMBER, ([int]$env:APPVEYOR_BUILD_NUMBER).ToString("000")))
+        $paddedbuild = ([int]$env:APPVEYOR_BUILD_NUMBER).ToString("000")
+        write-host "Version is $version - replacing -${env:APPVEYOR_BUILD_NUMBER} with -$paddedbuild"
+        Update-AppveyorBuild -version ($version.Replace("-${env:APPVEYOR_BUILD_NUMBER}", "-$paddedbuild"))
         Set-AppveyorBuildVariable 'PRERELEASE' "true"
     }
     
