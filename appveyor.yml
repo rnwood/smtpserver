@@ -1,4 +1,4 @@
-version: 3.1.0-ci-{build}
+version: 3.1.0-ci@{build}
 os: Visual Studio 2017
 configuration: Release
 skip_tags:  false
@@ -26,8 +26,8 @@ init:
        $version = $env:APPVEYOR_REPO_TAG_NAME
        Set-AppveyorBuildVariable 'PRERELEASE' (($version.Contains("-")).ToString())
     } else {
-        $paddedbuild = ([int]$env:APPVEYOR_BUILD_NUMBER).ToString("000")
-        write-host "Version is $version - replacing -${env:APPVEYOR_BUILD_NUMBER} with -$paddedbuild"
+        $paddedbuild = ([int]$env:APPVEYOR_BUILD_NUMBER).ToString("0000")
+        write-host "Version is $version - replacing @${env:APPVEYOR_BUILD_NUMBER} with $paddedbuild"
         Update-AppveyorBuild -version ($version.Replace("-${env:APPVEYOR_BUILD_NUMBER}", "-$paddedbuild"))
         Set-AppveyorBuildVariable 'PRERELEASE' "true"
     }
