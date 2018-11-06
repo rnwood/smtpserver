@@ -24,7 +24,7 @@ init:
        }
        $version = $env:APPVEYOR_REPO_TAG_NAME
        Set-AppveyorBuildVariable 'PRERELEASE' (($version.Contains("-")).ToString())
-    } else() {
+    } else {
         Update-AppveyorBuild -version $version + (([int]$env:APPVEYOR_BUILD_NUMBER).ToString("000")
         Set-AppveyorBuildVariable 'PRERELEASE' "true"
     }
