@@ -1,4 +1,4 @@
-version: 3.1.0-ci
+version: 3.1.0-ci-{build}
 os: Visual Studio 2017
 configuration: Release
 skip_tags:  false
@@ -25,7 +25,7 @@ init:
        $version = $env:APPVEYOR_REPO_TAG_NAME
        Set-AppveyorBuildVariable 'PRERELEASE' (($version.Contains("-")).ToString())
     } else {
-        Update-AppveyorBuild -version $version + (([int]$env:APPVEYOR_BUILD_NUMBER).ToString("000"))
+        Update-AppveyorBuild -version ($version.Replace($env:APPVEYOR_BUILD_NUMBER, ([int]$env:APPVEYOR_BUILD_NUMBER).ToString("000")))
         Set-AppveyorBuildVariable 'PRERELEASE' "true"
     }
     
