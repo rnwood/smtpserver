@@ -1,16 +1,28 @@
-﻿using Moq;
-using Rnwood.SmtpServer.Verbs;
-using System.Threading.Tasks;
-using Xunit;
+﻿// <copyright file="VerbWithSubCommandsTests.cs" company="Rnwood.SmtpServer project contributors">
+// Copyright (c) Rnwood.SmtpServer project contributors. All rights reserved.
+// Licensed under the BSD license. See LICENSE.md file in the project root for full license information.
+// </copyright>
 
 namespace Rnwood.SmtpServer.Tests.Verbs
 {
+    using System.Threading.Tasks;
+    using Moq;
+    using Rnwood.SmtpServer.Verbs;
+    using Xunit;
+
+    /// <summary>
+    /// Defines the <see cref="VerbWithSubCommandsTests" />
+    /// </summary>
     public class VerbWithSubCommandsTests
     {
+        /// <summary>
+        /// The ProcessAsync_RegisteredSubCommand_Processed
+        /// </summary>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         [Fact]
         public async Task ProcessAsync_RegisteredSubCommand_Processed()
         {
-            Mocks mocks = new Mocks();
+            TestMocks mocks = new TestMocks();
 
             Mock<VerbWithSubCommands> verbWithSubCommands = new Mock<VerbWithSubCommands>() { CallBase = true };
             Mock<IVerb> verb = new Mock<IVerb>();
@@ -21,10 +33,14 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             verb.Verify(v => v.ProcessAsync(mocks.Connection.Object, new SmtpCommand("SUBCOMMAND1")));
         }
 
+        /// <summary>
+        /// The ProcessAsync_UnregisteredSubCommand_ErrorResponse
+        /// </summary>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         [Fact]
         public async Task ProcessAsync_UnregisteredSubCommand_ErrorResponse()
         {
-            Mocks mocks = new Mocks();
+            TestMocks mocks = new TestMocks();
 
             Mock<VerbWithSubCommands> verbWithSubCommands = new Mock<VerbWithSubCommands>() { CallBase = true };
 

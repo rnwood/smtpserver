@@ -1,16 +1,57 @@
-﻿using Moq;
-using Rnwood.SmtpServer.Extensions;
-using System.Threading.Tasks;
-using Xunit;
+﻿// <copyright file="EhloVerbTests.cs" company="Rnwood.SmtpServer project contributors">
+// Copyright (c) Rnwood.SmtpServer project contributors. All rights reserved.
+// Licensed under the BSD license. See LICENSE.md file in the project root for full license information.
+// </copyright>
 
 namespace Rnwood.SmtpServer.Tests.Verbs
 {
+    using System.Threading.Tasks;
+    using Moq;
+    using Rnwood.SmtpServer.Extensions;
+    using Xunit;
+
+    /// <summary>
+    /// Defines the <see cref="EhloVerbTests" />
+    /// </summary>
     public class EhloVerbTests
     {
+        /// <summary>
+        /// The Process_NoArguments_Accepted
+        /// </summary>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+        [Fact]
+        public async Task Process_NoArguments_Accepted()
+        {
+            TestMocks mocks = new TestMocks();
+            EhloVerb ehloVerb = new EhloVerb();
+            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO")).ConfigureAwait(false);
+            mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
+
+            mocks.Session.VerifySet(s => s.ClientName = "");
+        }
+
+        /// <summary>
+        /// The Process_RecordsClientName
+        /// </summary>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+        [Fact]
+        public async Task Process_RecordsClientName()
+        {
+            TestMocks mocks = new TestMocks();
+            EhloVerb ehloVerb = new EhloVerb();
+            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foobar")).ConfigureAwait(false);
+
+            mocks.Session.VerifySet(s => s.ClientName = "foobar");
+        }
+
+        /// <summary>
+        /// The Process_RespondsWith250
+        /// </summary>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         [Fact]
         public async Task Process_RespondsWith250()
         {
-            Mocks mocks = new Mocks();
+            TestMocks mocks = new TestMocks();
             Mock<IExtensionProcessor> mockExtensionProcessor1 = new Mock<IExtensionProcessor>();
             mockExtensionProcessor1.Setup(ep => ep.GetEHLOKeywords()).ReturnsAsync(new[] { "EXTN1" });
             Mock<IExtensionProcessor> mockExtensionProcessor2 = new Mock<IExtensionProcessor>();
@@ -28,31 +69,14 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
         }
 
-        [Fact]
-        public async Task Process_NoArguments_Accepted()
-        {
-            Mocks mocks = new Mocks();
-            EhloVerb ehloVerb = new EhloVerb();
-            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO")).ConfigureAwait(false);
-            mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
-
-            mocks.Session.VerifySet(s => s.ClientName = "");
-        }
-
-        [Fact]
-        public async Task Process_RecordsClientName()
-        {
-            Mocks mocks = new Mocks();
-            EhloVerb ehloVerb = new EhloVerb();
-            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foobar")).ConfigureAwait(false);
-
-            mocks.Session.VerifySet(s => s.ClientName = "foobar");
-        }
-
+        /// <summary>
+        /// The Process_RespondsWithExtensionKeywords
+        /// </summary>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         [Fact]
         public async Task Process_RespondsWithExtensionKeywords()
         {
-            Mocks mocks = new Mocks();
+            TestMocks mocks = new TestMocks();
             Mock<IExtensionProcessor> mockExtensionProcessor1 = new Mock<IExtensionProcessor>();
             mockExtensionProcessor1.Setup(ep => ep.GetEHLOKeywords()).ReturnsAsync(new[] { "EXTN1" });
             Mock<IExtensionProcessor> mockExtensionProcessor2 = new Mock<IExtensionProcessor>();
@@ -75,10 +99,14 @@ namespace Rnwood.SmtpServer.Tests.Verbs
                 )));
         }
 
+        /// <summary>
+        /// The Process_SaidHeloAlready_Allowed
+        /// </summary>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         [Fact]
         public async Task Process_SaidHeloAlready_Allowed()
         {
-            Mocks mocks = new Mocks();
+            TestMocks mocks = new TestMocks();
 
             EhloVerb verb = new EhloVerb();
             await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foo.blah")).ConfigureAwait(false);

@@ -1,21 +1,71 @@
-﻿namespace Rnwood.SmtpServer.Extensions.Auth
+﻿// <copyright file="LoginMechanismProcessor.cs" company="Rnwood.SmtpServer project contributors">
+// Copyright (c) Rnwood.SmtpServer project contributors. All rights reserved.
+// Licensed under the BSD license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+
+namespace Rnwood.SmtpServer.Extensions.Auth
 {
     using System;
     using System.Text;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Defines the <see cref="LoginMechanismProcessor" />
+    /// </summary>
     public class LoginMechanismProcessor : AuthMechanismProcessor
     {
-        public LoginMechanismProcessor(IConnection connection) : base(connection)
+        /// <summary>
+        /// Defines the username
+        /// </summary>
+        private string username;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoginMechanismProcessor"/> class.
+        /// </summary>
+        /// <param name="connection">The connection<see cref="IConnection"/></param>
+        public LoginMechanismProcessor(IConnection connection)
+            : base(connection)
         {
             this.State = States.Initial;
         }
 
+        /// <summary>
+        /// Defines the States
+        /// </summary>
+        private enum States
+        {
+           /// <summary>
+           /// Defines the Initial
+           /// </summary>
+            Initial,
+
+           /// <summary>
+           /// Defines the WaitingForUsername
+           /// </summary>
+            WaitingForUsername,
+
+           /// <summary>
+           /// Defines the WaitingForPassword
+           /// </summary>
+            WaitingForPassword,
+
+           /// <summary>
+           /// Defines the Completed
+           /// </summary>
+            Completed
+        }
+
+        /// <summary>
+        /// Gets or sets the State
+        /// </summary>
         private States State { get; set; }
 
-        private string username;
-
-        public async override Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="data">The data<see cref="string"/></param>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+        public override async Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
         {
             if (this.State == States.Initial && data != null)
             {
@@ -66,14 +116,6 @@
                 default:
                     throw new NotImplementedException();
             }
-        }
-
-        private enum States
-        {
-            Initial,
-            WaitingForUsername,
-            WaitingForPassword,
-            Completed
         }
     }
 }

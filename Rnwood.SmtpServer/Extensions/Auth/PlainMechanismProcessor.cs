@@ -1,34 +1,65 @@
-﻿namespace Rnwood.SmtpServer.Extensions.Auth
+﻿// <copyright file="PlainMechanismProcessor.cs" company="Rnwood.SmtpServer project contributors">
+// Copyright (c) Rnwood.SmtpServer project contributors. All rights reserved.
+// Licensed under the BSD license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+
+namespace Rnwood.SmtpServer.Extensions.Auth
 {
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Defines the <see cref="PlainMechanismProcessor" />
+    /// </summary>
     public class PlainMechanismProcessor : AuthMechanismProcessor, IAuthMechanismProcessor
     {
-        public enum States
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PlainMechanismProcessor"/> class.
+        /// </summary>
+        /// <param name="connection">The connection<see cref="IConnection"/></param>
+        public PlainMechanismProcessor(IConnection connection)
+            : base(connection)
         {
+        }
+
+        /// <summary>
+        /// Defines the States
+        /// </summary>
+        public enum ProcessingState
+        {
+           /// <summary>
+           /// Defines the Initial
+           /// </summary>
             Initial,
+
+           /// <summary>
+           /// Defines the AwaitingResponse
+           /// </summary>
             AwaitingResponse
         }
 
-        public PlainMechanismProcessor(IConnection connection) : base(connection)
-        {
-        }
+        /// <summary>
+        /// Gets or sets the State
+        /// </summary>
+        private ProcessingState State { get; set; }
 
-        private States State { get; set; }
-
-        public async override Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="data">The data<see cref="string"/></param>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+        public override async Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
         {
             if (string.IsNullOrEmpty(data))
             {
-                if (this.State == States.AwaitingResponse)
+                if (this.State == ProcessingState.AwaitingResponse)
                 {
                     throw new SmtpServerException(new SmtpResponse(
                         StandardSmtpResponseCode.AuthenticationFailure,
                                                                    "Missing auth data"));
                 }
 
-                await this.Connection.WriteResponse(new SmtpResponse(StandardSmtpResponseCode.AuthenticationContinue, "")).ConfigureAwait(false);
-                this.State = States.AwaitingResponse;
+                await this.Connection.WriteResponse(new SmtpResponse(StandardSmtpResponseCode.AuthenticationContinue, string.Empty)).ConfigureAwait(false);
+                this.State = ProcessingState.AwaitingResponse;
                 return AuthMechanismProcessorStatus.Continue;
             }
 

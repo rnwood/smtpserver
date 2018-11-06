@@ -1,23 +1,44 @@
-﻿namespace Rnwood.SmtpServer.Extensions.Auth
+﻿// <copyright file="AuthVerb.cs" company="Rnwood.SmtpServer project contributors">
+// Copyright (c) Rnwood.SmtpServer project contributors. All rights reserved.
+// Licensed under the BSD license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+
+namespace Rnwood.SmtpServer.Extensions.Auth
 {
     using System.Linq;
     using System.Threading.Tasks;
     using Rnwood.SmtpServer.Verbs;
 
+    /// <summary>
+    /// Defines the <see cref="AuthVerb" />
+    /// </summary>
     public class AuthVerb : IVerb
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthVerb"/> class.
+        /// </summary>
+        /// <param name="authExtensionProcessor">The authExtensionProcessor<see cref="AuthExtensionProcessor"/></param>
         public AuthVerb(AuthExtensionProcessor authExtensionProcessor)
         {
             this.AuthExtensionProcessor = authExtensionProcessor;
         }
 
+        /// <summary>
+        /// Gets the AuthExtensionProcessor
+        /// </summary>
         public AuthExtensionProcessor AuthExtensionProcessor { get; private set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="connection">The connection<see cref="IConnection"/></param>
+        /// <param name="command">The command<see cref="SmtpCommand"/></param>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         public async Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
             ArgumentsParser argumentsParser = new ArgumentsParser(command.ArgumentsText);
 
-            if (argumentsParser.Arguments.Length > 0)
+            if (argumentsParser.Arguments.Count > 0)
             {
                 if (connection.Session.Authenticated)
                 {
@@ -26,7 +47,7 @@
                                                                    "Already authenticated"));
                 }
 
-                string mechanismId = argumentsParser.Arguments[0];
+                string mechanismId = argumentsParser.Arguments.First();
                 IAuthMechanism mechanism = this.AuthExtensionProcessor.MechanismMap.Get(mechanismId);
 
                 if (mechanism == null)
@@ -49,7 +70,7 @@
                     mechanism.CreateAuthMechanismProcessor(connection);
 
                 string initialData = null;
-                if (argumentsParser.Arguments.Length > 1)
+                if (argumentsParser.Arguments.Count > 1)
                 {
                     initialData = string.Join(" ", argumentsParser.Arguments.Skip(1).ToArray());
                 }

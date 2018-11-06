@@ -1,25 +1,54 @@
-﻿namespace Rnwood.SmtpServer
+﻿// <copyright file="MailFromVerb.cs" company="Rnwood.SmtpServer project contributors">
+// Copyright (c) Rnwood.SmtpServer project contributors. All rights reserved.
+// Licensed under the BSD license. See LICENSE.md file in the project root for full license information.
+// </copyright>
+
+namespace Rnwood.SmtpServer
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using Rnwood.SmtpServer.Verbs;
 
+    /// <summary>
+    /// Defines the <see cref="MailFromVerb" />
+    /// </summary>
     public class MailFromVerb : IVerb
     {
+        /// <summary>
+        /// Defines the currentDateTimeProvider
+        /// </summary>
         private ICurrentDateTimeProvider currentDateTimeProvider;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MailFromVerb"/> class.
+        /// </summary>
+        public MailFromVerb()
+            : this(new CurrentDateTimeProvider())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MailFromVerb"/> class.
+        /// </summary>
+        /// <param name="currentDateTimeProvider">The currentDateTimeProvider<see cref="ICurrentDateTimeProvider"/></param>
         public MailFromVerb(ICurrentDateTimeProvider currentDateTimeProvider)
         {
             this.ParameterProcessorMap = new ParameterProcessorMap();
             this.currentDateTimeProvider = currentDateTimeProvider;
         }
 
-        public MailFromVerb() : this(new CurrentDateTimeProvider())
-        {
-        }
-
+        /// <summary>
+        /// Gets the ParameterProcessorMap
+        /// </summary>
         public ParameterProcessorMap ParameterProcessorMap { get; private set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="connection">The connection<see cref="IConnection"/></param>
+        /// <param name="command">The command<see cref="SmtpCommand"/></param>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         public async Task ProcessAsync(IConnection connection, SmtpCommand command)
         {
             if (connection.CurrentMessage != null)
@@ -40,15 +69,15 @@
             }
 
             ArgumentsParser argumentsParser = new ArgumentsParser(command.ArgumentsText);
-            string[] arguments = argumentsParser.Arguments;
+            System.Collections.Generic.IReadOnlyCollection<string> arguments = argumentsParser.Arguments;
 
             string from = arguments.First();
-            if (from.StartsWith("<"))
+            if (from.StartsWith("<", StringComparison.OrdinalIgnoreCase))
             {
                 from = from.Remove(0, 1);
             }
 
-            if (from.EndsWith(">"))
+            if (from.EndsWith(">", StringComparison.OrdinalIgnoreCase))
             {
                 from = from.Remove(from.Length - 1, 1);
             }
@@ -60,7 +89,7 @@
 
             try
             {
-                await this.ParameterProcessorMap.ProcessAsync(connection, arguments.Skip(1).ToArray(), true).ConfigureAwait(false);
+                await this.ParameterProcessorMap.Process(connection, arguments.Skip(1).ToArray(), true).ConfigureAwait(false);
                 await connection.WriteResponse(new SmtpResponse(StandardSmtpResponseCode.OK, "New message started")).ConfigureAwait(false);
             }
             catch

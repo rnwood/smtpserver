@@ -1,16 +1,28 @@
-﻿using Moq;
-using Rnwood.SmtpServer.Extensions.Auth;
-using System.Threading.Tasks;
-using Xunit;
+﻿// <copyright file="LoginMechanismProcessorTests.cs" company="Rnwood.SmtpServer project contributors">
+// Copyright (c) Rnwood.SmtpServer project contributors. All rights reserved.
+// Licensed under the BSD license. See LICENSE.md file in the project root for full license information.
+// </copyright>
 
 namespace Rnwood.SmtpServer.Tests.Extensions.Auth
 {
+    using System.Threading.Tasks;
+    using Moq;
+    using Rnwood.SmtpServer.Extensions.Auth;
+    using Xunit;
+
+    /// <summary>
+    /// Defines the <see cref="LoginMechanismProcessorTests" />
+    /// </summary>
     public class LoginMechanismProcessorTests : AuthMechanismTest
     {
+        /// <summary>
+        /// The ProcessRepsonse_NoUsername_GetUsernameChallenge
+        /// </summary>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         [Fact]
         public async Task ProcessRepsonse_NoUsername_GetUsernameChallenge()
         {
-            Mocks mocks = new Mocks();
+            TestMocks mocks = new TestMocks();
 
             LoginMechanismProcessor processor = this.Setup(mocks);
             AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(null).ConfigureAwait(false);
@@ -26,10 +38,14 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
             );
         }
 
+        /// <summary>
+        /// The ProcessRepsonse_Username_GetPasswordChallenge
+        /// </summary>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         [Fact]
         public async Task ProcessRepsonse_Username_GetPasswordChallenge()
         {
-            Mocks mocks = new Mocks();
+            TestMocks mocks = new TestMocks();
 
             LoginMechanismProcessor processor = this.Setup(mocks);
             AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(EncodeBase64("rob")).ConfigureAwait(false);
@@ -46,10 +62,14 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
             );
         }
 
+        /// <summary>
+        /// The ProcessResponse_PasswordAcceptedAfterUserNameInInitialRequest
+        /// </summary>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         [Fact]
         public async Task ProcessResponse_PasswordAcceptedAfterUserNameInInitialRequest()
         {
-            Mocks mocks = new Mocks();
+            TestMocks mocks = new TestMocks();
 
             LoginMechanismProcessor processor = this.Setup(mocks);
             AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(EncodeBase64("rob")).ConfigureAwait(false);
@@ -69,13 +89,16 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
             Assert.Equal(AuthMechanismProcessorStatus.Success, result);
         }
 
-
+        /// <summary>
+        /// The ProcessResponse_Response_BadBase64
+        /// </summary>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         [Fact]
         public async Task ProcessResponse_Response_BadBase64()
         {
             await Assert.ThrowsAsync<BadBase64Exception>(async () =>
             {
-                Mocks mocks = new Mocks();
+                TestMocks mocks = new TestMocks();
 
                 LoginMechanismProcessor processor = this.Setup(mocks);
                 await processor.ProcessResponseAsync(null).ConfigureAwait(false);
@@ -83,7 +106,12 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
             }).ConfigureAwait(false);
         }
 
-        private LoginMechanismProcessor Setup(Mocks mocks)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="mocks">The mocks<see cref="TestMocks"/></param>
+        /// <returns>The <see cref="LoginMechanismProcessor"/></returns>
+        private LoginMechanismProcessor Setup(TestMocks mocks)
         {
             return new LoginMechanismProcessor(mocks.Connection.Object);
         }
