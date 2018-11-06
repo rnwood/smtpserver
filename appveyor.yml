@@ -27,7 +27,7 @@ init:
     } else() {
         Update-AppveyorBuild -version $version + (([int]$env:APPVEYOR_BUILD_NUMBER).ToString("000")
         Set-AppveyorBuildVariable 'PRERELEASE' "true"
-	}
+    }
     
 install:
 - cmd: |
