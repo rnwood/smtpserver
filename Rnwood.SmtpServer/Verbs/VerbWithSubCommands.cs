@@ -35,26 +35,29 @@ namespace Rnwood.SmtpServer.Verbs
         public IVerbMap SubVerbMap { get; private set; }
 
         /// <summary>
-        ///
+        /// Dispatches a command to the registered sub command matching the next verb in the command
+        /// or writes an error to the client is no match was found.
         /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <param name="command">The command<see cref="SmtpCommand"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public virtual async Task ProcessAsync(IConnection connection, SmtpCommand command)
+        /// <param name="connection">The connection<see cref="Rnwood.SmtpServer.IConnection" /></param>
+        /// <param name="command">The command<see cref="Rnwood.SmtpServer.SmtpCommand" /></param>
+        /// <returns>
+        /// A <see cref="System.Threading.Tasks.Task" /> representing the async operation
+        /// </returns>
+        public virtual async Task Process(IConnection connection, SmtpCommand command)
         {
             SmtpCommand subrequest = new SmtpCommand(command.ArgumentsText);
             IVerb verbProcessor = this.SubVerbMap.GetVerbProcessor(subrequest.Verb);
 
             if (verbProcessor != null)
             {
-                await verbProcessor.ProcessAsync(connection, subrequest).ConfigureAwait(false);
+                await verbProcessor.Process(connection, subrequest).ConfigureAwait(false);
             }
             else
             {
                 await connection.WriteResponse(
                     new SmtpResponse(
                         StandardSmtpResponseCode.CommandParameterNotImplemented,
-                                     "Subcommand {0} not implemented", 
+                                     "Subcommand {0} not implemented",
                                      subrequest.Verb)).ConfigureAwait(false);
             }
         }

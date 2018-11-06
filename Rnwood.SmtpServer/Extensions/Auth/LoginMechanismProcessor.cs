@@ -55,17 +55,10 @@ namespace Rnwood.SmtpServer.Extensions.Auth
             Completed
         }
 
-        /// <summary>
-        /// Gets or sets the State
-        /// </summary>
         private States State { get; set; }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="data">The data<see cref="string"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public override async Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
+        /// <inheritdoc/>
+        public override async Task<AuthMechanismProcessorStatus> ProcessResponse(string data)
         {
             if (this.State == States.Initial && data != null)
             {
@@ -100,7 +93,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                     this.Credentials = new LoginAuthenticationCredentials(this.username, password);
 
                     AuthenticationResult result =
-                        await this.Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(
+                        await this.Connection.Server.Behaviour.ValidateAuthenticationCredentials(
                             this.Connection,
                                                                                       this.Credentials).ConfigureAwait(false);
 

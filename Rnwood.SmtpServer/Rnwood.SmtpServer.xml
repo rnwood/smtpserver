@@ -177,14 +177,16 @@
         </member>
         <member name="P:Rnwood.SmtpServer.ASCIISevenBitTruncatingEncoding.DecodingFallback.MaxCharCount">
             <summary>
-            Gets the MaxCharCount
+            Gets the maximum number of characters the current <see cref="T:System.Text.DecoderFallback"></see> object can return.
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.ASCIISevenBitTruncatingEncoding.DecodingFallback.CreateFallbackBuffer">
-             <summary>
-            
-             </summary>
-             <returns>The <see cref="T:System.Text.DecoderFallbackBuffer"/></returns>
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Text.DecoderFallbackBuffer"></see> class.
+            </summary>
+            <returns>
+            An object that provides a fallback buffer for a decoder.
+            </returns>
         </member>
         <member name="T:Rnwood.SmtpServer.AsyncEventHandler`1">
             <summary>
@@ -251,6 +253,22 @@
             </summary>
             <param name="message">The error message that explains the reason for the exception.</param>
             <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="T:Rnwood.SmtpServer.CloseNotifyingMemoryStream">
+            <summary>
+            Defines the <see cref="T:Rnwood.SmtpServer.CloseNotifyingMemoryStream" /> which is a memory stream that fires an event when disposed.
+            </summary>
+        </member>
+        <member name="E:Rnwood.SmtpServer.CloseNotifyingMemoryStream.Closing">
+            <summary>
+            Occurs when the stream is disposed.
+            </summary>
+        </member>
+        <member name="M:Rnwood.SmtpServer.CloseNotifyingMemoryStream.Dispose(System.Boolean)">
+            <summary>
+            Releases the unmanaged resources used by the <see cref="T:System.IO.MemoryStream"></see> class and optionally releases the managed resources.
+            </summary>
+            <param name="disposing">The disposing<see cref="T:System.Boolean" /></param>
         </member>
         <member name="T:Rnwood.SmtpServer.CommandEventArgs">
             <summary>
@@ -324,6 +342,12 @@
         <member name="M:Rnwood.SmtpServer.Connection.NewMessage">
             <inheritdoc/>
         </member>
+        <member name="M:Rnwood.SmtpServer.Connection.ReadLine">
+            <inheritdoc/>
+        </member>
+        <member name="M:Rnwood.SmtpServer.Connection.SetReaderEncoding(System.Text.Encoding)">
+            <inheritdoc/>
+        </member>
         <member name="M:Rnwood.SmtpServer.Connection.SetReaderEncodingToDefault">
             <inheritdoc/>
         </member>
@@ -345,7 +369,7 @@
             <param name="server">The server.</param>
             <param name="connectionChannel">The connection channel.</param>
             <param name="verbMap">The verb map.</param>
-            <returns></returns>
+            <returns>An <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.Connection.ProcessAsync">
             <summary>
@@ -401,6 +425,12 @@
             </summary>
             <param name="message">The message<see cref="T:System.String"/></param>
             <param name="innerException">The innerException<see cref="T:System.Exception"/></param>
+        </member>
+        <member name="T:Rnwood.SmtpServer.CurrentDateTimeProvider">
+            <summary>
+            Implements <see cref="T:Rnwood.SmtpServer.ICurrentDateTimeProvider"/> using the real local date time.
+            </summary>
+            <seealso cref="T:Rnwood.SmtpServer.ICurrentDateTimeProvider" />
         </member>
         <member name="M:Rnwood.SmtpServer.CurrentDateTimeProvider.GetCurrentDateTime">
             <inheritdoc/>
@@ -501,6 +531,70 @@
             Gets the Behaviour.
             </summary>
         </member>
+        <member name="T:Rnwood.SmtpServer.DefaultServerBehaviour">
+            <summary>
+            Implements a default <see cref="T:Rnwood.SmtpServer.IServerBehaviour"/> which is suitable for many basic uses.
+            </summary>
+            <seealso cref="T:Rnwood.SmtpServer.IServerBehaviour" />
+        </member>
+        <member name="M:Rnwood.SmtpServer.DefaultServerBehaviour.#ctor(System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Rnwood.SmtpServer.DefaultServerBehaviour"/> class.
+            </summary>
+            <param name="allowRemoteConnections">if set to <c>true</c> remote connections to the server are allowed.</param>
+        </member>
+        <member name="M:Rnwood.SmtpServer.DefaultServerBehaviour.#ctor(System.Boolean,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Rnwood.SmtpServer.DefaultServerBehaviour"/> class.
+            </summary>
+            <param name="allowRemoteConnections">if set to <c>true</c> remote connections to the server are allowed.</param>
+            <param name="portNumber">The port number.</param>
+        </member>
+        <member name="M:Rnwood.SmtpServer.DefaultServerBehaviour.#ctor(System.Boolean,System.Int32,System.Security.Cryptography.X509Certificates.X509Certificate)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Rnwood.SmtpServer.DefaultServerBehaviour"/> class.
+            </summary>
+            <param name="allowRemoteConnections">if set to <c>true</c> remote connections to the server are allowed.</param>
+            <param name="portNumber">The port number.</param>
+            <param name="sslCertificate">The SSL certificate.</param>
+        </member>
+        <member name="M:Rnwood.SmtpServer.DefaultServerBehaviour.#ctor(System.Boolean,System.Security.Cryptography.X509Certificates.X509Certificate)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Rnwood.SmtpServer.DefaultServerBehaviour"/> class.
+            </summary>
+            <param name="allowRemoteConnections">if set to <c>true</c> remote connections to the server are allowed.</param>
+            <param name="sslCertificate">The SSL certificate.</param>
+        </member>
+        <member name="E:Rnwood.SmtpServer.DefaultServerBehaviour.AuthenticationCredentialsValidationRequiredAsync">
+            <summary>
+            Occurs when authentication credential provided by the client need to be validated.
+            </summary>
+        </member>
+        <member name="E:Rnwood.SmtpServer.DefaultServerBehaviour.CommandReceivedEventHandler">
+            <summary>
+            Occurs when a command is received from a client.
+            </summary>
+        </member>
+        <member name="E:Rnwood.SmtpServer.DefaultServerBehaviour.MessageCompletedEventHandler">
+            <summary>
+            Occurs when a message is received but not yet committed.
+            </summary>
+        </member>
+        <member name="E:Rnwood.SmtpServer.DefaultServerBehaviour.MessageReceivedEventHandler">
+            <summary>
+            Occurs when a message is received and committed.
+            </summary>
+        </member>
+        <member name="E:Rnwood.SmtpServer.DefaultServerBehaviour.SessionCompletedEventHandler">
+            <summary>
+            Occurs when a client session is closed.
+            </summary>
+        </member>
+        <member name="E:Rnwood.SmtpServer.DefaultServerBehaviour.SessionStartedEventHandler">
+            <summary>
+            Occurs when a new session is created, when a client connects to the server.
+            </summary>
+        </member>
         <member name="P:Rnwood.SmtpServer.DefaultServerBehaviour.DomainName">
             <inheritdoc/>
         </member>
@@ -567,7 +661,7 @@
         <member name="M:Rnwood.SmtpServer.DefaultServerBehaviour.OnSessionStarted(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.ISession)">
             <inheritdoc/>
         </member>
-        <member name="M:Rnwood.SmtpServer.DefaultServerBehaviour.ValidateAuthenticationCredentialsAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.Extensions.Auth.IAuthenticationCredentials)">
+        <member name="M:Rnwood.SmtpServer.DefaultServerBehaviour.ValidateAuthenticationCredentials(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.Extensions.Auth.IAuthenticationCredentials)">
             <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.AnonymousAuthenticationCredentials">
@@ -582,25 +676,17 @@
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.AnonymousMechanism">
             <summary>
-            Defines the <see cref="T:Rnwood.SmtpServer.Extensions.Auth.AnonymousMechanism" />
+            Defines the <see cref="T:Rnwood.SmtpServer.Extensions.Auth.AnonymousMechanism" /> which implements ANONYMOUS authentication.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.AnonymousMechanism.Identifier">
-            <summary>
-            Gets the Identifier
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.AnonymousMechanism.IsPlainText">
-            <summary>
-            Gets a value indicating whether IsPlainText
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.AnonymousMechanism.CreateAuthMechanismProcessor(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanismProcessor"/></returns>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.AnonymousMechanismProcessor">
             <summary>
@@ -614,21 +700,18 @@
             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.AnonymousMechanismProcessor.Credentials">
-            <summary>
-            Gets the Credentials
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.AnonymousMechanismProcessor.Connection">
             <summary>
-            Gets the Connection
+            Gets the connection this processor is for.
             </summary>
+            <value>
+            The connection.
+            </value>
         </member>
-        <member name="M:Rnwood.SmtpServer.Extensions.Auth.AnonymousMechanismProcessor.ProcessResponseAsync(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="data">The data<see cref="T:System.String"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Extensions.Auth.AnonymousMechanismProcessor.ProcessResponse(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.AuthExtension">
             <summary>
@@ -636,11 +719,13 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthExtension.CreateExtensionProcessor(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Extensions.IExtensionProcessor"/></returns>
+            <inheritdoc />
+        </member>
+        <member name="T:Rnwood.SmtpServer.Extensions.Auth.AuthExtensionProcessor">
+            <summary>
+            Implements the AUTH extension for a connection.
+            </summary>
+            <seealso cref="T:Rnwood.SmtpServer.Extensions.IExtensionProcessor" />
         </member>
         <member name="F:Rnwood.SmtpServer.Extensions.Auth.AuthExtensionProcessor.connection">
             <summary>
@@ -653,21 +738,29 @@
             </summary>
             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
         </member>
+        <member name="P:Rnwood.SmtpServer.Extensions.Auth.AuthExtensionProcessor.MechanismMap">
+            <summary>
+            Gets the mechanism map which manages the list of available auth mechasims.
+            </summary>
+            <value>
+            The mechanism map.
+            </value>
+        </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthExtensionProcessor.GetEHLOKeywords">
             <inheritdoc/>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthExtensionProcessor.IsMechanismEnabled(Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism)">
-             <summary>
-            
-             </summary>
-             <param name="mechanism">The mechanism<see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Determines whether the specified auth mechanism is enabled for the current connection.
+            </summary>
+            <param name="mechanism">The mechanism.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation which yields true if enabled.</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthExtensionProcessor.GetEnabledAuthMechanisms">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Returns a sequence of all enabled auth mechanisms for the current connection.
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.AuthMechanismMap">
             <summary>
@@ -680,23 +773,23 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthMechanismMap.Add(Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism)">
-             <summary>
-            
-             </summary>
-             <param name="mechanism">The mechanism<see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism"/></param>
+            <summary>
+            Adds an auth mechanism to the map.
+            </summary>
+            <param name="mechanism">The mechanism<see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism"/></param>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthMechanismMap.Get(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="identifier">The identifier<see cref="T:System.String"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism"/></returns>
+            <summary>
+            Gets the auth mechanism which has been registered for the given identifier.
+            </summary>
+            <param name="identifier">The identifier<see cref="T:System.String"/></param>
+            <returns>The <see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism"/></returns>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthMechanismMap.GetAll">
-             <summary>
-            
-             </summary>
-             <returns>The <see cref="T:System.Collections.Generic.IEnumerable`1"/></returns>
+            <summary>
+            Gets all registered auth mechanisms.
+            </summary>
+            <returns>The <see cref="T:System.Collections.Generic.IEnumerable`1"/></returns>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.AuthMechanismProcessor">
             <summary>
@@ -711,34 +804,25 @@
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.AuthMechanismProcessor.Connection">
             <summary>
-            Gets the Connection
+            Gets the connection this processor is for
             </summary>
+            <value>
+            The connection.
+            </value>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.AuthMechanismProcessor.Credentials">
-            <summary>
-            Gets or sets the Credentials
-            </summary>
+            <inheritdoc />
         </member>
-        <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthMechanismProcessor.ProcessResponseAsync(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="data">The data<see cref="T:System.String"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthMechanismProcessor.ProcessResponse(System.String)">
+            <inheritdoc />
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthMechanismProcessor.DecodeBase64(System.String)">
             <summary>
-            The DecodeBase64
+            Decodes a base64 encoded ASCII string and throws an exception if invalid.
             </summary>
-            <param name="data">The data<see cref="T:System.String"/></param>
-            <returns>The <see cref="T:System.String"/></returns>
-        </member>
-        <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthMechanismProcessor.EncodeBase64(System.String)">
-            <summary>
-            The EncodeBase64
-            </summary>
-            <param name="asciiString">The asciiString<see cref="T:System.String"/></param>
-            <returns>The <see cref="T:System.String"/></returns>
+            <param name="data">The data.</param>
+            <returns>The decoded ASCII string</returns>
+            <exception cref="T:Rnwood.SmtpServer.BadBase64Exception">If the base64 encoded string is invalid</exception>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.AuthMechanismProcessorStatus">
             <summary>
@@ -776,13 +860,8 @@
             Gets the AuthExtensionProcessor
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Extensions.Auth.AuthVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.CramMd5AuthenticationCredentials">
             <summary>
@@ -813,11 +892,13 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.CramMd5AuthenticationCredentials.ValidateResponse(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="password">The password<see cref="T:System.String"/></param>
-             <returns>The <see cref="T:System.Boolean"/></returns>
+            <summary>
+            Validates the response sent by the client against a password specified in clear text.
+            </summary>
+            <param name="password">The password<see cref="T:System.String" /></param>
+            <returns>
+            The <see cref="T:System.Boolean" />
+            </returns>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.CramMd5AuthenticationRequest">
             <summary>
@@ -849,25 +930,17 @@
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.CramMd5Mechanism">
             <summary>
-            Defines the <see cref="T:Rnwood.SmtpServer.Extensions.Auth.CramMd5Mechanism" />
+            Defines the <see cref="T:Rnwood.SmtpServer.Extensions.Auth.CramMd5Mechanism" /> implementing the CRAM-MD5 auth mechanism.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.CramMd5Mechanism.Identifier">
-            <summary>
-            Gets the Identifier
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.CramMd5Mechanism.IsPlainText">
-            <summary>
-            Gets a value indicating whether IsPlainText
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.CramMd5Mechanism.CreateAuthMechanismProcessor(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanismProcessor"/></returns>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.CramMd5MechanismProcessor">
             <summary>
@@ -921,12 +994,8 @@
             Defines the AwaitingResponse
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.Extensions.Auth.CramMd5MechanismProcessor.ProcessResponseAsync(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="data">The data<see cref="T:System.String"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Extensions.Auth.CramMd5MechanismProcessor.ProcessResponse(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.IAuthenticationCredentials">
             <summary>
@@ -935,42 +1004,46 @@
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism">
             <summary>
-            Defines the <see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism" />
+            Defines the <see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism" /> which implements a single authentication mechansim for the server.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism.Identifier">
             <summary>
-            Gets the Identifier
+            Gets the identifier for this AUTH mechanism as declared by the server in the EHELO response.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism.IsPlainText">
             <summary>
-            Gets a value indicating whether IsPlainText
+            Gets a value indicating whether credentials are sent using plain text.
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism.CreateAuthMechanismProcessor(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanismProcessor"/></returns>
+            <summary>
+            Creates an authentication mechanism processor for the provided connection.
+            </summary>
+            <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection" /></param>
+            <returns>
+            The <see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanismProcessor" />
+            </returns>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanismProcessor">
             <summary>
-            Defines the <see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanismProcessor" />
+            Defines the <see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanismProcessor" /> which implements the state machine for a particular auth mechnism for a single client connection.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanismProcessor.Credentials">
             <summary>
-            Gets the Credentials
+            Gets the Credentials supplied during this authentication.
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanismProcessor.ProcessResponseAsync(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="data">The data<see cref="T:System.String"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanismProcessor.ProcessResponse(System.String)">
+            <summary>
+            Processes a response from the client and returns the result of the auth operation.
+            </summary>
+            <param name="data">The data<see cref="T:System.String" /></param>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task`1" /> representing the async operation
+            </returns>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.LoginAuthenticationCredentials">
             <summary>
@@ -986,25 +1059,17 @@
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.LoginMechanism">
             <summary>
-            Defines the <see cref="T:Rnwood.SmtpServer.Extensions.Auth.LoginMechanism" />
+            Defines the <see cref="T:Rnwood.SmtpServer.Extensions.Auth.LoginMechanism" /> implementing the plain text LOGIN auth mechanism.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.LoginMechanism.Identifier">
-            <summary>
-            Gets the Identifier
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.LoginMechanism.IsPlainText">
-            <summary>
-            Gets a value indicating whether IsPlainText
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.LoginMechanism.CreateAuthMechanismProcessor(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanismProcessor"/></returns>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.LoginMechanismProcessor">
             <summary>
@@ -1047,17 +1112,8 @@
             Defines the Completed
             </summary>
         </member>
-        <member name="P:Rnwood.SmtpServer.Extensions.Auth.LoginMechanismProcessor.State">
-            <summary>
-            Gets or sets the State
-            </summary>
-        </member>
-        <member name="M:Rnwood.SmtpServer.Extensions.Auth.LoginMechanismProcessor.ProcessResponseAsync(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="data">The data<see cref="T:System.String"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Extensions.Auth.LoginMechanismProcessor.ProcessResponse(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.PlainAuthenticationCredentials">
             <summary>
@@ -1073,25 +1129,17 @@
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.PlainMechanism">
             <summary>
-            Defines the <see cref="T:Rnwood.SmtpServer.Extensions.Auth.PlainMechanism" />
+            Defines the <see cref="T:Rnwood.SmtpServer.Extensions.Auth.PlainMechanism" /> which implements the PLAIN auth mechnism.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.PlainMechanism.Identifier">
-            <summary>
-            Gets the Identifier
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.PlainMechanism.IsPlainText">
-            <summary>
-            Gets a value indicating whether IsPlainText
-            </summary>
+            <inheritdoc/>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.PlainMechanism.CreateAuthMechanismProcessor(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Extensions.Auth.IAuthMechanismProcessor"/></returns>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.PlainMechanismProcessor">
             <summary>
@@ -1124,12 +1172,8 @@
             Gets or sets the State
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.Extensions.Auth.PlainMechanismProcessor.ProcessResponseAsync(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="data">The data<see cref="T:System.String"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Extensions.Auth.PlainMechanismProcessor.ProcessResponse(System.String)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.UsernameAndPasswordAuthenticationCredentials">
             <summary>
@@ -1185,22 +1229,11 @@
             Initializes a new instance of the <see cref="T:Rnwood.SmtpServer.Extensions.EightBitMimeDataVerb"/> class.
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.Extensions.EightBitMimeDataVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Extensions.EightBitMimeDataVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.EightBitMimeDataVerb.SetParameter(Rnwood.SmtpServer.IConnection,System.String,System.String)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="key">The key<see cref="T:System.String"/></param>
-             <param name="value">The value<see cref="T:System.String"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.EightBitMimeExtension">
             <summary>
@@ -1213,11 +1246,7 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.EightBitMimeExtension.CreateExtensionProcessor(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Extensions.IExtensionProcessor"/></returns>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.EightBitMimeExtension.EightBitMimeExtensionProcessor">
             <summary>
@@ -1231,10 +1260,7 @@
             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.EightBitMimeExtension.EightBitMimeExtensionProcessor.GetEHLOKeywords">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.ExtensionProcessor">
             <summary>
@@ -1253,10 +1279,10 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.ExtensionProcessor.GetEHLOKeywords">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Returns the EHLO keywords which advertise this extension to the client.
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.IExtension">
             <summary>
@@ -1264,11 +1290,13 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.IExtension.CreateExtensionProcessor(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Extensions.IExtensionProcessor"/></returns>
+            <summary>
+            Creates the extension processor for a connection.
+            </summary>
+            <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection" /></param>
+            <returns>
+            The <see cref="T:Rnwood.SmtpServer.Extensions.IExtensionProcessor" />
+            </returns>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.IExtensionProcessor">
             <summary>
@@ -1276,10 +1304,10 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.IExtensionProcessor.GetEHLOKeywords">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Returns a sequence of EHLO keywords which are output to advertise the support for this extension to the client.
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.SizeExtension">
             <summary>
@@ -1287,11 +1315,7 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.SizeExtension.CreateExtensionProcessor(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Extensions.IExtensionProcessor"/></returns>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.SizeExtension.SizeExtensionProcessor">
             <summary>
@@ -1306,23 +1330,17 @@
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.SizeExtension.SizeExtensionProcessor.Connection">
             <summary>
-            Gets the Connection
+            Gets the connection this processor is for
             </summary>
+            <value>
+            The connection.
+            </value>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.SizeExtension.SizeExtensionProcessor.GetEHLOKeywords">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <inheritdoc/>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.SizeExtension.SizeExtensionProcessor.SetParameter(Rnwood.SmtpServer.IConnection,System.String,System.String)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="key">The key<see cref="T:System.String"/></param>
-             <param name="value">The value<see cref="T:System.String"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.StartTlsExtension">
             <summary>
@@ -1330,11 +1348,7 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.StartTlsExtension.CreateExtensionProcessor(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Extensions.IExtensionProcessor"/></returns>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.StartTlsExtension.StartTlsExtensionProcessor">
             <summary>
@@ -1349,27 +1363,22 @@
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.StartTlsExtension.StartTlsExtensionProcessor.Connection">
             <summary>
-            Gets the Connection
+            Gets the connection this processor is for
             </summary>
+            <value>
+            The connection.
+            </value>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.StartTlsExtension.StartTlsExtensionProcessor.GetEHLOKeywords">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.StartTlsVerb">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.Extensions.StartTlsVerb" />
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.Extensions.StartTlsVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Extensions.StartTlsVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.AuthenticationResult">
             <summary>
@@ -1394,21 +1403,6 @@
         <member name="T:Rnwood.SmtpServer.FileMessage">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.FileMessage" />
-            </summary>
-        </member>
-        <member name="F:Rnwood.SmtpServer.FileMessage.file">
-            <summary>
-            Defines the file
-            </summary>
-        </member>
-        <member name="F:Rnwood.SmtpServer.FileMessage.keepOnDispose">
-            <summary>
-            Defines the keepOnDispose
-            </summary>
-        </member>
-        <member name="F:Rnwood.SmtpServer.FileMessage.to">
-            <summary>
-            Defines the to
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.FileMessage.#ctor(System.IO.FileInfo,System.Boolean)">
@@ -1453,6 +1447,22 @@
             Gets the To
             </summary>
         </member>
+        <member name="P:Rnwood.SmtpServer.FileMessage.File">
+            <summary>
+            Gets the file.
+            </summary>
+            <value>
+            The file.
+            </value>
+        </member>
+        <member name="P:Rnwood.SmtpServer.FileMessage.RecipientsList">
+            <summary>
+            Gets the recipients list.
+            </summary>
+            <value>
+            The recipients list.
+            </value>
+        </member>
         <member name="M:Rnwood.SmtpServer.FileMessage.Dispose">
             <summary>
             Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -1472,65 +1482,55 @@
             </summary>
             <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         </member>
-        <member name="P:Rnwood.SmtpServer.FileMessage.Builder.DeclaredMessageSize">
+        <member name="T:Rnwood.SmtpServer.FileMessageBuilder">
             <summary>
-            Gets or sets the DeclaredMessageSize
+            Implements a message builder which will build a <see cref="T:Rnwood.SmtpServer.FileMessage"/>
             </summary>
+            <seealso cref="T:Rnwood.SmtpServer.IMessageBuilder" />
         </member>
-        <member name="P:Rnwood.SmtpServer.FileMessage.Builder.EightBitTransport">
+        <member name="M:Rnwood.SmtpServer.FileMessageBuilder.#ctor(System.IO.FileInfo,System.Boolean)">
             <summary>
-            Gets or sets a value indicating whether EightBitTransport
+            Initializes a new instance of the <see cref="T:Rnwood.SmtpServer.FileMessageBuilder"/> class.
             </summary>
+            <param name="file">The file.</param>
+            <param name="keepOnDispose">if set to <c>true</c> [keep on dispose].</param>
         </member>
-        <member name="P:Rnwood.SmtpServer.FileMessage.Builder.From">
-            <summary>
-            Gets or sets the From
-            </summary>
+        <member name="P:Rnwood.SmtpServer.FileMessageBuilder.DeclaredMessageSize">
+            <inheritdoc/>
         </member>
-        <member name="P:Rnwood.SmtpServer.FileMessage.Builder.ReceivedDate">
-            <summary>
-            Gets or sets the ReceivedDate
-            </summary>
+        <member name="P:Rnwood.SmtpServer.FileMessageBuilder.EightBitTransport">
+            <inheritdoc/>
         </member>
-        <member name="P:Rnwood.SmtpServer.FileMessage.Builder.SecureConnection">
-            <summary>
-            Gets or sets a value indicating whether SecureConnection
-            </summary>
+        <member name="P:Rnwood.SmtpServer.FileMessageBuilder.From">
+            <inheritdoc/>
         </member>
-        <member name="P:Rnwood.SmtpServer.FileMessage.Builder.Session">
-            <summary>
-            Gets or sets the Session
-            </summary>
+        <member name="P:Rnwood.SmtpServer.FileMessageBuilder.ReceivedDate">
+            <inheritdoc/>
         </member>
-        <member name="P:Rnwood.SmtpServer.FileMessage.Builder.Recipients">
-            <summary>
-            Gets the To
-            </summary>
+        <member name="P:Rnwood.SmtpServer.FileMessageBuilder.SecureConnection">
+            <inheritdoc/>
         </member>
-        <member name="M:Rnwood.SmtpServer.FileMessage.Builder.GetData">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="P:Rnwood.SmtpServer.FileMessageBuilder.Session">
+            <inheritdoc/>
         </member>
-        <member name="M:Rnwood.SmtpServer.FileMessage.Builder.ToMessage">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="P:Rnwood.SmtpServer.FileMessageBuilder.Recipients">
+            <inheritdoc/>
         </member>
-        <member name="M:Rnwood.SmtpServer.FileMessage.Builder.WriteData">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.FileMessageBuilder.GetData">
+            <inheritdoc/>
         </member>
-        <member name="M:Rnwood.SmtpServer.FileMessage.Builder.Dispose">
+        <member name="M:Rnwood.SmtpServer.FileMessageBuilder.ToMessage">
+            <inheritdoc/>
+        </member>
+        <member name="M:Rnwood.SmtpServer.FileMessageBuilder.WriteData">
+            <inheritdoc/>
+        </member>
+        <member name="M:Rnwood.SmtpServer.FileMessageBuilder.Dispose">
             <summary>
             Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.FileMessage.Builder.Dispose(System.Boolean)">
+        <member name="M:Rnwood.SmtpServer.FileMessageBuilder.Dispose(System.Boolean)">
             <summary>
             Releases unmanaged and - optionally - managed resources.
             </summary>
@@ -1551,11 +1551,11 @@
             <param name="file">The file<see cref="T:System.IO.FileInfo"/></param>
             <param name="keepOnDispose">The keepOnDispose<see cref="T:System.Boolean"/></param>
         </member>
+        <member name="M:Rnwood.SmtpServer.FileSession.AppendToLog(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="M:Rnwood.SmtpServer.FileSession.GetLog">
-            <summary>
-            Gets a reader which will read from the session log.
-            </summary>
-            <returns>A <see cref="T:System.IO.TextReader"/> which reads from the sesion log.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:Rnwood.SmtpServer.FileSession.Dispose(System.Boolean)">
             <summary>
@@ -1566,6 +1566,11 @@
         <member name="T:Rnwood.SmtpServer.IConnection">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.IConnection" />
+            </summary>
+        </member>
+        <member name="E:Rnwood.SmtpServer.IConnection.ConnectionClosedEventHandler">
+            <summary>
+            Occurs when connection is closed.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.IConnection.CurrentMessage">
@@ -1604,11 +1609,6 @@
             Gets the VerbMap
             </summary>
         </member>
-        <member name="E:Rnwood.SmtpServer.IConnection.ConnectionClosedEventHandler">
-            <summary>
-            Occurs when connection is closed.
-            </summary>
-        </member>
         <member name="M:Rnwood.SmtpServer.IConnection.AbortMessage">
             <summary>
             Aborts the current message started by the MAIL FROM command.
@@ -1623,22 +1623,22 @@
             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IConnection.CloseConnection">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Closes the connection
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IConnection.CommitMessage">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Commits the current message.
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IConnection.NewMessage">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Creates and returns a new message and sets it as the current message.
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IConnection.ReadLine">
             <summary>
@@ -1664,6 +1664,12 @@
             </summary>
             <param name="response">The response<see cref="T:Rnwood.SmtpServer.SmtpResponse"/></param>
             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        </member>
+        <member name="T:Rnwood.SmtpServer.IConnectionChannel">
+            <summary>
+            Represents a channel connecting the client and server.
+            </summary>
+            <seealso cref="T:System.IDisposable" />
         </member>
         <member name="E:Rnwood.SmtpServer.IConnectionChannel.ClosedEventHandler">
             <summary>
@@ -1754,10 +1760,10 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.ICurrentDateTimeProvider.GetCurrentDateTime">
-             <summary>
-            
-             </summary>
-             <returns>The <see cref="T:System.DateTime"/></returns>
+            <summary>
+            Returns the current date and time.
+            </summary>
+            <returns>The <see cref="T:System.DateTime"/></returns>
         </member>
         <member name="T:Rnwood.SmtpServer.IEditableSession">
             <summary>
@@ -1815,16 +1821,16 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.IEditableSession.AddMessage(Rnwood.SmtpServer.IMessage)">
-             <summary>
-            
-             </summary>
-             <param name="message">The message<see cref="T:Rnwood.SmtpServer.IMessage"/></param>
+            <summary>
+            Adds a message to this session.
+            </summary>
+            <param name="message">The message<see cref="T:Rnwood.SmtpServer.IMessage"/></param>
         </member>
         <member name="M:Rnwood.SmtpServer.IEditableSession.AppendToLog(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="text">The text<see cref="T:System.String"/></param>
+            <summary>
+            Appends a line of text to the session log.
+            </summary>
+            <param name="text">The text<see cref="T:System.String"/></param>
         </member>
         <member name="T:Rnwood.SmtpServer.IMessage">
             <summary>
@@ -1879,12 +1885,12 @@
         </member>
         <member name="P:Rnwood.SmtpServer.IMessageBuilder.DeclaredMessageSize">
             <summary>
-            Gets or sets the DeclaredMessageSize
+            Gets or sets the message size declared by the client using the SIZE extension.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.IMessageBuilder.EightBitTransport">
             <summary>
-            Gets or sets a value indicating whether EightBitTransport
+            Gets or sets a value indicating whether the message was received over an 8-bit clean channel.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.IMessageBuilder.From">
@@ -1894,36 +1900,46 @@
         </member>
         <member name="P:Rnwood.SmtpServer.IMessageBuilder.ReceivedDate">
             <summary>
-            Gets or sets the ReceivedDate
+            Gets or sets the date the message was received.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.IMessageBuilder.SecureConnection">
             <summary>
-            Gets or sets a value indicating whether SecureConnection
+            Gets or sets a value indicating whether the message is being received over a secure connection.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.IMessageBuilder.Session">
             <summary>
-            Gets or sets the Session
+            Gets or sets the Session this message is being received in.
             </summary>
         </member>
+        <member name="P:Rnwood.SmtpServer.IMessageBuilder.Recipients">
+            <summary>
+            Gets the recipients of the message as specified in the RCPT TO command.
+            </summary>
+            <value>
+            The recipients.
+            </value>
+        </member>
         <member name="M:Rnwood.SmtpServer.IMessageBuilder.GetData">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Gets a read only stream containing the message data.
+            </summary>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task`1" /> representing the async operation
+            </returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IMessageBuilder.ToMessage">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Turns the editable messge into a read only message.
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IMessageBuilder.WriteData">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Returns a stream which can be used to write to the message data.
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="T:Rnwood.SmtpServer.IParameterProcessor">
             <summary>
@@ -1931,13 +1947,13 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.IParameterProcessor.SetParameter(Rnwood.SmtpServer.IConnection,System.String,System.String)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="key">The key<see cref="T:System.String"/></param>
-             <param name="value">The value<see cref="T:System.String"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Processes the parameter which has the <paramref name="key"/> and <paramref name="value"/> specified.
+            </summary>
+            <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
+            <param name="key">The key<see cref="T:System.String"/></param>
+            <param name="value">The value<see cref="T:System.String"/></param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="T:Rnwood.SmtpServer.IRandomIntegerGenerator">
             <summary>
@@ -1945,12 +1961,14 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.IRandomIntegerGenerator.GenerateRandomInteger(System.Int32,System.Int32)">
-             <summary>
-            
-             </summary>
-             <param name="minValue">The minValue<see cref="T:System.Int32"/></param>
-             <param name="maxValue">The maxValue<see cref="T:System.Int32"/></param>
-             <returns>The <see cref="T:System.Int32"/></returns>
+            <summary>
+            Generates a random integer in a specfied range.
+            </summary>
+            <param name="minValue">The minValue<see cref="T:System.Int32" /></param>
+            <param name="maxValue">The maxValue<see cref="T:System.Int32" /></param>
+            <returns>
+            The <see cref="T:System.Int32" />
+            </returns>
         </member>
         <member name="T:Rnwood.SmtpServer.IServerBehaviour">
             <summary>
@@ -1970,7 +1988,7 @@
         </member>
         <member name="P:Rnwood.SmtpServer.IServerBehaviour.MaximumNumberOfSequentialBadCommands">
             <summary>
-            Gets the MaximumNumberOfSequentialBadCommands
+            Gets the max number of sequential bad commands before the client will be disconnected.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.IServerBehaviour.PortNumber">
@@ -1979,46 +1997,48 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.GetDefaultEncoding(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Gets the default encoding for the server which will be used for all new connections until overridden by an extension etc.
+            </summary>
+            <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection" /></param>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task`1" /> representing the async operation
+            </returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.GetExtensions(Rnwood.SmtpServer.IConnectionChannel)">
             <summary>
             Gets the extensions that should be enabled for the specified connection.
             </summary>
-            <param name="connectionChannel">The connectionChannel<see cref="T:Rnwood.SmtpServer.IConnectionChannel"/></param>
-            <returns></returns>
+            <param name="connectionChannel">The connectionChannel<see cref="T:Rnwood.SmtpServer.IConnectionChannel" /></param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> resulting in a sequence of <see cref="T:Rnwood.SmtpServer.Extensions.IExtension"/> for the extensions.</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.GetMaximumMessageSize(Rnwood.SmtpServer.IConnection)">
             <summary>
             Gets the maximum allowed size of the message for the specified connection.
             </summary>
             <param name="connection">The connection.</param>
-            <returns></returns>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.GetReceiveTimeout(Rnwood.SmtpServer.IConnectionChannel)">
             <summary>
             Gets the receive timeout that should be used for the specified connection.
             </summary>
             <param name="connectionChannel">The connection channel.</param>
-            <returns></returns>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.GetSendTimeout(Rnwood.SmtpServer.IConnectionChannel)">
-             <summary>
-            
-             </summary>
-             <param name="connectionChannel">The connectionChannel<see cref="T:Rnwood.SmtpServer.IConnectionChannel"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Gets the send timeout that should be used for the specified connection.
+            </summary>
+            <param name="connectionChannel">The connectionChannel<see cref="T:Rnwood.SmtpServer.IConnectionChannel"/></param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.GetSSLCertificate(Rnwood.SmtpServer.IConnection)">
             <summary>
             Gets the SSL certificate that should be used for the specified connection.
             </summary>
             <param name="connection">The connection.</param>
-            <returns></returns>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.IsAuthMechanismEnabled(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism)">
             <summary>
@@ -2029,11 +2049,11 @@
             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.IsSessionLoggingEnabled(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Gets a value indicating whether session logging should be enabled for the given connection.
+            </summary>
+            <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.IsSSLEnabled(Rnwood.SmtpServer.IConnection)">
             <summary>
@@ -2053,42 +2073,42 @@
             <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.OnCreateNewMessage(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Called when a new message is started using the MAIL FROM command and must returns the instance of <see cref="T:Rnwood.SmtpServer.IMessageBuilder"/> which will be used to record the message.
+            </summary>
+            <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.OnCreateNewSession(Rnwood.SmtpServer.IConnectionChannel)">
-             <summary>
-            
-             </summary>
-             <param name="connectionChannel">The connectionChannel<see cref="T:Rnwood.SmtpServer.IConnectionChannel"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Called when a new session is started and must return an object which is used to record details about that session.
+            </summary>
+            <param name="connectionChannel">The connectionChannel<see cref="T:Rnwood.SmtpServer.IConnectionChannel"/></param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.OnMessageCompleted(Rnwood.SmtpServer.IConnection)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Called when a message is received but not committed.
+            </summary>
+            <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.OnMessageReceived(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.IMessage)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="message">The message<see cref="T:Rnwood.SmtpServer.IMessage"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Called when a new message is received by the server.
+            </summary>
+            <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
+            <param name="message">The message<see cref="T:Rnwood.SmtpServer.IMessage"/></param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.OnMessageRecipientAdding(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.IMessageBuilder,System.String)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="message">The message<see cref="T:Rnwood.SmtpServer.IMessageBuilder"/></param>
-             <param name="recipient">The recipient<see cref="T:System.String"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <summary>
+            Called when a new recipient is requested for a message using the MAIL FROM command.
+            </summary>
+            <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
+            <param name="message">The message<see cref="T:Rnwood.SmtpServer.IMessageBuilder"/></param>
+            <param name="recipient">The recipient<see cref="T:System.String"/></param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.OnMessageStart(Rnwood.SmtpServer.IConnection,System.String)">
             <summary>
@@ -2114,14 +2134,14 @@
             <param name="session">The session.</param>
             <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
         </member>
-        <member name="M:Rnwood.SmtpServer.IServerBehaviour.ValidateAuthenticationCredentialsAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.Extensions.Auth.IAuthenticationCredentials)">
+        <member name="M:Rnwood.SmtpServer.IServerBehaviour.ValidateAuthenticationCredentials(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.Extensions.Auth.IAuthenticationCredentials)">
             <summary>
             Validates the authentication request to determine if the supplied details
             are correct.
             </summary>
             <param name="connection">The connection.</param>
             <param name="authenticationRequest">The authentication request.</param>
-            <returns></returns>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the async operation.</returns>
         </member>
         <member name="T:Rnwood.SmtpServer.ISession">
             <summary>
@@ -2204,6 +2224,19 @@
             Gets the Behaviour
             </summary>
         </member>
+        <member name="T:Rnwood.SmtpServer.Logging">
+            <summary>
+            Helper class implementing logging
+            </summary>
+        </member>
+        <member name="P:Rnwood.SmtpServer.Logging.Factory">
+            <summary>
+            Gets the logging factory.
+            </summary>
+            <value>
+            The factory.
+            </value>
+        </member>
         <member name="T:Rnwood.SmtpServer.MemoryMessage">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.MemoryMessage" />
@@ -2249,6 +2282,22 @@
             Gets the recipient of the message as specified by the client when sending RCPT TO command.
             </summary>
         </member>
+        <member name="P:Rnwood.SmtpServer.MemoryMessage.Data">
+            <summary>
+            Gets or sets the message data.
+            </summary>
+            <value>
+            The data.
+            </value>
+        </member>
+        <member name="P:Rnwood.SmtpServer.MemoryMessage.RecipientsList">
+            <summary>
+            Gets the recipients list.
+            </summary>
+            <value>
+            The recipients list.
+            </value>
+        </member>
         <member name="M:Rnwood.SmtpServer.MemoryMessage.GetData">
             <summary>
             Gets a stream which returns the message data.
@@ -2257,101 +2306,10 @@
             A <see cref="T:System.Threading.Tasks.Task`1" /> representing the async operation
             </returns>
         </member>
-        <member name="T:Rnwood.SmtpServer.MemoryMessage.Builder">
-            <summary>
-            Defines the <see cref="T:Rnwood.SmtpServer.MemoryMessage.Builder" />
-            </summary>
-        </member>
-        <member name="M:Rnwood.SmtpServer.MemoryMessage.Builder.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:Rnwood.SmtpServer.MemoryMessage.Builder"/> class.
-            </summary>
-        </member>
-        <member name="M:Rnwood.SmtpServer.MemoryMessage.Builder.#ctor(Rnwood.SmtpServer.MemoryMessage)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Rnwood.SmtpServer.MemoryMessage.Builder"/> class.
-            </summary>
-            <param name="message">The message<see cref="T:Rnwood.SmtpServer.MemoryMessage"/></param>
-        </member>
-        <member name="P:Rnwood.SmtpServer.MemoryMessage.Builder.DeclaredMessageSize">
-            <summary>
-            Gets or sets the DeclaredMessageSize
-            </summary>
-        </member>
-        <member name="P:Rnwood.SmtpServer.MemoryMessage.Builder.EightBitTransport">
-            <summary>
-            Gets or sets a value indicating whether EightBitTransport
-            </summary>
-        </member>
-        <member name="P:Rnwood.SmtpServer.MemoryMessage.Builder.From">
-            <summary>
-            Gets or sets the From
-            </summary>
-        </member>
-        <member name="P:Rnwood.SmtpServer.MemoryMessage.Builder.ReceivedDate">
-            <summary>
-            Gets or sets the ReceivedDate
-            </summary>
-        </member>
-        <member name="P:Rnwood.SmtpServer.MemoryMessage.Builder.SecureConnection">
-            <summary>
-            Gets or sets a value indicating whether SecureConnection
-            </summary>
-        </member>
-        <member name="P:Rnwood.SmtpServer.MemoryMessage.Builder.Session">
-            <summary>
-            Gets or sets the Session
-            </summary>
-        </member>
-        <member name="P:Rnwood.SmtpServer.MemoryMessage.Builder.Recipients">
-            <summary>
-            Gets the To
-            </summary>
-        </member>
-        <member name="M:Rnwood.SmtpServer.MemoryMessage.Builder.GetData">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
-        </member>
-        <member name="M:Rnwood.SmtpServer.MemoryMessage.Builder.ToMessage">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
-        </member>
-        <member name="M:Rnwood.SmtpServer.MemoryMessage.Builder.WriteData">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
-        </member>
-        <member name="T:Rnwood.SmtpServer.MemoryMessage.Builder.CloseNotifyingMemoryStream">
-            <summary>
-            Defines the <see cref="T:Rnwood.SmtpServer.MemoryMessage.Builder.CloseNotifyingMemoryStream" />
-            </summary>
-        </member>
-        <member name="E:Rnwood.SmtpServer.MemoryMessage.Builder.CloseNotifyingMemoryStream.Closing">
-            <summary>
-            Defines the Closing
-            </summary>
-        </member>
-        <member name="M:Rnwood.SmtpServer.MemoryMessage.Builder.CloseNotifyingMemoryStream.Dispose(System.Boolean)">
-             <summary>
-            
-             </summary>
-             <param name="disposing">The disposing<see cref="T:System.Boolean"/></param>
-        </member>
-        <member name="M:Rnwood.SmtpServer.MemoryMessage.Builder.Dispose">
+        <member name="M:Rnwood.SmtpServer.MemoryMessage.Dispose">
             <summary>
             Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
             </summary>
-        </member>
-        <member name="M:Rnwood.SmtpServer.MemoryMessage.Builder.Dispose(System.Boolean)">
-            <summary>
-            Releases unmanaged and - optionally - managed resources.
-            </summary>
-            <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         </member>
         <member name="M:Rnwood.SmtpServer.MemoryMessage.Dispose(System.Boolean)">
             <summary>
@@ -2359,10 +2317,62 @@
             </summary>
             <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         </member>
-        <member name="M:Rnwood.SmtpServer.MemoryMessage.Dispose">
+        <member name="T:Rnwood.SmtpServer.MemoryMessageBuilder">
+            <summary>
+            Defines the <see cref="T:Rnwood.SmtpServer.MemoryMessageBuilder" />
+            </summary>
+        </member>
+        <member name="M:Rnwood.SmtpServer.MemoryMessageBuilder.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Rnwood.SmtpServer.MemoryMessageBuilder"/> class.
+            </summary>
+        </member>
+        <member name="M:Rnwood.SmtpServer.MemoryMessageBuilder.#ctor(Rnwood.SmtpServer.MemoryMessage)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Rnwood.SmtpServer.MemoryMessageBuilder"/> class.
+            </summary>
+            <param name="message">The message<see cref="T:Rnwood.SmtpServer.MemoryMessage"/></param>
+        </member>
+        <member name="P:Rnwood.SmtpServer.MemoryMessageBuilder.DeclaredMessageSize">
+            <inheritdoc/>
+        </member>
+        <member name="P:Rnwood.SmtpServer.MemoryMessageBuilder.EightBitTransport">
+            <inheritdoc/>
+        </member>
+        <member name="P:Rnwood.SmtpServer.MemoryMessageBuilder.From">
+            <inheritdoc/>
+        </member>
+        <member name="P:Rnwood.SmtpServer.MemoryMessageBuilder.ReceivedDate">
+            <inheritdoc/>
+        </member>
+        <member name="P:Rnwood.SmtpServer.MemoryMessageBuilder.SecureConnection">
+            <inheritdoc/>
+        </member>
+        <member name="P:Rnwood.SmtpServer.MemoryMessageBuilder.Session">
+            <inheritdoc/>
+        </member>
+        <member name="P:Rnwood.SmtpServer.MemoryMessageBuilder.Recipients">
+            <inheritdoc/>
+        </member>
+        <member name="M:Rnwood.SmtpServer.MemoryMessageBuilder.GetData">
+            <inheritdoc/>
+        </member>
+        <member name="M:Rnwood.SmtpServer.MemoryMessageBuilder.ToMessage">
+            <inheritdoc/>
+        </member>
+        <member name="M:Rnwood.SmtpServer.MemoryMessageBuilder.WriteData">
+            <inheritdoc/>
+        </member>
+        <member name="M:Rnwood.SmtpServer.MemoryMessageBuilder.Dispose">
             <summary>
             Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
             </summary>
+        </member>
+        <member name="M:Rnwood.SmtpServer.MemoryMessageBuilder.Dispose(System.Boolean)">
+            <summary>
+            Releases unmanaged and - optionally - managed resources.
+            </summary>
+            <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         </member>
         <member name="T:Rnwood.SmtpServer.MemorySession">
             <summary>
@@ -2381,17 +2391,14 @@
             <param name="clientAddress">The clientAddress<see cref="T:System.Net.IPAddress"/></param>
             <param name="startDate">The startDate<see cref="T:System.DateTime"/></param>
         </member>
-        <member name="M:Rnwood.SmtpServer.MemorySession.Dispose(System.Boolean)">
-            <summary>
-            Releases unmanaged and - optionally - managed resources.
-            </summary>
-            <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        <member name="M:Rnwood.SmtpServer.MemorySession.AppendToLog(System.String)">
+            <inheritdoc />
         </member>
         <member name="M:Rnwood.SmtpServer.MemorySession.GetLog">
-             <summary>
-            
-             </summary>
-             <returns>The <see cref="T:System.IO.TextReader"/></returns>
+            <inheritdoc />
+        </member>
+        <member name="M:Rnwood.SmtpServer.MemorySession.Dispose(System.Boolean)">
+            <inheritdoc />
         </member>
         <member name="T:Rnwood.SmtpServer.MessageEventArgs">
             <summary>
@@ -2432,33 +2439,34 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.Parameter.Equals(System.Object)">
-             <summary>
-            
-             </summary>
-             <param name="obj">The obj<see cref="T:System.Object"/></param>
-             <returns>The <see cref="T:System.Boolean"/></returns>
+            <summary>
+            Determines whether the specified <see cref="T:System.Object" />, is equal to this instance.
+            </summary>
+            <param name="obj">The obj<see cref="T:System.Object" /></param>
+            <returns>
+            The <see cref="T:System.Boolean" />
+            </returns>
         </member>
         <member name="M:Rnwood.SmtpServer.Parameter.Equals(Rnwood.SmtpServer.Parameter)">
-             <summary>
-            
-             </summary>
-             <param name="other">The other<see cref="T:Rnwood.SmtpServer.Parameter"/></param>
-             <returns>The <see cref="T:System.Boolean"/></returns>
+            <summary>
+            Indicates whether the current object is equal to another object of the same type.
+            </summary>
+            <param name="other">The other<see cref="T:Rnwood.SmtpServer.Parameter" /></param>
+            <returns>
+            The <see cref="T:System.Boolean" />
+            </returns>
         </member>
         <member name="M:Rnwood.SmtpServer.Parameter.GetHashCode">
-             <summary>
-            
-             </summary>
-             <returns>The <see cref="T:System.Int32"/></returns>
+            <summary>
+            Returns a hash code for this instance.
+            </summary>
+            <returns>
+            The <see cref="T:System.Int32" />
+            </returns>
         </member>
         <member name="T:Rnwood.SmtpServer.ParameterParser">
             <summary>
-            Defines the <see cref="T:Rnwood.SmtpServer.ParameterParser" />
-            </summary>
-        </member>
-        <member name="F:Rnwood.SmtpServer.ParameterParser.parameters">
-            <summary>
-            Defines the parameters
+            Defines the <see cref="T:Rnwood.SmtpServer.ParameterParser" /> which implements parsing of A=1 B=2 type string for command parameters.
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.ParameterParser.#ctor(System.String[])">
@@ -2469,14 +2477,8 @@
         </member>
         <member name="P:Rnwood.SmtpServer.ParameterParser.Parameters">
             <summary>
-            Gets the Parameters
+            Gets the parameters which have been parsed from the arguments.
             </summary>
-        </member>
-        <member name="M:Rnwood.SmtpServer.ParameterParser.Parse(System.String[])">
-             <summary>
-            
-             </summary>
-             <param name="tokens">The tokens<see cref="T:System.String"/></param>
         </member>
         <member name="T:Rnwood.SmtpServer.ParameterProcessorMap">
             <summary>
@@ -2522,18 +2524,8 @@
             Defines the <see cref="T:Rnwood.SmtpServer.RandomIntegerGenerator" />
             </summary>
         </member>
-        <member name="F:Rnwood.SmtpServer.RandomIntegerGenerator.random">
-            <summary>
-            Defines the random
-            </summary>
-        </member>
         <member name="M:Rnwood.SmtpServer.RandomIntegerGenerator.GenerateRandomInteger(System.Int32,System.Int32)">
-             <summary>
-            
-             </summary>
-             <param name="minValue">The minValue<see cref="T:System.Int32"/></param>
-             <param name="maxValue">The maxValue<see cref="T:System.Int32"/></param>
-             <returns>The <see cref="T:System.Int32"/></returns>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.ServerStopBehaviour">
             <summary>
@@ -2593,12 +2585,7 @@
         </member>
         <member name="T:Rnwood.SmtpServer.SmtpCommand">
             <summary>
-            Defines the <see cref="T:Rnwood.SmtpServer.SmtpCommand" />
-            </summary>
-        </member>
-        <member name="F:Rnwood.SmtpServer.SmtpCommand.COMMANDREGEX">
-            <summary>
-            Defines the COMMANDREGEX
+            Defines the <see cref="T:Rnwood.SmtpServer.SmtpCommand" /> which implements parsing of an SMTP command received from client to server.
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.SmtpCommand.#ctor(System.String)">
@@ -2609,7 +2596,7 @@
         </member>
         <member name="P:Rnwood.SmtpServer.SmtpCommand.ArgumentsText">
             <summary>
-            Gets the ArgumentsText
+            Gets the arguments supplied after the VERB in the command as a single string.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.SmtpCommand.IsEmpty">
@@ -2619,7 +2606,7 @@
         </member>
         <member name="P:Rnwood.SmtpServer.SmtpCommand.IsValid">
             <summary>
-            Gets a value indicating whether IsValid
+            Gets a value indicating whether this command is valid - i.e. matching the pattern allowed.
             </summary>
         </member>
         <member name="P:Rnwood.SmtpServer.SmtpCommand.Text">
@@ -2633,24 +2620,30 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.SmtpCommand.Equals(System.Object)">
-             <summary>
-            
-             </summary>
-             <param name="obj">The obj<see cref="T:System.Object"/></param>
-             <returns>The <see cref="T:System.Boolean"/></returns>
+            <summary>
+            Determines whether the specified <see cref="T:System.Object" />, is equal to this instance.
+            </summary>
+            <param name="obj">The obj<see cref="T:System.Object" /></param>
+            <returns>
+            The <see cref="T:System.Boolean" />
+            </returns>
         </member>
         <member name="M:Rnwood.SmtpServer.SmtpCommand.Equals(Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="other">The other<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>The <see cref="T:System.Boolean"/></returns>
+            <summary>
+            Indicates whether the current object is equal to another object of the same type.
+            </summary>
+            <param name="other">The other<see cref="T:Rnwood.SmtpServer.SmtpCommand" /></param>
+            <returns>
+            The <see cref="T:System.Boolean" />
+            </returns>
         </member>
         <member name="M:Rnwood.SmtpServer.SmtpCommand.GetHashCode">
-             <summary>
-            
-             </summary>
-             <returns>The <see cref="T:System.Int32"/></returns>
+            <summary>
+            Returns a hash code for this instance.
+            </summary>
+            <returns>
+            The <see cref="T:System.Int32" />
+            </returns>
         </member>
         <member name="T:Rnwood.SmtpServer.SmtpResponse">
             <summary>
@@ -2842,17 +2835,11 @@
             </summary>
             <param name="disposing">The disposing<see cref="T:System.Boolean" /></param>
         </member>
-        <member name="M:Rnwood.SmtpServer.SmtpServer.AcceptNextClient">
-             <summary>
-            
-             </summary>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
-        </member>
         <member name="M:Rnwood.SmtpServer.SmtpServer.CreateVerbMap">
             <summary>
             Creates the verb map which represent the commands implemented by the server.
             </summary>
-            <returns></returns>
+            <returns>The <see cref="T:Rnwood.SmtpServer.Verbs.IVerbMap"/> with registered verbs for the commands.</returns>
         </member>
         <member name="T:Rnwood.SmtpServer.SmtpServerException">
             <summary>
@@ -3092,22 +3079,15 @@
             <exception cref="T:Rnwood.SmtpServer.ConnectionUnexpectedlyClosedException">Read failed</exception>
         </member>
         <member name="M:Rnwood.SmtpServer.TcpClientConnectionChannel.SetReaderEncoding(System.Text.Encoding)">
-             <summary>
-            
-             </summary>
-             <param name="encoding">The encoding<see cref="T:System.Text.Encoding"/></param>
+            <inheritdoc/>
         </member>
         <member name="M:Rnwood.SmtpServer.TcpClientConnectionChannel.WriteLine(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="text">The text<see cref="T:System.String"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+            <inheritdoc/>
         </member>
-        <member name="M:Rnwood.SmtpServer.TcpClientConnectionChannel.SetupReaderAndWriter">
-             <summary>
-            
-             </summary>
+        <member name="M:Rnwood.SmtpServer.TcpClientConnectionChannel.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.TcpClientConnectionChannel.Dispose(System.Boolean)">
             <summary>
@@ -3115,69 +3095,49 @@
             </summary>
             <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         </member>
-        <member name="M:Rnwood.SmtpServer.TcpClientConnectionChannel.Dispose">
-            <summary>
-            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-            </summary>
-        </member>
         <member name="T:Rnwood.SmtpServer.DataVerb">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.DataVerb" />
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.DataVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.DataVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
         <member name="M:Rnwood.SmtpServer.DataVerb.ProcessLine(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="line">The line<see cref="T:System.String"/></param>
-             <returns>The <see cref="T:System.String"/></returns>
+            <summary>
+            Processes a line of data from the client removing the escaping of the special end of message character.
+            </summary>
+            <param name="line">The line.</param>
+            <returns>The line of data without escaping of the . character</returns>
         </member>
         <member name="T:Rnwood.SmtpServer.EhloVerb">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.EhloVerb" />
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.EhloVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.EhloVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.HeloVerb">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.HeloVerb" />
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.HeloVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.HeloVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Verbs.IVerb">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.Verbs.IVerb" />
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.Verbs.IVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Verbs.IVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <summary>
+            Processes a command which math
+            </summary>
+            <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
+            <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
         </member>
         <member name="T:Rnwood.SmtpServer.Verbs.IVerbMap">
             <summary>
@@ -3185,68 +3145,45 @@
             </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.Verbs.IVerbMap.GetVerbProcessor(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="verb">The verb<see cref="T:System.String"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Verbs.IVerb"/></returns>
+            <summary>
+            Gets the verb processor which is registered for the specified verb.
+            </summary>
+            <param name="verb">The verb.</param>
+            <returns>The verb or null</returns>
         </member>
         <member name="M:Rnwood.SmtpServer.Verbs.IVerbMap.SetVerbProcessor(System.String,Rnwood.SmtpServer.Verbs.IVerb)">
-             <summary>
-            
-             </summary>
-             <param name="verb">The verb<see cref="T:System.String"/></param>
-             <param name="verbProcessor">The verbProcessor<see cref="T:Rnwood.SmtpServer.Verbs.IVerb"/></param>
+            <summary>
+            Sets the verb processor which is registered for a verb.
+            </summary>
+            <param name="verb">The verb<see cref="T:System.String"/></param>
+            <param name="verbProcessor">The verbProcessor<see cref="T:Rnwood.SmtpServer.Verbs.IVerb"/></param>
         </member>
         <member name="T:Rnwood.SmtpServer.Verbs.NoopVerb">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.Verbs.NoopVerb" />
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.Verbs.NoopVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Verbs.NoopVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Verbs.RsetVerb">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.Verbs.RsetVerb" />
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.Verbs.RsetVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Verbs.RsetVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Verbs.VerbMap">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.Verbs.VerbMap" />
             </summary>
         </member>
-        <member name="F:Rnwood.SmtpServer.Verbs.VerbMap.processorVerbs">
-            <summary>
-            Defines the processorVerbs
-            </summary>
-        </member>
         <member name="M:Rnwood.SmtpServer.Verbs.VerbMap.GetVerbProcessor(System.String)">
-             <summary>
-            
-             </summary>
-             <param name="verb">The verb<see cref="T:System.String"/></param>
-             <returns>The <see cref="T:Rnwood.SmtpServer.Verbs.IVerb"/></returns>
+            <inheritdoc/>
         </member>
         <member name="M:Rnwood.SmtpServer.Verbs.VerbMap.SetVerbProcessor(System.String,Rnwood.SmtpServer.Verbs.IVerb)">
-             <summary>
-            
-             </summary>
-             <param name="verb">The verb<see cref="T:System.String"/></param>
-             <param name="verbProcessor">The verbProcessor<see cref="T:Rnwood.SmtpServer.Verbs.IVerb"/></param>
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Verbs.VerbWithSubCommands">
             <summary>
@@ -3269,13 +3206,16 @@
             Gets the SubVerbMap
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.Verbs.VerbWithSubCommands.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.Verbs.VerbWithSubCommands.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <summary>
+            Dispatches a command to the registered sub command matching the next verb in the command
+            or writes an error to the client is no match was found.
+            </summary>
+            <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection" /></param>
+            <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand" /></param>
+            <returns>
+            A <see cref="T:System.Threading.Tasks.Task" /> representing the async operation
+            </returns>
         </member>
         <member name="T:Rnwood.SmtpServer.MailFromVerb">
             <summary>
@@ -3303,13 +3243,8 @@
             Gets the ParameterProcessorMap
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.MailFromVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.MailFromVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.MailVerb">
             <summary>
@@ -3331,39 +3266,24 @@
             Gets the SubVerbMap
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.MailVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.MailVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.QuitVerb">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.QuitVerb" />
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.QuitVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.QuitVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.RcptToVerb">
             <summary>
             Defines the <see cref="T:Rnwood.SmtpServer.RcptToVerb" />
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.RcptToVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.RcptToVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.RcptVerb">
             <summary>
@@ -3377,16 +3297,11 @@
         </member>
         <member name="P:Rnwood.SmtpServer.RcptVerb.SubVerbMap">
             <summary>
-            Gets the SubVerbMap
+            Gets the <see cref="T:Rnwood.SmtpServer.Verbs.VerbMap"/> for subcommands.
             </summary>
         </member>
-        <member name="M:Rnwood.SmtpServer.RcptVerb.ProcessAsync(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
-             <summary>
-            
-             </summary>
-             <param name="connection">The connection<see cref="T:Rnwood.SmtpServer.IConnection"/></param>
-             <param name="command">The command<see cref="T:Rnwood.SmtpServer.SmtpCommand"/></param>
-             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation</returns>
+        <member name="M:Rnwood.SmtpServer.RcptVerb.Process(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.SmtpCommand)">
+            <inheritdoc/>
         </member>
     </members>
 </doc>

@@ -19,6 +19,11 @@ namespace Rnwood.SmtpServer
     public interface IConnection
     {
         /// <summary>
+        /// Occurs when connection is closed.
+        /// </summary>
+        event AsyncEventHandler<ConnectionEventArgs> ConnectionClosedEventHandler;
+
+        /// <summary>
         /// Gets the current message which has been started by the MAIL FROM command but not yet completed with
         /// a valid response from the server after the DATA command.
         /// </summary>
@@ -55,11 +60,6 @@ namespace Rnwood.SmtpServer
         IVerbMap VerbMap { get; }
 
         /// <summary>
-        /// Occurs when connection is closed.
-        /// </summary>
-        event AsyncEventHandler<ConnectionEventArgs> ConnectionClosedEventHandler;
-
-        /// <summary>
         /// Aborts the current message started by the MAIL FROM command.
         /// </summary>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
@@ -73,19 +73,19 @@ namespace Rnwood.SmtpServer
         Task ApplyStreamFilter(Func<Stream, Task<Stream>> filter);
 
         /// <summary>
-        ///
+        /// Closes the connection
         /// </summary>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task CloseConnection();
 
         /// <summary>
-        ///
+        /// Commits the current message.
         /// </summary>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task CommitMessage();
 
         /// <summary>
-        ///
+        /// Creates and returns a new message and sets it as the current message.
         /// </summary>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task<IMessageBuilder> NewMessage();
@@ -114,7 +114,5 @@ namespace Rnwood.SmtpServer
         /// <param name="response">The response<see cref="SmtpResponse"/></param>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task WriteResponse(SmtpResponse response);
-
-
     }
 }

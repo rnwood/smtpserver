@@ -109,6 +109,7 @@ namespace Rnwood.SmtpServer
             return this.CurrentMessage;
         }
 
+        /// <inheritdoc/>
         public async Task<string> ReadLine()
         {
             string text = await this.ConnectionChannel.ReadLine().ConfigureAwait(false);
@@ -116,6 +117,7 @@ namespace Rnwood.SmtpServer
             return text;
         }
 
+        /// <inheritdoc/>
         public void SetReaderEncoding(Encoding encoding)
         {
             this.ConnectionChannel.SetReaderEncoding(encoding);
@@ -150,7 +152,7 @@ namespace Rnwood.SmtpServer
         /// <param name="server">The server.</param>
         /// <param name="connectionChannel">The connection channel.</param>
         /// <param name="verbMap">The verb map.</param>
-        /// <returns></returns>
+        /// <returns>An <see cref="Task{T}"/> representing the async operation</returns>
         internal static async Task<Connection> Create(ISmtpServer server, IConnectionChannel connectionChannel, IVerbMap verbMap)
         {
             IEditableSession session = await server.Behaviour.OnCreateNewSession(connectionChannel).ConfigureAwait(false);
@@ -204,7 +206,7 @@ namespace Rnwood.SmtpServer
                         {
                             try
                             {
-                                await verbProcessor.ProcessAsync(this, command).ConfigureAwait(false);
+                                await verbProcessor.Process(this, command).ConfigureAwait(false);
                             }
                             catch (SmtpServerException exception)
                             {

@@ -32,27 +32,22 @@ namespace Rnwood.SmtpServer
         /// </summary>
         public VerbMap SubVerbMap { get; private set; }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <param name="command">The command<see cref="SmtpCommand"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public async Task ProcessAsync(IConnection connection, SmtpCommand command)
+        /// <inheritdoc/>
+        public async Task Process(IConnection connection, SmtpCommand command)
         {
             SmtpCommand subrequest = new SmtpCommand(command.ArgumentsText);
             IVerb verbProcessor = this.SubVerbMap.GetVerbProcessor(subrequest.Verb);
 
             if (verbProcessor != null)
             {
-                await verbProcessor.ProcessAsync(connection, subrequest).ConfigureAwait(false);
+                await verbProcessor.Process(connection, subrequest).ConfigureAwait(false);
             }
             else
             {
                 await connection.WriteResponse(
                     new SmtpResponse(
                         StandardSmtpResponseCode.CommandParameterNotImplemented,
-                                     "Subcommand {0} not implemented", 
+                                     "Subcommand {0} not implemented",
                                      subrequest.Verb)).ConfigureAwait(false);
             }
         }

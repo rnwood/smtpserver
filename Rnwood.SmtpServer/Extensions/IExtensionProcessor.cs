@@ -13,7 +13,7 @@ namespace Rnwood.SmtpServer.Extensions
     public interface IExtensionProcessor
     {
         /// <summary>
-        ///
+        /// Returns a sequence of EHLO keywords which are output to advertise the support for this extension to the client.
         /// </summary>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task<string[]> GetEHLOKeywords();

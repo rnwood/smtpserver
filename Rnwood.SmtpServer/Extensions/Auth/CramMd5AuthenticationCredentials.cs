@@ -43,10 +43,12 @@ namespace Rnwood.SmtpServer.Extensions.Auth
         public string Username { get; private set; }
 
         /// <summary>
-        ///
+        /// Validates the response sent by the client against a password specified in clear text.
         /// </summary>
-        /// <param name="password">The password<see cref="string"/></param>
-        /// <returns>The <see cref="bool"/></returns>
+        /// <param name="password">The password<see cref="string" /></param>
+        /// <returns>
+        /// The <see cref="bool" />
+        /// </returns>
         public bool ValidateResponse(string password)
         {
 #pragma warning disable CA5351

@@ -11,6 +11,10 @@ namespace Rnwood.SmtpServer
     using System.Text;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Represents a channel connecting the client and server.
+    /// </summary>
+    /// <seealso cref="System.IDisposable" />
     public interface IConnectionChannel : IDisposable
     {
         /// <summary>

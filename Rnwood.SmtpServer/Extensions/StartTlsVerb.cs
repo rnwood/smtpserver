@@ -16,13 +16,8 @@ namespace Rnwood.SmtpServer.Extensions
     /// </summary>
     public class StartTlsVerb : IVerb
     {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <param name="command">The command<see cref="SmtpCommand"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public async Task ProcessAsync(IConnection connection, SmtpCommand command)
+        /// <inheritdoc/>
+        public async Task Process(IConnection connection, SmtpCommand command)
         {
             X509Certificate certificate = await connection.Server.Behaviour.GetSSLCertificate(connection).ConfigureAwait(false);
 

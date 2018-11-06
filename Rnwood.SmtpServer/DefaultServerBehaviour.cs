@@ -15,22 +15,41 @@ namespace Rnwood.SmtpServer
     using Rnwood.SmtpServer.Extensions;
     using Rnwood.SmtpServer.Extensions.Auth;
 
+    /// <summary>
+    /// Implements a default <see cref="IServerBehaviour"/> which is suitable for many basic uses.
+    /// </summary>
+    /// <seealso cref="Rnwood.SmtpServer.IServerBehaviour" />
     public class DefaultServerBehaviour : IServerBehaviour
     {
         private readonly bool allowRemoteConnections;
 
         private readonly X509Certificate sslCertificate;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultServerBehaviour"/> class.
+        /// </summary>
+        /// <param name="allowRemoteConnections">if set to <c>true</c> remote connections to the server are allowed.</param>
         public DefaultServerBehaviour(bool allowRemoteConnections)
             : this(allowRemoteConnections, 25, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultServerBehaviour"/> class.
+        /// </summary>
+        /// <param name="allowRemoteConnections">if set to <c>true</c> remote connections to the server are allowed.</param>
+        /// <param name="portNumber">The port number.</param>
         public DefaultServerBehaviour(bool allowRemoteConnections, int portNumber)
             : this(allowRemoteConnections, portNumber, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultServerBehaviour"/> class.
+        /// </summary>
+        /// <param name="allowRemoteConnections">if set to <c>true</c> remote connections to the server are allowed.</param>
+        /// <param name="portNumber">The port number.</param>
+        /// <param name="sslCertificate">The SSL certificate.</param>
         public DefaultServerBehaviour(bool allowRemoteConnections, int portNumber, X509Certificate sslCertificate)
         {
             this.PortNumber = portNumber;
@@ -38,21 +57,44 @@ namespace Rnwood.SmtpServer
             this.allowRemoteConnections = allowRemoteConnections;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultServerBehaviour"/> class.
+        /// </summary>
+        /// <param name="allowRemoteConnections">if set to <c>true</c> remote connections to the server are allowed.</param>
+        /// <param name="sslCertificate">The SSL certificate.</param>
         public DefaultServerBehaviour(bool allowRemoteConnections, X509Certificate sslCertificate)
             : this(allowRemoteConnections, 587, sslCertificate)
         {
         }
 
+        /// <summary>
+        /// Occurs when authentication credential provided by the client need to be validated.
+        /// </summary>
         public event AsyncEventHandler<AuthenticationCredentialsValidationEventArgs> AuthenticationCredentialsValidationRequiredAsync;
 
+        /// <summary>
+        /// Occurs when a command is received from a client.
+        /// </summary>
         public event AsyncEventHandler<CommandEventArgs> CommandReceivedEventHandler;
 
+        /// <summary>
+        /// Occurs when a message is received but not yet committed.
+        /// </summary>
         public event AsyncEventHandler<ConnectionEventArgs> MessageCompletedEventHandler;
 
+        /// <summary>
+        /// Occurs when a message is received and committed.
+        /// </summary>
         public event AsyncEventHandler<MessageEventArgs> MessageReceivedEventHandler;
 
+        /// <summary>
+        /// Occurs when a client session is closed.
+        /// </summary>
         public event AsyncEventHandler<SessionEventArgs> SessionCompletedEventHandler;
 
+        /// <summary>
+        /// Occurs when a new session is created, when a client connects to the server.
+        /// </summary>
         public event AsyncEventHandler<SessionEventArgs> SessionStartedEventHandler;
 
         /// <inheritdoc/>
@@ -139,7 +181,7 @@ namespace Rnwood.SmtpServer
         /// <inheritdoc/>
         public virtual Task<IMessageBuilder> OnCreateNewMessage(IConnection connection)
         {
-            return Task.FromResult<IMessageBuilder>(new MemoryMessage.Builder());
+            return Task.FromResult<IMessageBuilder>(new MemoryMessageBuilder());
         }
 
         /// <inheritdoc/>
@@ -193,7 +235,7 @@ namespace Rnwood.SmtpServer
         }
 
         /// <inheritdoc/>
-        public virtual async Task<AuthenticationResult> ValidateAuthenticationCredentialsAsync(
+        public virtual async Task<AuthenticationResult> ValidateAuthenticationCredentials(
             IConnection connection,
                                                                           IAuthenticationCredentials request)
         {

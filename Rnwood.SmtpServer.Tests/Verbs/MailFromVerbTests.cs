@@ -55,7 +55,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             mocks.Connection.SetupGet(c => c.CurrentMessage).Returns(new Mock<IMessageBuilder>().Object);
 
             MailFromVerb mailFromVerb = new MailFromVerb();
-            await mailFromVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("FROM <foo@bar.com>")).ConfigureAwait(false);
+            await mailFromVerb.Process(mocks.Connection.Object, new SmtpCommand("FROM <foo@bar.com>")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.BadSequenceOfCommands);
         }
@@ -70,7 +70,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             TestMocks mocks = new TestMocks();
 
             MailFromVerb mailFromVerb = new MailFromVerb();
-            await mailFromVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("FROM")).ConfigureAwait(false);
+            await mailFromVerb.Process(mocks.Connection.Object, new SmtpCommand("FROM")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.SyntaxErrorInCommandArguments);
         }
@@ -95,7 +95,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             mocks.Connection.SetupGet(c => c.CurrentMessage).Returns(() => currentMessage);
 
             MailFromVerb mailFromVerb = new MailFromVerb();
-            await mailFromVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("FROM " + address)).ConfigureAwait(false);
+            await mailFromVerb.Process(mocks.Connection.Object, new SmtpCommand("FROM " + address)).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(expectedResponse);
             message.VerifySet(m => m.From = expectedParsedAddress);

@@ -24,7 +24,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         {
             TestMocks mocks = new TestMocks();
             EhloVerb ehloVerb = new EhloVerb();
-            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO")).ConfigureAwait(false);
+            await ehloVerb.Process(mocks.Connection.Object, new SmtpCommand("EHLO")).ConfigureAwait(false);
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
 
             mocks.Session.VerifySet(s => s.ClientName = "");
@@ -39,7 +39,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         {
             TestMocks mocks = new TestMocks();
             EhloVerb ehloVerb = new EhloVerb();
-            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foobar")).ConfigureAwait(false);
+            await ehloVerb.Process(mocks.Connection.Object, new SmtpCommand("EHLO foobar")).ConfigureAwait(false);
 
             mocks.Session.VerifySet(s => s.ClientName = "foobar");
         }
@@ -64,7 +64,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
                                                                               });
 
             EhloVerb ehloVerb = new EhloVerb();
-            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foobar")).ConfigureAwait(false);
+            await ehloVerb.Process(mocks.Connection.Object, new SmtpCommand("EHLO foobar")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
         }
@@ -89,7 +89,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
                                                                               });
 
             EhloVerb ehloVerb = new EhloVerb();
-            await ehloVerb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foobar")).ConfigureAwait(false);
+            await ehloVerb.Process(mocks.Connection.Object, new SmtpCommand("EHLO foobar")).ConfigureAwait(false);
 
             mocks.Connection.Verify(c => c.WriteResponse(It.Is<SmtpResponse>(r =>
 
@@ -109,8 +109,8 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             TestMocks mocks = new TestMocks();
 
             EhloVerb verb = new EhloVerb();
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foo.blah")).ConfigureAwait(false);
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("EHLO foo.blah")).ConfigureAwait(false);
+            await verb.Process(mocks.Connection.Object, new SmtpCommand("EHLO foo.blah")).ConfigureAwait(false);
+            await verb.Process(mocks.Connection.Object, new SmtpCommand("EHLO foo.blah")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
         }

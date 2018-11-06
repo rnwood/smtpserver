@@ -24,27 +24,25 @@ namespace Rnwood.SmtpServer.Extensions.Auth
         }
 
         /// <summary>
-        /// Gets the Connection
+        /// Gets the connection this processor is for
         /// </summary>
+        /// <value>
+        /// The connection.
+        /// </value>
         public IConnection Connection { get; private set; }
 
-        /// <summary>
-        /// Gets or sets the Credentials
-        /// </summary>
+        /// <inheritdoc />
         public IAuthenticationCredentials Credentials { get; protected set; }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="data">The data<see cref="string"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public abstract Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data);
+        /// <inheritdoc />
+        public abstract Task<AuthMechanismProcessorStatus> ProcessResponse(string data);
 
         /// <summary>
-        /// The DecodeBase64
+        /// Decodes a base64 encoded ASCII string and throws an exception if invalid.
         /// </summary>
-        /// <param name="data">The data<see cref="string"/></param>
-        /// <returns>The <see cref="string"/></returns>
+        /// <param name="data">The data.</param>
+        /// <returns>The decoded ASCII string</returns>
+        /// <exception cref="BadBase64Exception">If the base64 encoded string is invalid</exception>
         protected static string DecodeBase64(string data)
         {
             try
@@ -59,11 +57,6 @@ namespace Rnwood.SmtpServer.Extensions.Auth
             }
         }
 
-        /// <summary>
-        /// The EncodeBase64
-        /// </summary>
-        /// <param name="asciiString">The asciiString<see cref="string"/></param>
-        /// <returns>The <see cref="string"/></returns>
         private static string EncodeBase64(string asciiString)
         {
             return Convert.ToBase64String(Encoding.ASCII.GetBytes(asciiString));

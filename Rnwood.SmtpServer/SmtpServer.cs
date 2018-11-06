@@ -221,9 +221,24 @@ namespace Rnwood.SmtpServer
         }
 
         /// <summary>
-        ///
+        /// Creates the verb map which represent the commands implemented by the server.
         /// </summary>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+        /// <returns>The <see cref="IVerbMap"/> with registered verbs for the commands.</returns>
+        protected virtual IVerbMap CreateVerbMap()
+        {
+            VerbMap verbMap = new VerbMap();
+            verbMap.SetVerbProcessor("HELO", new HeloVerb());
+            verbMap.SetVerbProcessor("EHLO", new EhloVerb());
+            verbMap.SetVerbProcessor("QUIT", new QuitVerb());
+            verbMap.SetVerbProcessor("MAIL", new MailVerb());
+            verbMap.SetVerbProcessor("RCPT", new RcptVerb());
+            verbMap.SetVerbProcessor("DATA", new DataVerb());
+            verbMap.SetVerbProcessor("RSET", new RsetVerb());
+            verbMap.SetVerbProcessor("NOOP", new NoopVerb());
+
+            return verbMap;
+        }
+
         private async Task AcceptNextClient()
         {
             TcpClient tcpClient = null;
@@ -276,25 +291,6 @@ namespace Rnwood.SmtpServer
                 await this.AcceptNextClient().ConfigureAwait(false);
                 this.nextConnectionEvent.Set();
             }
-        }
-
-        /// <summary>
-        /// Creates the verb map which represent the commands implemented by the server.
-        /// </summary>
-        /// <returns></returns>
-        protected virtual IVerbMap CreateVerbMap()
-        {
-            VerbMap verbMap = new VerbMap();
-            verbMap.SetVerbProcessor("HELO", new HeloVerb());
-            verbMap.SetVerbProcessor("EHLO", new EhloVerb());
-            verbMap.SetVerbProcessor("QUIT", new QuitVerb());
-            verbMap.SetVerbProcessor("MAIL", new MailVerb());
-            verbMap.SetVerbProcessor("RCPT", new RcptVerb());
-            verbMap.SetVerbProcessor("DATA", new DataVerb());
-            verbMap.SetVerbProcessor("RSET", new RsetVerb());
-            verbMap.SetVerbProcessor("NOOP", new NoopVerb());
-
-            return verbMap;
         }
     }
 }

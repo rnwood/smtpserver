@@ -15,13 +15,8 @@ namespace Rnwood.SmtpServer
     /// </summary>
     public class DataVerb : IVerb
     {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <param name="command">The command<see cref="SmtpCommand"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public virtual async Task ProcessAsync(IConnection connection, SmtpCommand command)
+        /// <inheritdoc/>
+        public virtual async Task Process(IConnection connection, SmtpCommand command)
         {
             if (connection.CurrentMessage == null)
             {
@@ -86,10 +81,10 @@ namespace Rnwood.SmtpServer
         }
 
         /// <summary>
-        ///
+        /// Processes a line of data from the client removing the escaping of the special end of message character.
         /// </summary>
-        /// <param name="line">The line<see cref="string"/></param>
-        /// <returns>The <see cref="string"/></returns>
+        /// <param name="line">The line.</param>
+        /// <returns>The line of data without escaping of the . character</returns>
         protected virtual string ProcessLine(string line)
         {
             // Remove escaping of end of message character

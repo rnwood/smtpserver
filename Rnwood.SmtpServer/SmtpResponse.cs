@@ -70,7 +70,7 @@ namespace Rnwood.SmtpServer
         /// </returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
             {
                 return false;
             }
@@ -97,7 +97,7 @@ namespace Rnwood.SmtpServer
         /// </returns>
         public bool Equals(SmtpResponse other)
         {
-            if (ReferenceEquals(null, other))
+            if (other is null)
             {
                 return false;
             }

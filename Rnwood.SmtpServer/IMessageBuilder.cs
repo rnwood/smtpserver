@@ -16,12 +16,12 @@ namespace Rnwood.SmtpServer
     public interface IMessageBuilder : IDisposable
     {
         /// <summary>
-        /// Gets or sets the DeclaredMessageSize
+        /// Gets or sets the message size declared by the client using the SIZE extension.
         /// </summary>
         long? DeclaredMessageSize { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether EightBitTransport
+        /// Gets or sets a value indicating whether the message was received over an 8-bit clean channel.
         /// </summary>
         bool EightBitTransport { get; set; }
 
@@ -31,36 +31,44 @@ namespace Rnwood.SmtpServer
         string From { get; set; }
 
         /// <summary>
-        /// Gets or sets the ReceivedDate
+        /// Gets or sets the date the message was received.
         /// </summary>
         DateTime ReceivedDate { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether SecureConnection
+        /// Gets or sets a value indicating whether the message is being received over a secure connection.
         /// </summary>
         bool SecureConnection { get; set; }
 
         /// <summary>
-        /// Gets or sets the Session
+        /// Gets or sets the Session this message is being received in.
         /// </summary>
         ISession Session { get; set; }
 
+        /// <summary>
+        /// Gets the recipients of the message as specified in the RCPT TO command.
+        /// </summary>
+        /// <value>
+        /// The recipients.
+        /// </value>
         ICollection<string> Recipients { get; }
 
         /// <summary>
-        ///
+        /// Gets a read only stream containing the message data.
         /// </summary>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+        /// <returns>
+        /// A <see cref="Task{T}" /> representing the async operation
+        /// </returns>
         Task<Stream> GetData();
 
         /// <summary>
-        ///
+        /// Turns the editable messge into a read only message.
         /// </summary>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task<IMessage> ToMessage();
 
         /// <summary>
-        ///
+        /// Returns a stream which can be used to write to the message data.
         /// </summary>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task<Stream> WriteData();

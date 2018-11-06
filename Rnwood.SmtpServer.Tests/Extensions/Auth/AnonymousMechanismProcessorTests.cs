@@ -56,11 +56,11 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
             TestMocks mocks = new TestMocks();
             mocks.ServerBehaviour.Setup(
                 b =>
-                b.ValidateAuthenticationCredentialsAsync(mocks.Connection.Object, It.IsAny<AnonymousAuthenticationCredentials>()))
+                b.ValidateAuthenticationCredentials(mocks.Connection.Object, It.IsAny<AnonymousAuthenticationCredentials>()))
                 .ReturnsAsync(authenticationResult);
 
             AnonymousMechanismProcessor anonymousMechanismProcessor = new AnonymousMechanismProcessor(mocks.Connection.Object);
-            AuthMechanismProcessorStatus result = await anonymousMechanismProcessor.ProcessResponseAsync(null).ConfigureAwait(false);
+            AuthMechanismProcessorStatus result = await anonymousMechanismProcessor.ProcessResponse(null).ConfigureAwait(false);
 
             Assert.Equal(authMechanismProcessorStatus, result);
 

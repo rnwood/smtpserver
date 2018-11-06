@@ -10,11 +10,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
     /// </summary>
     public class AuthExtension : IExtension
     {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <returns>The <see cref="IExtensionProcessor"/></returns>
+        /// <inheritdoc />
         public IExtensionProcessor CreateExtensionProcessor(IConnection connection)
         {
             return new AuthExtensionProcessor(connection);

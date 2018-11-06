@@ -31,7 +31,7 @@ namespace Rnwood.SmtpServer
         IPAddress IpAddress { get; }
 
         /// <summary>
-        /// Gets the MaximumNumberOfSequentialBadCommands
+        /// Gets the max number of sequential bad commands before the client will be disconnected.
         /// </summary>
         int MaximumNumberOfSequentialBadCommands { get; }
 
@@ -41,35 +41,37 @@ namespace Rnwood.SmtpServer
         int PortNumber { get; }
 
         /// <summary>
-        ///
+        /// Gets the default encoding for the server which will be used for all new connections until overridden by an extension etc.
         /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+        /// <param name="connection">The connection<see cref="IConnection" /></param>
+        /// <returns>
+        /// A <see cref="Task{T}" /> representing the async operation
+        /// </returns>
         Task<Encoding> GetDefaultEncoding(IConnection connection);
 
         /// <summary>
         /// Gets the extensions that should be enabled for the specified connection.
         /// </summary>
-        /// <param name="connectionChannel">The connectionChannel<see cref="IConnectionChannel"/></param>
-        /// <returns></returns>
+        /// <param name="connectionChannel">The connectionChannel<see cref="IConnectionChannel" /></param>
+        /// <returns>A <see cref="Task{T}"/> resulting in a sequence of <see cref="IExtension"/> for the extensions.</returns>
         Task<IEnumerable<IExtension>> GetExtensions(IConnectionChannel connectionChannel);
 
         /// <summary>
         /// Gets the maximum allowed size of the message for the specified connection.
         /// </summary>
         /// <param name="connection">The connection.</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task<long?> GetMaximumMessageSize(IConnection connection);
 
         /// <summary>
         /// Gets the receive timeout that should be used for the specified connection.
         /// </summary>
         /// <param name="connectionChannel">The connection channel.</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task<TimeSpan> GetReceiveTimeout(IConnectionChannel connectionChannel);
 
         /// <summary>
-        ///
+        /// Gets the send timeout that should be used for the specified connection.
         /// </summary>
         /// <param name="connectionChannel">The connectionChannel<see cref="IConnectionChannel"/></param>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
@@ -79,7 +81,7 @@ namespace Rnwood.SmtpServer
         /// Gets the SSL certificate that should be used for the specified connection.
         /// </summary>
         /// <param name="connection">The connection.</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task<X509Certificate> GetSSLCertificate(IConnection connection);
 
         /// <summary>
@@ -91,7 +93,7 @@ namespace Rnwood.SmtpServer
         Task<bool> IsAuthMechanismEnabled(IConnection connection, IAuthMechanism authMechanism);
 
         /// <summary>
-        ///
+        /// Gets a value indicating whether session logging should be enabled for the given connection.
         /// </summary>
         /// <param name="connection">The connection<see cref="IConnection"/></param>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
@@ -115,28 +117,28 @@ namespace Rnwood.SmtpServer
         Task OnCommandReceived(IConnection connection, SmtpCommand command);
 
         /// <summary>
-        ///
+        /// Called when a new message is started using the MAIL FROM command and must returns the instance of <see cref="IMessageBuilder"/> which will be used to record the message.
         /// </summary>
         /// <param name="connection">The connection<see cref="IConnection"/></param>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task<IMessageBuilder> OnCreateNewMessage(IConnection connection);
 
         /// <summary>
-        ///
+        /// Called when a new session is started and must return an object which is used to record details about that session.
         /// </summary>
         /// <param name="connectionChannel">The connectionChannel<see cref="IConnectionChannel"/></param>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task<IEditableSession> OnCreateNewSession(IConnectionChannel connectionChannel);
 
         /// <summary>
-        ///
+        /// Called when a message is received but not committed.
         /// </summary>
         /// <param name="connection">The connection<see cref="IConnection"/></param>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         Task OnMessageCompleted(IConnection connection);
 
         /// <summary>
-        ///
+        /// Called when a new message is received by the server.
         /// </summary>
         /// <param name="connection">The connection<see cref="IConnection"/></param>
         /// <param name="message">The message<see cref="IMessage"/></param>
@@ -144,7 +146,7 @@ namespace Rnwood.SmtpServer
         Task OnMessageReceived(IConnection connection, IMessage message);
 
         /// <summary>
-        ///
+        /// Called when a new recipient is requested for a message using the MAIL FROM command.
         /// </summary>
         /// <param name="connection">The connection<see cref="IConnection"/></param>
         /// <param name="message">The message<see cref="IMessageBuilder"/></param>
@@ -182,8 +184,8 @@ namespace Rnwood.SmtpServer
         /// </summary>
         /// <param name="connection">The connection.</param>
         /// <param name="authenticationRequest">The authentication request.</param>
-        /// <returns></returns>
-        Task<AuthenticationResult> ValidateAuthenticationCredentialsAsync(
+        /// <returns>A <see cref="Task"/> representing the async operation.</returns>
+        Task<AuthenticationResult> ValidateAuthenticationCredentials(
             IConnection connection,
                                                            IAuthenticationCredentials authenticationRequest);
     }

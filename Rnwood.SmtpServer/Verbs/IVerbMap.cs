@@ -11,14 +11,14 @@ namespace Rnwood.SmtpServer.Verbs
     public interface IVerbMap
     {
         /// <summary>
-        ///
+        /// Gets the verb processor which is registered for the specified verb.
         /// </summary>
-        /// <param name="verb">The verb<see cref="string"/></param>
-        /// <returns>The <see cref="IVerb"/></returns>
+        /// <param name="verb">The verb.</param>
+        /// <returns>The verb or null</returns>
         IVerb GetVerbProcessor(string verb);
 
         /// <summary>
-        ///
+        /// Sets the verb processor which is registered for a verb.
         /// </summary>
         /// <param name="verb">The verb<see cref="string"/></param>
         /// <param name="verbProcessor">The verbProcessor<see cref="IVerb"/></param>

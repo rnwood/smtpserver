@@ -7,6 +7,10 @@ namespace Rnwood.SmtpServer
 {
     using System;
 
+    /// <summary>
+    /// Implements <see cref="ICurrentDateTimeProvider"/> using the real local date time.
+    /// </summary>
+    /// <seealso cref="Rnwood.SmtpServer.ICurrentDateTimeProvider" />
     internal class CurrentDateTimeProvider : ICurrentDateTimeProvider
     {
         /// <inheritdoc/>

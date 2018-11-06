@@ -21,27 +21,24 @@ namespace Rnwood.SmtpServer.Extensions.Auth
             this.Connection = connection;
         }
 
-        /// <summary>
-        /// Gets the Credentials
-        /// </summary>
+        /// <inheritdoc/>
         public IAuthenticationCredentials Credentials { get; private set; }
 
         /// <summary>
-        /// Gets the Connection
+        /// Gets the connection this processor is for.
         /// </summary>
+        /// <value>
+        /// The connection.
+        /// </value>
         protected IConnection Connection { get; private set; }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="data">The data<see cref="string"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public async Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
+        /// <inheritdoc/>
+        public async Task<AuthMechanismProcessorStatus> ProcessResponse(string data)
         {
             this.Credentials = new AnonymousAuthenticationCredentials();
 
             AuthenticationResult result =
-                await this.Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(this.Connection, this.Credentials).ConfigureAwait(false);
+                await this.Connection.Server.Behaviour.ValidateAuthenticationCredentials(this.Connection, this.Credentials).ConfigureAwait(false);
 
             switch (result)
             {

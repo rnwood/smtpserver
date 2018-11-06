@@ -152,21 +152,14 @@ namespace Rnwood.SmtpServer
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="encoding">The encoding<see cref="Encoding"/></param>
+        /// <inheritdoc/>
         public void SetReaderEncoding(Encoding encoding)
         {
             this.ReaderEncoding = encoding;
             this.SetupReaderAndWriter();
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="text">The text<see cref="string"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+        /// <inheritdoc/>
         public async Task WriteLine(string text)
         {
             try
@@ -181,12 +174,12 @@ namespace Rnwood.SmtpServer
         }
 
         /// <summary>
-        ///
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        private void SetupReaderAndWriter()
+        public void Dispose()
         {
-            this.writer = new StreamWriter(this.stream, this.ReaderEncoding) { AutoFlush = true, NewLine = "\r\n" };
-            this.reader = new StreamReader(this.stream, this.ReaderEncoding);
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -209,13 +202,10 @@ namespace Rnwood.SmtpServer
             }
         }
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
+        private void SetupReaderAndWriter()
         {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
+            this.writer = new StreamWriter(this.stream, this.ReaderEncoding) { AutoFlush = true, NewLine = "\r\n" };
+            this.reader = new StreamReader(this.stream, this.ReaderEncoding);
         }
     }
 }

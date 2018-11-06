@@ -9,13 +9,10 @@ namespace Rnwood.SmtpServer
     using System.Text.RegularExpressions;
 
     /// <summary>
-    /// Defines the <see cref="SmtpCommand" />
+    /// Defines the <see cref="SmtpCommand" /> which implements parsing of an SMTP command received from client to server.
     /// </summary>
     public class SmtpCommand : IEquatable<SmtpCommand>
     {
-        /// <summary>
-        /// Defines the COMMANDREGEX
-        /// </summary>
         private static readonly Regex COMMANDREGEX = new Regex("(?'verb'[^ :]+)[ :]*(?'arguments'.*)");
 
         /// <summary>
@@ -43,7 +40,7 @@ namespace Rnwood.SmtpServer
         }
 
         /// <summary>
-        /// Gets the ArgumentsText
+        /// Gets the arguments supplied after the VERB in the command as a single string.
         /// </summary>
         public string ArgumentsText { get; private set; }
 
@@ -53,7 +50,7 @@ namespace Rnwood.SmtpServer
         public bool IsEmpty { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether IsValid
+        /// Gets a value indicating whether this command is valid - i.e. matching the pattern allowed.
         /// </summary>
         public bool IsValid { get; private set; }
 
@@ -68,13 +65,15 @@ namespace Rnwood.SmtpServer
         public string Verb { get; private set; }
 
         /// <summary>
-        ///
+        /// Determines whether the specified <see cref="object" />, is equal to this instance.
         /// </summary>
-        /// <param name="obj">The obj<see cref="object"/></param>
-        /// <returns>The <see cref="bool"/></returns>
+        /// <param name="obj">The obj<see cref="object" /></param>
+        /// <returns>
+        /// The <see cref="bool" />
+        /// </returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
             {
                 return false;
             }
@@ -93,13 +92,15 @@ namespace Rnwood.SmtpServer
         }
 
         /// <summary>
-        ///
+        /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
-        /// <param name="other">The other<see cref="SmtpCommand"/></param>
-        /// <returns>The <see cref="bool"/></returns>
+        /// <param name="other">The other<see cref="SmtpCommand" /></param>
+        /// <returns>
+        /// The <see cref="bool" />
+        /// </returns>
         public bool Equals(SmtpCommand other)
         {
-            if (ReferenceEquals(null, other))
+            if (other is null)
             {
                 return false;
             }
@@ -113,9 +114,11 @@ namespace Rnwood.SmtpServer
         }
 
         /// <summary>
-        ///
+        /// Returns a hash code for this instance.
         /// </summary>
-        /// <returns>The <see cref="int"/></returns>
+        /// <returns>
+        /// The <see cref="int" />
+        /// </returns>
         public override int GetHashCode()
         {
             return this.Text != null ? this.Text.GetHashCode() : 0;

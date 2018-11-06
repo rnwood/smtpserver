@@ -21,7 +21,7 @@ namespace Rnwood.SmtpServer.Tests
             FileInfo tempFile = new FileInfo(Path.GetTempFileName());
 
             TestMocks mocks = new TestMocks();
-            return new FileMessage.Builder(tempFile, false);
+            return new FileMessageBuilder(tempFile, false);
         }
     }
 }

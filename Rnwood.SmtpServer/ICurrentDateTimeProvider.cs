@@ -13,7 +13,7 @@ namespace Rnwood.SmtpServer
     public interface ICurrentDateTimeProvider
     {
         /// <summary>
-        ///
+        /// Returns the current date and time.
         /// </summary>
         /// <returns>The <see cref="DateTime"/></returns>
         DateTime GetCurrentDateTime();

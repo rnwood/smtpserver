@@ -28,13 +28,8 @@ namespace Rnwood.SmtpServer.Extensions.Auth
         /// </summary>
         public AuthExtensionProcessor AuthExtensionProcessor { get; private set; }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <param name="command">The command<see cref="SmtpCommand"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public async Task ProcessAsync(IConnection connection, SmtpCommand command)
+        /// <inheritdoc/>
+        public async Task Process(IConnection connection, SmtpCommand command)
         {
             ArgumentsParser argumentsParser = new ArgumentsParser(command.ArgumentsText);
 
@@ -76,7 +71,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                 }
 
                 AuthMechanismProcessorStatus status =
-                    await authMechanismProcessor.ProcessResponseAsync(initialData).ConfigureAwait(false);
+                    await authMechanismProcessor.ProcessResponse(initialData).ConfigureAwait(false);
                 while (status == AuthMechanismProcessorStatus.Continue)
                 {
                     string response = await connection.ReadLine().ConfigureAwait(false);
@@ -87,7 +82,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                         return;
                     }
 
-                    status = await authMechanismProcessor.ProcessResponseAsync(response).ConfigureAwait(false);
+                    status = await authMechanismProcessor.ProcessResponse(response).ConfigureAwait(false);
                 }
 
                 if (status == AuthMechanismProcessorStatus.Success)

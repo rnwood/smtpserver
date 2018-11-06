@@ -11,10 +11,12 @@ namespace Rnwood.SmtpServer.Extensions
     public interface IExtension
     {
         /// <summary>
-        ///
+        /// Creates the extension processor for a connection.
         /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <returns>The <see cref="IExtensionProcessor"/></returns>
+        /// <param name="connection">The connection<see cref="IConnection" /></param>
+        /// <returns>
+        /// The <see cref="IExtensionProcessor" />
+        /// </returns>
         IExtensionProcessor CreateExtensionProcessor(IConnection connection);
     }
 }

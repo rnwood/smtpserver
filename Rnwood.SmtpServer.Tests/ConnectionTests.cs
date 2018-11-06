@@ -102,7 +102,7 @@ namespace Rnwood.SmtpServer.Tests
             Connection connection = await Connection.Create(mocks.Server.Object, mocks.ConnectionChannel.Object, mocks.VerbMap.Object).ConfigureAwait(false);
             await connection.ProcessAsync().ConfigureAwait(false);
 
-            mockVerb.Verify(v => v.ProcessAsync(It.IsAny<IConnection>(), It.IsAny<SmtpCommand>()));
+            mockVerb.Verify(v => v.Process(It.IsAny<IConnection>(), It.IsAny<SmtpCommand>()));
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Rnwood.SmtpServer.Tests
             TestMocks mocks = new TestMocks();
             Mock<IVerb> mockVerb = new Mock<IVerb>();
             mocks.VerbMap.Setup(v => v.GetVerbProcessor(It.IsAny<string>())).Returns(mockVerb.Object);
-            mockVerb.Setup(v => v.ProcessAsync(It.IsAny<IConnection>(), It.IsAny<SmtpCommand>())).Returns(Task.FromException(new SmtpServerException(new SmtpResponse(500, "error"))));
+            mockVerb.Setup(v => v.Process(It.IsAny<IConnection>(), It.IsAny<SmtpCommand>())).Returns(Task.FromException(new SmtpServerException(new SmtpResponse(500, "error"))));
 
             mocks.ConnectionChannel.Setup(c => c.ReadLine()).ReturnsAsync("GOODCOMMAND").Callback(() => mocks.Connection.Object.CloseConnection().Wait());
 

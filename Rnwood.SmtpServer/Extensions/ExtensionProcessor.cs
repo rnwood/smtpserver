@@ -27,7 +27,7 @@ namespace Rnwood.SmtpServer.Extensions
         public IConnection Connection { get; private set; }
 
         /// <summary>
-        ///
+        /// Returns the EHLO keywords which advertise this extension to the client.
         /// </summary>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         public abstract Task<string[]> GetEHLOKeywords();

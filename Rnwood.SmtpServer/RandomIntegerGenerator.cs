@@ -12,17 +12,9 @@ namespace Rnwood.SmtpServer
     /// </summary>
     public class RandomIntegerGenerator : IRandomIntegerGenerator
     {
-        /// <summary>
-        /// Defines the random
-        /// </summary>
         private static Random random = new Random();
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="minValue">The minValue<see cref="int"/></param>
-        /// <param name="maxValue">The maxValue<see cref="int"/></param>
-        /// <returns>The <see cref="int"/></returns>
+        /// <inheritdoc/>
         public int GenerateRandomInteger(int minValue, int maxValue)
         {
             return random.Next(minValue, maxValue);

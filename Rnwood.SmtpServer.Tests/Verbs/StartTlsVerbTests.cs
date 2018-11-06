@@ -27,7 +27,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             mocks.ServerBehaviour.Setup(b => b.GetSSLCertificate(It.IsAny<IConnection>())).ReturnsAsync((X509Certificate)null);
 
             StartTlsVerb verb = new StartTlsVerb();
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("STARTTLS")).ConfigureAwait(false);
+            await verb.Process(mocks.Connection.Object, new SmtpCommand("STARTTLS")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.CommandNotImplemented);
         }

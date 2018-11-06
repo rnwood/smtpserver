@@ -30,26 +30,21 @@ namespace Rnwood.SmtpServer
         {
         }
 
+        /// <inheritdoc />
         public override void AppendToLog(string text)
         {
             this.log.AppendLine(text);
         }
 
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected override void Dispose(bool disposing)
-        {
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <returns>The <see cref="TextReader"/></returns>
+        /// <inheritdoc />
         public override TextReader GetLog()
         {
             return new StringReader(this.log.ToString());
+        }
+
+        /// <inheritdoc />
+        protected override void Dispose(bool disposing)
+        {
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
         private readonly Dictionary<string, IAuthMechanism> map = new Dictionary<string, IAuthMechanism>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        ///
+        /// Adds an auth mechanism to the map.
         /// </summary>
         /// <param name="mechanism">The mechanism<see cref="IAuthMechanism"/></param>
         public void Add(IAuthMechanism mechanism)
@@ -28,7 +28,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
         }
 
         /// <summary>
-        ///
+        /// Gets the auth mechanism which has been registered for the given identifier.
         /// </summary>
         /// <param name="identifier">The identifier<see cref="string"/></param>
         /// <returns>The <see cref="IAuthMechanism"/></returns>
@@ -40,7 +40,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
         }
 
         /// <summary>
-        ///
+        /// Gets all registered auth mechanisms.
         /// </summary>
         /// <returns>The <see cref="IEnumerable{T}"/></returns>
         public IEnumerable<IAuthMechanism> GetAll()

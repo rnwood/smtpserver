@@ -72,12 +72,8 @@ namespace Rnwood.SmtpServer.Extensions.Auth
             AwaitingResponse
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="data">The data<see cref="string"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public override async Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
+        /// <inheritdoc/>
+        public override async Task<AuthMechanismProcessorStatus> ProcessResponse(string data)
         {
             if (this.challenge == null)
             {
@@ -113,7 +109,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
                 this.Credentials = new CramMd5AuthenticationCredentials(username, this.challenge, hash);
 
                 AuthenticationResult result =
-                    await this.Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(this.Connection, this.Credentials).ConfigureAwait(false);
+                    await this.Connection.Server.Behaviour.ValidateAuthenticationCredentials(this.Connection, this.Credentials).ConfigureAwait(false);
 
                 switch (result)
                 {

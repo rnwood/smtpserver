@@ -14,11 +14,7 @@ namespace Rnwood.SmtpServer.Extensions
     /// </summary>
     public class SizeExtension : IExtension
     {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <returns>The <see cref="IExtensionProcessor"/></returns>
+        /// <inheritdoc/>
         public IExtensionProcessor CreateExtensionProcessor(IConnection connection)
         {
             return new SizeExtensionProcessor(connection);
@@ -39,15 +35,15 @@ namespace Rnwood.SmtpServer.Extensions
                 this.Connection.MailVerb.FromSubVerb.ParameterProcessorMap.SetProcessor("SIZE", this);
             }
 
-           /// <summary>
-           /// Gets the Connection
-           /// </summary>
+            /// <summary>
+            /// Gets the connection this processor is for
+            /// </summary>
+            /// <value>
+            /// The connection.
+            /// </value>
             public IConnection Connection { get; private set; }
 
-           /// <summary>
-           ///
-           /// </summary>
-           /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+            /// <inheritdoc/>
             public async Task<string[]> GetEHLOKeywords()
             {
                 long? maxMessageSize = await this.Connection.Server.Behaviour.GetMaximumMessageSize(this.Connection).ConfigureAwait(false);
@@ -62,13 +58,7 @@ namespace Rnwood.SmtpServer.Extensions
                 }
             }
 
-           /// <summary>
-           ///
-           /// </summary>
-           /// <param name="connection">The connection<see cref="IConnection"/></param>
-           /// <param name="key">The key<see cref="string"/></param>
-           /// <param name="value">The value<see cref="string"/></param>
-            /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+            /// <inheritdoc/>
             public async Task SetParameter(IConnection connection, string key, string value)
             {
                 if (key.Equals("SIZE", StringComparison.OrdinalIgnoreCase))

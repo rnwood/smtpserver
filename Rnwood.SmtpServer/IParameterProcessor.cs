@@ -13,7 +13,7 @@ namespace Rnwood.SmtpServer
     public interface IParameterProcessor
     {
         /// <summary>
-        ///
+        /// Processes the parameter which has the <paramref name="key"/> and <paramref name="value"/> specified.
         /// </summary>
         /// <param name="connection">The connection<see cref="IConnection"/></param>
         /// <param name="key">The key<see cref="string"/></param>

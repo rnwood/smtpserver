@@ -14,7 +14,7 @@ namespace Rnwood.SmtpServer
     /// <seealso cref="System.Text.Encoding" />
     public class ASCIISevenBitTruncatingEncoding : Encoding
     {
-        private Encoding asciiEncoding;
+        private readonly Encoding asciiEncoding;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ASCIISevenBitTruncatingEncoding" /> class.
@@ -110,15 +110,17 @@ namespace Rnwood.SmtpServer
 
         private class DecodingFallback : DecoderFallback
         {
-           /// <summary>
-           /// Gets the MaxCharCount
-           /// </summary>
+            /// <summary>
+            /// Gets the maximum number of characters the current <see cref="System.Text.DecoderFallback"></see> object can return.
+            /// </summary>
             public override int MaxCharCount => 1;
 
-           /// <summary>
-           ///
-           /// </summary>
-           /// <returns>The <see cref="DecoderFallbackBuffer"/></returns>
+            /// <summary>
+            /// Initializes a new instance of the <see cref="System.Text.DecoderFallbackBuffer"></see> class.
+            /// </summary>
+            /// <returns>
+            /// An object that provides a fallback buffer for a decoder.
+            /// </returns>
             public override DecoderFallbackBuffer CreateFallbackBuffer()
             {
                 return new Buffer();

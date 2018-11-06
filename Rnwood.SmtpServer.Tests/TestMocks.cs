@@ -8,6 +8,7 @@ namespace Rnwood.SmtpServer.Tests
     using System.Net;
     using System.Threading.Tasks;
     using Moq;
+    using Rnwood.SmtpServer.Extensions;
     using Rnwood.SmtpServer.Verbs;
 
     /// <summary>
@@ -37,6 +38,7 @@ namespace Rnwood.SmtpServer.Tests
             this.Connection.SetupGet(c => c.Server).Returns(this.Server.Object);
             this.Connection.SetupGet(c => c.ReaderEncoding).Returns(new ASCIISevenBitTruncatingEncoding());
             this.Connection.Setup(s => s.CloseConnection()).Returns(() => this.ConnectionChannel.Object.Close());
+            this.Connection.SetupGet(s => s.ExtensionProcessors).Returns(new IExtensionProcessor[0]);
 
             this.Server.SetupGet(s => s.Behaviour).Returns(this.ServerBehaviour.Object);
 

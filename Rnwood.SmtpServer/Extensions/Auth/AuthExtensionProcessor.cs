@@ -10,6 +10,10 @@ namespace Rnwood.SmtpServer.Extensions.Auth
     using System.Linq;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Implements the AUTH extension for a connection.
+    /// </summary>
+    /// <seealso cref="Rnwood.SmtpServer.Extensions.IExtensionProcessor" />
     public class AuthExtensionProcessor : IExtensionProcessor
     {
         /// <summary>
@@ -32,6 +36,12 @@ namespace Rnwood.SmtpServer.Extensions.Auth
             connection.VerbMap.SetVerbProcessor("AUTH", new AuthVerb(this));
         }
 
+        /// <summary>
+        /// Gets the mechanism map which manages the list of available auth mechasims.
+        /// </summary>
+        /// <value>
+        /// The mechanism map.
+        /// </value>
         public AuthMechanismMap MechanismMap { get; private set; }
 
         /// <inheritdoc/>
@@ -56,17 +66,17 @@ namespace Rnwood.SmtpServer.Extensions.Auth
         }
 
         /// <summary>
-        ///
+        /// Determines whether the specified auth mechanism is enabled for the current connection.
         /// </summary>
-        /// <param name="mechanism">The mechanism<see cref="IAuthMechanism"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+        /// <param name="mechanism">The mechanism.</param>
+        /// <returns>A <see cref="Task{T}"/> representing the async operation which yields true if enabled.</returns>
         public async Task<bool> IsMechanismEnabled(IAuthMechanism mechanism)
         {
             return await this.connection.Server.Behaviour.IsAuthMechanismEnabled(this.connection, mechanism).ConfigureAwait(false);
         }
 
         /// <summary>
-        ///
+        /// Returns a sequence of all enabled auth mechanisms for the current connection.
         /// </summary>
         /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
         protected async Task<IEnumerable<IAuthMechanism>> GetEnabledAuthMechanisms()

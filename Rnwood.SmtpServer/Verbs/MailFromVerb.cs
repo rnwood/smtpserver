@@ -18,7 +18,7 @@ namespace Rnwood.SmtpServer
         /// <summary>
         /// Defines the currentDateTimeProvider
         /// </summary>
-        private ICurrentDateTimeProvider currentDateTimeProvider;
+        private readonly ICurrentDateTimeProvider currentDateTimeProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MailFromVerb"/> class.
@@ -43,13 +43,8 @@ namespace Rnwood.SmtpServer
         /// </summary>
         public ParameterProcessorMap ParameterProcessorMap { get; private set; }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <param name="command">The command<see cref="SmtpCommand"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public async Task ProcessAsync(IConnection connection, SmtpCommand command)
+        /// <inheritdoc/>
+        public async Task Process(IConnection connection, SmtpCommand command)
         {
             if (connection.CurrentMessage != null)
             {

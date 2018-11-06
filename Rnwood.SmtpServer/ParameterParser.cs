@@ -9,13 +9,10 @@ namespace Rnwood.SmtpServer
     using System.Collections.Generic;
 
     /// <summary>
-    /// Defines the <see cref="ParameterParser" />
+    /// Defines the <see cref="ParameterParser" /> which implements parsing of A=1 B=2 type string for command parameters.
     /// </summary>
     public class ParameterParser
     {
-        /// <summary>
-        /// Defines the parameters
-        /// </summary>
         private readonly List<Parameter> parameters = new List<Parameter>();
 
         /// <summary>
@@ -28,14 +25,10 @@ namespace Rnwood.SmtpServer
         }
 
         /// <summary>
-        /// Gets the Parameters
+        /// Gets the parameters which have been parsed from the arguments.
         /// </summary>
         public IReadOnlyCollection<Parameter> Parameters => this.parameters.ToArray();
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="tokens">The tokens<see cref="string"/></param>
         private void Parse(string[] tokens)
         {
             foreach (string token in tokens)

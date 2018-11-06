@@ -45,7 +45,7 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
                 string challenge = string.Format("{0}.{1}@{2}", FAKERANDOM, FAKEDATETIME, FAKEDOMAIN);
 
                 CramMd5MechanismProcessor cramMd5MechanismProcessor = this.Setup(mocks, challenge);
-                AuthMechanismProcessorStatus result = await cramMd5MechanismProcessor.ProcessResponseAsync("BLAH").ConfigureAwait(false);
+                AuthMechanismProcessorStatus result = await cramMd5MechanismProcessor.ProcessResponse("BLAH").ConfigureAwait(false);
             }).ConfigureAwait(false);
         }
 
@@ -59,7 +59,7 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
             TestMocks mocks = new TestMocks();
 
             CramMd5MechanismProcessor cramMd5MechanismProcessor = this.Setup(mocks);
-            AuthMechanismProcessorStatus result = await cramMd5MechanismProcessor.ProcessResponseAsync(null).ConfigureAwait(false);
+            AuthMechanismProcessorStatus result = await cramMd5MechanismProcessor.ProcessResponse(null).ConfigureAwait(false);
 
             string expectedResponse = string.Format("{0}.{1}@{2}", FAKERANDOM, FAKEDATETIME, FAKEDOMAIN);
 
@@ -86,8 +86,8 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
                 TestMocks mocks = new TestMocks();
 
                 CramMd5MechanismProcessor cramMd5MechanismProcessor = this.Setup(mocks);
-                await cramMd5MechanismProcessor.ProcessResponseAsync(null).ConfigureAwait(false);
-                await cramMd5MechanismProcessor.ProcessResponseAsync("rob blah").ConfigureAwait(false);
+                await cramMd5MechanismProcessor.ProcessResponse(null).ConfigureAwait(false);
+                await cramMd5MechanismProcessor.ProcessResponse("rob blah").ConfigureAwait(false);
             }).ConfigureAwait(false);
         }
 

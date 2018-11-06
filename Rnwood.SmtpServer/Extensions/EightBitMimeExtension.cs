@@ -19,11 +19,7 @@ namespace Rnwood.SmtpServer.Extensions
         {
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <returns>The <see cref="IExtensionProcessor"/></returns>
+        /// <inheritdoc/>
         public IExtensionProcessor CreateExtensionProcessor(IConnection connection)
         {
             return new EightBitMimeExtensionProcessor(connection);
@@ -49,10 +45,7 @@ namespace Rnwood.SmtpServer.Extensions
                 mailFromProcessor.ParameterProcessorMap.SetProcessor("BODY", verb);
             }
 
-           /// <summary>
-           ///
-           /// </summary>
-           /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+            /// <inheritdoc/>
             public override Task<string[]> GetEHLOKeywords()
             {
                 return Task.FromResult(new[] { "8BITMIME" });

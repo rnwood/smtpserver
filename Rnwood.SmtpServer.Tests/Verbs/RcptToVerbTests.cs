@@ -74,11 +74,11 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         private async Task TestBadAddressAsync(string address)
         {
             TestMocks mocks = new TestMocks();
-            MemoryMessage.Builder messageBuilder = new MemoryMessage.Builder();
+            MemoryMessageBuilder messageBuilder = new MemoryMessageBuilder();
             mocks.Connection.SetupGet(c => c.CurrentMessage).Returns(messageBuilder);
 
             RcptToVerb verb = new RcptToVerb();
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("TO " + address)).ConfigureAwait(false);
+            await verb.Process(mocks.Connection.Object, new SmtpCommand("TO " + address)).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.SyntaxErrorInCommandArguments);
             Assert.Equal(0, messageBuilder.Recipients.Count);
@@ -93,11 +93,11 @@ namespace Rnwood.SmtpServer.Tests.Verbs
         private async Task TestGoodAddressAsync(string address, string expectedAddress)
         {
             TestMocks mocks = new TestMocks();
-            MemoryMessage.Builder messageBuilder = new MemoryMessage.Builder();
+            MemoryMessageBuilder messageBuilder = new MemoryMessageBuilder();
             mocks.Connection.SetupGet(c => c.CurrentMessage).Returns(messageBuilder);
 
             RcptToVerb verb = new RcptToVerb();
-            await verb.ProcessAsync(mocks.Connection.Object, new SmtpCommand("TO " + address)).ConfigureAwait(false);
+            await verb.Process(mocks.Connection.Object, new SmtpCommand("TO " + address)).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.OK);
             Assert.Equal(expectedAddress, messageBuilder.Recipients.First());

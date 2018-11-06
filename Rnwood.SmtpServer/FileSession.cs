@@ -33,6 +33,7 @@ namespace Rnwood.SmtpServer
             this.keepOnDispose = keepOnDispose;
         }
 
+        /// <inheritdoc/>
         public override void AppendToLog(string text)
         {
             using (StreamWriter writer = this.file.AppendText())
@@ -41,10 +42,7 @@ namespace Rnwood.SmtpServer
             }
         }
 
-        /// <summary>
-        /// Gets a reader which will read from the session log.
-        /// </summary>
-        /// <returns>A <see cref="TextReader"/> which reads from the sesion log.</returns>
+        /// <inheritdoc/>
         public override TextReader GetLog()
         {
             return this.file.OpenText();

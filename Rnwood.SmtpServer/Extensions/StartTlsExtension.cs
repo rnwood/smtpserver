@@ -13,11 +13,7 @@ namespace Rnwood.SmtpServer.Extensions
     /// </summary>
     public class StartTlsExtension : IExtension
     {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <returns>The <see cref="IExtensionProcessor"/></returns>
+        /// <inheritdoc/>
         public IExtensionProcessor CreateExtensionProcessor(IConnection connection)
         {
             return new StartTlsExtensionProcessor(connection);
@@ -38,15 +34,15 @@ namespace Rnwood.SmtpServer.Extensions
                 this.Connection.VerbMap.SetVerbProcessor("STARTTLS", new StartTlsVerb());
             }
 
-           /// <summary>
-           /// Gets the Connection
-           /// </summary>
+            /// <summary>
+            /// Gets the connection this processor is for
+            /// </summary>
+            /// <value>
+            /// The connection.
+            /// </value>
             public IConnection Connection { get; private set; }
 
-           /// <summary>
-           ///
-           /// </summary>
-           /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+            /// <inheritdoc/>
             public Task<string[]> GetEHLOKeywords()
             {
                 string[] result;

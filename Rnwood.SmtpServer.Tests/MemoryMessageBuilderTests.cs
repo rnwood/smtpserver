@@ -17,7 +17,7 @@ namespace Rnwood.SmtpServer.Tests
         protected override IMessageBuilder GetInstance()
         {
             TestMocks mocks = new TestMocks();
-            return new MemoryMessage.Builder();
+            return new MemoryMessageBuilder();
         }
     }
 }

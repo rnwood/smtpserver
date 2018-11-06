@@ -28,9 +28,9 @@ namespace Rnwood.SmtpServer.Tests.Verbs
             Mock<IVerb> verb = new Mock<IVerb>();
             verbWithSubCommands.Object.SubVerbMap.SetVerbProcessor("SUBCOMMAND1", verb.Object);
 
-            await verbWithSubCommands.Object.ProcessAsync(mocks.Connection.Object, new SmtpCommand("VERB SUBCOMMAND1")).ConfigureAwait(false);
+            await verbWithSubCommands.Object.Process(mocks.Connection.Object, new SmtpCommand("VERB SUBCOMMAND1")).ConfigureAwait(false);
 
-            verb.Verify(v => v.ProcessAsync(mocks.Connection.Object, new SmtpCommand("SUBCOMMAND1")));
+            verb.Verify(v => v.Process(mocks.Connection.Object, new SmtpCommand("SUBCOMMAND1")));
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Rnwood.SmtpServer.Tests.Verbs
 
             Mock<VerbWithSubCommands> verbWithSubCommands = new Mock<VerbWithSubCommands>() { CallBase = true };
 
-            await verbWithSubCommands.Object.ProcessAsync(mocks.Connection.Object, new SmtpCommand("VERB SUBCOMMAND1")).ConfigureAwait(false);
+            await verbWithSubCommands.Object.Process(mocks.Connection.Object, new SmtpCommand("VERB SUBCOMMAND1")).ConfigureAwait(false);
 
             mocks.VerifyWriteResponseAsync(StandardSmtpResponseCode.CommandParameterNotImplemented);
         }

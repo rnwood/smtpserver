@@ -42,12 +42,8 @@ namespace Rnwood.SmtpServer.Extensions.Auth
         /// </summary>
         private ProcessingState State { get; set; }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="data">The data<see cref="string"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public override async Task<AuthMechanismProcessorStatus> ProcessResponseAsync(string data)
+        /// <inheritdoc/>
+        public override async Task<AuthMechanismProcessorStatus> ProcessResponse(string data)
         {
             if (string.IsNullOrEmpty(data))
             {
@@ -79,7 +75,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
             this.Credentials = new PlainAuthenticationCredentials(username, password);
 
             AuthenticationResult result =
-                await this.Connection.Server.Behaviour.ValidateAuthenticationCredentialsAsync(this.Connection, this.Credentials).ConfigureAwait(false);
+                await this.Connection.Server.Behaviour.ValidateAuthenticationCredentials(this.Connection, this.Credentials).ConfigureAwait(false);
             switch (result)
             {
                 case AuthenticationResult.Success:

@@ -25,7 +25,7 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
             TestMocks mocks = new TestMocks();
 
             LoginMechanismProcessor processor = this.Setup(mocks);
-            AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(null).ConfigureAwait(false);
+            AuthMechanismProcessorStatus result = await processor.ProcessResponse(null).ConfigureAwait(false);
 
             Assert.Equal(AuthMechanismProcessorStatus.Continue, result);
             mocks.Connection.Verify(c =>
@@ -48,7 +48,7 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
             TestMocks mocks = new TestMocks();
 
             LoginMechanismProcessor processor = this.Setup(mocks);
-            AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(EncodeBase64("rob")).ConfigureAwait(false);
+            AuthMechanismProcessorStatus result = await processor.ProcessResponse(EncodeBase64("rob")).ConfigureAwait(false);
 
             Assert.Equal(AuthMechanismProcessorStatus.Continue, result);
 
@@ -72,7 +72,7 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
             TestMocks mocks = new TestMocks();
 
             LoginMechanismProcessor processor = this.Setup(mocks);
-            AuthMechanismProcessorStatus result = await processor.ProcessResponseAsync(EncodeBase64("rob")).ConfigureAwait(false);
+            AuthMechanismProcessorStatus result = await processor.ProcessResponse(EncodeBase64("rob")).ConfigureAwait(false);
 
             Assert.Equal(AuthMechanismProcessorStatus.Continue, result);
 
@@ -85,7 +85,7 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
                 )
             );
 
-            result = await processor.ProcessResponseAsync(EncodeBase64("password")).ConfigureAwait(false);
+            result = await processor.ProcessResponse(EncodeBase64("password")).ConfigureAwait(false);
             Assert.Equal(AuthMechanismProcessorStatus.Success, result);
         }
 
@@ -101,8 +101,8 @@ namespace Rnwood.SmtpServer.Tests.Extensions.Auth
                 TestMocks mocks = new TestMocks();
 
                 LoginMechanismProcessor processor = this.Setup(mocks);
-                await processor.ProcessResponseAsync(null).ConfigureAwait(false);
-                await processor.ProcessResponseAsync("rob blah").ConfigureAwait(false);
+                await processor.ProcessResponse(null).ConfigureAwait(false);
+                await processor.ProcessResponse("rob blah").ConfigureAwait(false);
             }).ConfigureAwait(false);
         }
 

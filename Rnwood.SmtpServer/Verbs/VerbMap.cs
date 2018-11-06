@@ -13,27 +13,16 @@ namespace Rnwood.SmtpServer.Verbs
     /// </summary>
     public class VerbMap : IVerbMap
     {
-        /// <summary>
-        /// Defines the processorVerbs
-        /// </summary>
         private readonly Dictionary<string, IVerb> processorVerbs = new Dictionary<string, IVerb>(StringComparer.CurrentCultureIgnoreCase);
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="verb">The verb<see cref="string"/></param>
-        /// <returns>The <see cref="IVerb"/></returns>
+        /// <inheritdoc/>
         public IVerb GetVerbProcessor(string verb)
         {
             this.processorVerbs.TryGetValue(verb, out IVerb result);
             return result;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="verb">The verb<see cref="string"/></param>
-        /// <param name="verbProcessor">The verbProcessor<see cref="IVerb"/></param>
+        /// <inheritdoc/>
         public void SetVerbProcessor(string verb, IVerb verbProcessor)
         {
             this.processorVerbs[verb] = verbProcessor;

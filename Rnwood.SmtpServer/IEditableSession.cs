@@ -65,13 +65,13 @@ namespace Rnwood.SmtpServer
         new DateTime StartDate { get; set; }
 
         /// <summary>
-        ///
+        /// Adds a message to this session.
         /// </summary>
         /// <param name="message">The message<see cref="IMessage"/></param>
         void AddMessage(IMessage message);
 
         /// <summary>
-        ///
+        /// Appends a line of text to the session log.
         /// </summary>
         /// <param name="text">The text<see cref="string"/></param>
         void AppendToLog(string text);

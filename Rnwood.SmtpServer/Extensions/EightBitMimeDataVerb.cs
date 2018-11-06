@@ -21,13 +21,8 @@ namespace Rnwood.SmtpServer.Extensions
         {
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <param name="command">The command<see cref="SmtpCommand"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public override async Task ProcessAsync(IConnection connection, SmtpCommand command)
+        /// <inheritdoc/>
+        public override async Task Process(IConnection connection, SmtpCommand command)
         {
             if (connection.CurrentMessage != null && connection.CurrentMessage.EightBitTransport)
             {
@@ -36,7 +31,7 @@ namespace Rnwood.SmtpServer.Extensions
 
             try
             {
-                await base.ProcessAsync(connection, command).ConfigureAwait(false);
+                await base.Process(connection, command).ConfigureAwait(false);
             }
             finally
             {
@@ -44,13 +39,7 @@ namespace Rnwood.SmtpServer.Extensions
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <param name="key">The key<see cref="string"/></param>
-        /// <param name="value">The value<see cref="string"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
+        /// <inheritdoc/>
         public Task SetParameter(IConnection connection, string key, string value)
         {
             if (key.Equals("BODY", StringComparison.OrdinalIgnoreCase))

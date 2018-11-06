@@ -12,13 +12,8 @@ namespace Rnwood.SmtpServer.Verbs
     /// </summary>
     public class RsetVerb : IVerb
     {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connection">The connection<see cref="IConnection"/></param>
-        /// <param name="command">The command<see cref="SmtpCommand"/></param>
-        /// <returns>A <see cref="Task{T}"/> representing the async operation</returns>
-        public async Task ProcessAsync(IConnection connection, SmtpCommand command)
+        /// <inheritdoc/>
+        public async Task Process(IConnection connection, SmtpCommand command)
         {
             await connection.AbortMessage().ConfigureAwait(false);
             await connection.WriteResponse(new SmtpResponse(StandardSmtpResponseCode.OK, "Rset completed")).ConfigureAwait(false);
