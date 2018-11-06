@@ -28,7 +28,7 @@ init:
     } else {
         $paddedbuild = ([int]$env:APPVEYOR_BUILD_NUMBER).ToString("0000")
         write-host "Version is $version - replacing @${env:APPVEYOR_BUILD_NUMBER} with $paddedbuild"
-        Update-AppveyorBuild -version ($version.Replace("@${env:APPVEYOR_BUILD_NUMBER}", "-$paddedbuild"))
+        Update-AppveyorBuild -version ($version.Replace("@${env:APPVEYOR_BUILD_NUMBER}", "$paddedbuild"))
         Set-AppveyorBuildVariable 'PRERELEASE' "true"
     }
     
