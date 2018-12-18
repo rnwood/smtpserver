@@ -26,7 +26,7 @@
     <PackageReference Include="System.Net.Security" Version="4.3.2" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="Moq" Version="4.10.0" />
-    <PackageReference Include="MailKit" Version="2.0.7" />
+    <PackageReference Include="MailKit" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
