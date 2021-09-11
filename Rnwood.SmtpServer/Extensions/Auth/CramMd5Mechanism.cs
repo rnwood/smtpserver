@@ -21,5 +21,17 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 		{
 			return new CramMd5MechanismProcessor(connection, new RandomIntegerGenerator(), new CurrentDateTimeProvider());
 		}
+
+		/// <inheritdoc/>
+		public override bool Equals(object obj)
+		{
+			return obj is CramMd5Mechanism mechanism &&
+				   this.Identifier == mechanism.Identifier;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 	}
 }

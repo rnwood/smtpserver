@@ -588,6 +588,11 @@
             <param name="allowRemoteConnections">if set to <c>true</c> remote connections to the server are allowed.</param>
             <param name="implcitTlsCertificate">The TLS certificate to use for implicit TLS.</param>
         </member>
+        <member name="P:Rnwood.SmtpServer.DefaultServerBehaviour.EnabledAuthMechanisms">
+            <summary>
+            List of active Auth Mechanism Identifiers.
+            </summary>
+        </member>
         <member name="E:Rnwood.SmtpServer.DefaultServerBehaviour.AuthenticationCredentialsValidationRequiredEventHandler">
             <summary>
             Occurs when authentication credential provided by the client need to be validated.
@@ -1162,6 +1167,9 @@
             <inheritdoc/>
         </member>
         <member name="M:Rnwood.SmtpServer.Extensions.Auth.PlainMechanism.CreateAuthMechanismProcessor(Rnwood.SmtpServer.IConnection)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Rnwood.SmtpServer.Extensions.Auth.PlainMechanism.Equals(System.Object)">
             <inheritdoc/>
         </member>
         <member name="T:Rnwood.SmtpServer.Extensions.Auth.PlainMechanismProcessor">
@@ -2021,11 +2029,16 @@
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.IsAuthMechanismEnabled(Rnwood.SmtpServer.IConnection,Rnwood.SmtpServer.Extensions.Auth.IAuthMechanism)">
             <summary>
-            Determines whether the speficied auth mechanism should be enabled for the specified connecton.
+            Determines whether the specified auth mechanism should be enabled for the specified connection.
             </summary>
             <param name="connection">The connection.</param>
             <param name="authMechanism">The auth mechanism.</param>
             <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> representing the async operation.</returns>
+        </member>
+        <member name="P:Rnwood.SmtpServer.IServerBehaviour.EnabledAuthMechanisms">
+            <summary>
+            Set/Get the list of Supported Auth Mechanism Identifiers.
+            </summary>
         </member>
         <member name="M:Rnwood.SmtpServer.IServerBehaviour.IsSessionLoggingEnabled(Rnwood.SmtpServer.IConnection)">
             <summary>

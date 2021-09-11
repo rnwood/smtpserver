@@ -21,5 +21,17 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 		{
 			return new LoginMechanismProcessor(connection);
 		}
+
+		/// <inheritdoc/>
+		public override bool Equals(object obj)
+		{
+			return obj is LoginMechanism mechanism &&
+				   this.Identifier == mechanism.Identifier;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 	}
 }

@@ -12,8 +12,8 @@ namespace Rnwood.SmtpServer
 	using System.Security.Cryptography.X509Certificates;
 	using System.Text;
 	using System.Threading.Tasks;
-	using Rnwood.SmtpServer.Extensions;
-	using Rnwood.SmtpServer.Extensions.Auth;
+	using Extensions;
+	using Extensions.Auth;
 
 	/// <summary>
 	/// Implements a default <see cref="IServerBehaviour"/> which is suitable for many basic uses.
@@ -96,6 +96,12 @@ namespace Rnwood.SmtpServer
 		}
 
 		/// <summary>
+		/// List of active Auth Mechanism Identifiers.
+		/// </summary>
+		public HashSet<IAuthMechanism> EnabledAuthMechanisms { get; set; } =
+			new HashSet<IAuthMechanism>(AuthMechanisms.All());
+
+		/// <summary>
 		/// Occurs when authentication credential provided by the client need to be validated.
 		/// </summary>
 		public event AsyncEventHandler<AuthenticationCredentialsValidationEventArgs> AuthenticationCredentialsValidationRequiredEventHandler;
@@ -143,7 +149,8 @@ namespace Rnwood.SmtpServer
 		/// <inheritdoc/>
 		public virtual Task<IEnumerable<IExtension>> GetExtensions(IConnectionChannel connectionChannel)
 		{
-			List<IExtension> extensions = new List<IExtension>(new IExtension[] { new EightBitMimeExtension(), new SizeExtension(), new SmtpUtfEightExtension() });
+			List<IExtension> extensions = new List<IExtension>(new IExtension[]
+				{ new EightBitMimeExtension(), new SizeExtension(), new SmtpUtfEightExtension() });
 
 			if (this.startTlsCertificate != null)
 			{
@@ -185,7 +192,8 @@ namespace Rnwood.SmtpServer
 		/// <inheritdoc/>
 		public virtual Task<bool> IsAuthMechanismEnabled(IConnection connection, IAuthMechanism authMechanism)
 		{
-			return Task.FromResult(true);
+			return Task.FromResult(
+				this.EnabledAuthMechanisms.Any(x => x.Equals(authMechanism)));
 		}
 
 		/// <inheritdoc/>

@@ -29,10 +29,11 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 		{
 			this.connection = connection;
 			this.MechanismMap = new AuthMechanismMap();
-			this.MechanismMap.Add(new CramMd5Mechanism());
-			this.MechanismMap.Add(new PlainMechanism());
-			this.MechanismMap.Add(new LoginMechanism());
-			this.MechanismMap.Add(new AnonymousMechanism());
+			foreach (var authMechanism in AuthMechanisms.All())
+			{
+				this.MechanismMap.Add(authMechanism);
+			}
+
 			connection.VerbMap.SetVerbProcessor("AUTH", new AuthVerb(this));
 		}
 

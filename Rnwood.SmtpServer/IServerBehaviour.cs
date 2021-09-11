@@ -81,12 +81,17 @@ namespace Rnwood.SmtpServer
 		Task<X509Certificate> GetSSLCertificate(IConnection connection);
 
 		/// <summary>
-		/// Determines whether the speficied auth mechanism should be enabled for the specified connecton.
+		/// Determines whether the specified auth mechanism should be enabled for the specified connection.
 		/// </summary>
 		/// <param name="connection">The connection.</param>
 		/// <param name="authMechanism">The auth mechanism.</param>
 		/// <returns>A <see cref="Task{T}"/> representing the async operation.</returns>
 		Task<bool> IsAuthMechanismEnabled(IConnection connection, IAuthMechanism authMechanism);
+
+		/// <summary>
+		/// Set/Get the list of Supported Auth Mechanism Identifiers.
+		/// </summary>
+		HashSet<IAuthMechanism> EnabledAuthMechanisms { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating whether session logging should be enabled for the given connection.
