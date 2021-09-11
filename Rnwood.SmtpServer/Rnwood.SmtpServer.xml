@@ -482,7 +482,7 @@
             
              <param name="allowRemoteConnections">if set to <c>true</c> remote connections are allowed.</param>
              <param name="portNumber">The port number.</param>
-             <param name="implcitTlsCertificate">The TLS certificate to use for implicit TLS.</param>
+             <param name="implicitTlsCertificate">The TLS certificate to use for implicit TLS.</param>
         </member>
         <member name="M:Rnwood.SmtpServer.DefaultServer.#ctor(System.Boolean,System.String,System.Int32,System.Security.Cryptography.X509Certificates.X509Certificate,System.Security.Cryptography.X509Certificates.X509Certificate)">
              <summary>
@@ -494,7 +494,7 @@
              <param name="allowRemoteConnections">if set to <c>true</c> remote connections are allowed.</param>
              <param name="domainName">The domain name the server will send in greeting</param>
              <param name="portNumber">The port number.</param>
-             <param name="implcitTlsCertificate">The TLS certificate to use for implicit TLS.</param>
+             <param name="implicitTlsCertificate">The TLS certificate to use for implicit TLS.</param>
              <param name="startTlsCertificate">The TLS certificate to use for STARTTLS.</param>
         </member>
         <member name="M:Rnwood.SmtpServer.DefaultServer.#ctor(System.Boolean,Rnwood.SmtpServer.StandardSmtpPort)">
@@ -512,12 +512,12 @@
         </member>
         <member name="E:Rnwood.SmtpServer.DefaultServer.MessageCompletedEventHandler">
             <summary>
-            Occurs when a mesage has been fully received but not yet acknlowledged by the server.
+            Occurs when a message has been fully received but not yet acknowledged by the server.
             </summary>
         </member>
         <member name="E:Rnwood.SmtpServer.DefaultServer.MessageReceivedEventHandler">
             <summary>
-            Occurs when a message has been receieved and acknlowledged by the server.
+            Occurs when a message has been received and acknowledged by the server.
             </summary>
         </member>
         <member name="E:Rnwood.SmtpServer.DefaultServer.SessionCompletedEventHandler">
@@ -763,7 +763,7 @@
         </member>
         <member name="P:Rnwood.SmtpServer.Extensions.Auth.AuthExtensionProcessor.MechanismMap">
             <summary>
-            Gets the mechanism map which manages the list of available auth mechasims.
+            Gets the mechanism map which manages the list of available auth mechanisms.
             </summary>
             <value>
             The mechanism map.

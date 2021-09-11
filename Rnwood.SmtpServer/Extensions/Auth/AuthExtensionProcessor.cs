@@ -37,7 +37,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 		}
 
 		/// <summary>
-		/// Gets the mechanism map which manages the list of available auth mechasims.
+		/// Gets the mechanism map which manages the list of available auth mechanisms.
 		/// </summary>
 		/// <value>
 		/// The mechanism map.
@@ -48,7 +48,7 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 		public async Task<string[]> GetEHLOKeywords()
 		{
 			IAuthMechanism[] mechanisms = (await this.GetEnabledAuthMechanisms().ConfigureAwait(false)).ToArray();
-			
+
 			if (mechanisms.Any())
 			{
 				string mids = string.Join(" ", mechanisms.Select(m => m.Identifier));
