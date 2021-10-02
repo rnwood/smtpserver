@@ -70,7 +70,7 @@ namespace Rnwood.SmtpServer
 		/// </summary>
 		///
 		/// <param name="allowRemoteConnections">if set to <c>true</c> remote connections are allowed.</param>
-		/// <param name="domainName">The domain name the server will send in greeting</param>
+		/// <param name="domainName">The domain name the server will send in greeting.</param>
 		/// <param name="portNumber">The port number.</param>
 		/// <param name="implicitTlsCertificate">The TLS certificate to use for implicit TLS.</param>
 		/// <param name="startTlsCertificate">The TLS certificate to use for STARTTLS.</param>

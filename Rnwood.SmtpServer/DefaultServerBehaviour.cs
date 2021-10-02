@@ -12,8 +12,8 @@ namespace Rnwood.SmtpServer
 	using System.Security.Cryptography.X509Certificates;
 	using System.Text;
 	using System.Threading.Tasks;
-	using Extensions;
-	using Extensions.Auth;
+	using Rnwood.SmtpServer.Extensions;
+	using Rnwood.SmtpServer.Extensions.Auth;
 
 	/// <summary>
 	/// Implements a default <see cref="IServerBehaviour"/> which is suitable for many basic uses.
@@ -50,9 +50,9 @@ namespace Rnwood.SmtpServer
 		/// </summary>
 		/// <param name="allowRemoteConnections">if set to <c>true</c> remote connections to the server are allowed.</param>
 		/// <param name="portNumber">The port number.</param>
-		/// <param name="implcitTlsCertificate">The TLS certificate to use for implicit TLS.</param>
-		public DefaultServerBehaviour(bool allowRemoteConnections, int portNumber, X509Certificate implcitTlsCertificate)
-			: this(allowRemoteConnections, portNumber, implcitTlsCertificate, null)
+		/// <param name="implicitTlsCertificate">The TLS certificate to use for implicit TLS.</param>
+		public DefaultServerBehaviour(bool allowRemoteConnections, int portNumber, X509Certificate implicitTlsCertificate)
+			: this(allowRemoteConnections, portNumber, implicitTlsCertificate, null)
 		{
 		}
 
@@ -61,10 +61,14 @@ namespace Rnwood.SmtpServer
 		/// </summary>
 		/// <param name="allowRemoteConnections">if set to <c>true</c> remote connections to the server are allowed.</param>
 		/// <param name="portNumber">The port number.</param>
-		/// <param name="implcitTlsCertificate">The TLS certificate to use for implicit TLS.</param>
-		/// <param name="startTlsCertificate">The TLS certificate to use for STARTTLS</param>
-		public DefaultServerBehaviour(bool allowRemoteConnections, int portNumber, X509Certificate implcitTlsCertificate, X509Certificate startTlsCertificate)
-			: this(allowRemoteConnections, Dns.GetHostName(), portNumber, implcitTlsCertificate, startTlsCertificate)
+		/// <param name="implicitTlsCertificate">The TLS certificate to use for implicit TLS.</param>
+		/// <param name="startTlsCertificate">The TLS certificate to use for STARTTLS.</param>
+		public DefaultServerBehaviour(
+			bool allowRemoteConnections,
+			int portNumber,
+			X509Certificate implicitTlsCertificate,
+			X509Certificate startTlsCertificate)
+			: this(allowRemoteConnections, Dns.GetHostName(), portNumber, implicitTlsCertificate, startTlsCertificate)
 		{
 		}
 
@@ -72,11 +76,16 @@ namespace Rnwood.SmtpServer
 		/// Initializes a new instance of the <see cref="DefaultServerBehaviour"/> class.
 		/// </summary>
 		/// <param name="allowRemoteConnections">if set to <c>true</c> remote connections to the server are allowed.</param>
-		/// <param name="domainName">The domain name the server will send in greeting</param>
+		/// <param name="domainName">The domain name the server will send in greeting.</param>
 		/// <param name="portNumber">The port number.</param>
 		/// <param name="implcitTlsCertificate">The TLS certificate to use for implicit TLS.</param>
-		/// <param name="startTlsCertificate">The TLS certificate to use for STARTTLS</param>
-		public DefaultServerBehaviour(bool allowRemoteConnections, string domainName, int portNumber, X509Certificate implcitTlsCertificate, X509Certificate startTlsCertificate)
+		/// <param name="startTlsCertificate">The TLS certificate to use for STARTTLS.</param>
+		public DefaultServerBehaviour(
+			bool allowRemoteConnections,
+			string domainName,
+			int portNumber,
+			X509Certificate implcitTlsCertificate,
+			X509Certificate startTlsCertificate)
 		{
 			this.DomainName = domainName;
 			this.PortNumber = portNumber;
@@ -94,12 +103,6 @@ namespace Rnwood.SmtpServer
 			: this(allowRemoteConnections, 587, implcitTlsCertificate, null)
 		{
 		}
-
-		/// <summary>
-		/// List of active Auth Mechanism Identifiers.
-		/// </summary>
-		public HashSet<IAuthMechanism> EnabledAuthMechanisms { get; set; } =
-			new HashSet<IAuthMechanism>(AuthMechanisms.All());
 
 		/// <summary>
 		/// Occurs when authentication credential provided by the client need to be validated.
@@ -131,6 +134,12 @@ namespace Rnwood.SmtpServer
 		/// </summary>
 		public event AsyncEventHandler<SessionEventArgs> SessionStartedEventHandler;
 
+		/// <summary>
+		/// Gets or sets a List of active Auth Mechanism Identifiers.
+		/// </summary>
+		public HashSet<IAuthMechanism> EnabledAuthMechanisms { get; set; } =
+			new HashSet<IAuthMechanism>(AuthMechanisms.All());
+
 		/// <inheritdoc/>
 		public virtual string DomainName { get; private set; }
 
@@ -150,7 +159,9 @@ namespace Rnwood.SmtpServer
 		public virtual Task<IEnumerable<IExtension>> GetExtensions(IConnectionChannel connectionChannel)
 		{
 			List<IExtension> extensions = new List<IExtension>(new IExtension[]
-				{ new EightBitMimeExtension(), new SizeExtension(), new SmtpUtfEightExtension() });
+			{
+				new EightBitMimeExtension(), new SizeExtension(), new SmtpUtfEightExtension(),
+			});
 
 			if (this.startTlsCertificate != null)
 			{

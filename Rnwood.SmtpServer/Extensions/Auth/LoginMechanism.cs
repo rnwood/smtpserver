@@ -29,9 +29,10 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 				   this.Identifier == mechanism.Identifier;
 		}
 
+		/// <inheritdoc/>
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			return this.Identifier.GetHashCode();
 		}
 	}
 }

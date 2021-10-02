@@ -26,12 +26,13 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 		public override bool Equals(object obj)
 		{
 			return obj is AnonymousMechanism mechanism &&
-			       this.Identifier == mechanism.Identifier;
+				   this.Identifier == mechanism.Identifier;
 		}
 
+		/// <inheritdoc />
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			return this.Identifier.GetHashCode();
 		}
 	}
 }

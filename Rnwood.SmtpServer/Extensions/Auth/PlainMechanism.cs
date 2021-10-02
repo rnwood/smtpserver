@@ -6,7 +6,7 @@
 namespace Rnwood.SmtpServer.Extensions.Auth
 {
 	/// <summary>
-	/// Defines the <see cref="PlainMechanism" /> which implements the PLAIN auth mechnism.
+	/// Defines the <see cref="PlainMechanism" /> which implements the PLAIN auth mechanism.
 	/// </summary>
 	public class PlainMechanism : IAuthMechanism
 	{
@@ -29,9 +29,10 @@ namespace Rnwood.SmtpServer.Extensions.Auth
 				   this.Identifier == mechanism.Identifier;
 		}
 
+		/// <inheritdoc/>
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			return this.Identifier.GetHashCode();
 		}
 	}
 }

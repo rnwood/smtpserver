@@ -46,6 +46,11 @@ namespace Rnwood.SmtpServer
 		Encoding FallbackEncoding { get; }
 
 		/// <summary>
+		/// Gets or sets the list of Supported Auth Mechanism Identifiers.
+		/// </summary>
+		HashSet<IAuthMechanism> EnabledAuthMechanisms { get; set; }
+
+		/// <summary>
 		/// Gets the extensions that should be enabled for the specified connection.
 		/// </summary>
 		/// <param name="connectionChannel">The connectionChannel<see cref="IConnectionChannel" />.</param>
@@ -87,11 +92,6 @@ namespace Rnwood.SmtpServer
 		/// <param name="authMechanism">The auth mechanism.</param>
 		/// <returns>A <see cref="Task{T}"/> representing the async operation.</returns>
 		Task<bool> IsAuthMechanismEnabled(IConnection connection, IAuthMechanism authMechanism);
-
-		/// <summary>
-		/// Set/Get the list of Supported Auth Mechanism Identifiers.
-		/// </summary>
-		HashSet<IAuthMechanism> EnabledAuthMechanisms { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating whether session logging should be enabled for the given connection.
