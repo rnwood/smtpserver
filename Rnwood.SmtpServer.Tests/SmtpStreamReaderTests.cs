@@ -62,7 +62,9 @@ namespace Rnwood.SmtpServer.Tests
 					{
 						List<string> receivedLines = new List<string>();
 
-						while (await ssr.ReadLineAsync(cts.Token) is { } receivedLine)
+						string receivedLine;
+						
+						while ((receivedLine = await ssr.ReadLineAsync(cts.Token)) != null)
 						{
 							receivedLines.Add(receivedLine);
 						}
