@@ -19,6 +19,15 @@ namespace Rnwood.SmtpServer.Tests
 				"MAIL FROM <robért@rnwood.co.uk>"
 			});
 		}
+		
+		[Fact]
+		public async Task ReadLine_WithAnsiChars()
+		{
+			await Test("MAIL FROM <quáestionem@rnwood.co.uk>\r\n", Encoding.GetEncoding("iso-8859-1"), new[]
+			{
+				"MAIL FROM <quáestionem@rnwood.co.uk>"
+			});
+		}
 
 		[Fact]
 		public async Task ReadLine_WithUtf8Chars()
@@ -53,13 +62,14 @@ namespace Rnwood.SmtpServer.Tests
 					{
 						List<string> receivedLines = new List<string>();
 
-						string receivedLine;
-						while ((receivedLine = await ssr.ReadLineAsync(cts.Token)) != null)
+						while (await ssr.ReadLineAsync(cts.Token) is { } receivedLine)
 						{
 							receivedLines.Add(receivedLine);
 						}
-
-						Assert.Equal(expectedLines, receivedLines.ToArray());
+						
+						byte[] receivedBytes = encoding.GetBytes(string.Join("\r\n", receivedLines));
+						byte[] expectedBytes = encoding.GetBytes(string.Join("\r\n", expectedLines));
+						Assert.Equal(expectedBytes, receivedBytes);
 					}
 				}
 			}
