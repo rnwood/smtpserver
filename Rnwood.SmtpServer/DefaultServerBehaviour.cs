@@ -114,7 +114,7 @@ public class DefaultServerBehaviour : IServerBehaviour
     public virtual string DomainName { get; }
 
     /// <inheritdoc />
-    public virtual IPAddress IpAddress => allowRemoteConnections ? IPAddress.Any : IPAddress.Loopback;
+    public virtual IPAddress IpAddress => allowRemoteConnections ? IPAddress.IPv6Any : IPAddress.IPv6Loopback;
 
     /// <inheritdoc />
     public int MaximumNumberOfSequentialBadCommands => 10;
